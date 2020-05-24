@@ -23,8 +23,17 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  styled_widget: 
-
+  
+  # MobX
+  mobx: ^1.2.1
+  flutter_mobx: ^1.1.0
+  
+  # Tools
+  flutter_hooks: ^0.9.0
+  freezed_annotation: ^0.7.1
+  get_it: ^4.0.2
+  styled_widget:
+  get: ^2.5.9
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
@@ -33,6 +42,9 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  build_runner: ^1.10.0
+  mobx_codegen: ^1.1.0
+  freezed: ^0.10.9
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
