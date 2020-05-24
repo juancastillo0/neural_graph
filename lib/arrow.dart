@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:neural_graph/node.dart';
 
 class ConnectionsPainter extends CustomPainter {
-  Map<int, Operation> operations;
+  Map<int, Node> operations;
   ConnectionsPainter(this.operations);
   static final _paint = Paint()
     ..color = Colors.black

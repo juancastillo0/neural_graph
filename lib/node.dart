@@ -1,49 +1,86 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:mobx/mobx.dart';
+import 'package:styled_widget/styled_widget.dart';
 
+part 'node.g.dart';
 
-class Operation {
-  final String name;
+class Node = _Node with _$Node;
+
+abstract class _Node with Store {
+  @observable
+  String name;
+  @observable
   double top;
+  @observable
   double left;
+
   Set<int> inputs;
+  @observable
   double width = 0;
+  @observable
   double height = 0;
 
+  @computed
   Offset get center => Offset(left + width / 2, top + height / 2);
 
-  Operation(this.name, this.top, this.left, this.inputs);
+  @action
+  void move(DragUpdateDetails d) {
+    left += d.delta.dx;
+    top += d.delta.dy;
+  }
+
+  @action
+  void updateSize(BuildContext ctx) {
+    final newWidth = ctx.size.width + _nodePadding * 2;
+    final newHeight = ctx.size.height + _nodePadding * 2;
+    if (newWidth != width || newHeight != height) {
+      width = newWidth;
+      height = newHeight;
+    }
+  }
+
+  _Node(this.name, this.top, this.left, this.inputs);
 }
 
+const _nodePadding = 18.0;
+const _nodeBorderRadius = const BorderRadius.all(const Radius.circular(6.0));
+const _nodeEdgeInsets = const EdgeInsets.all(_nodePadding);
 
-class OperationView extends StatelessWidget {
-  const OperationView(this.op);
+class NodeView extends StatelessWidget {
+  const NodeView({this.node, Key key}) : super(key: key);
+  final Node node;
 
-  final Operation op;
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.all(Radius.circular(8.0)),
-        border: Border.all(width: 1),
-      ),
-      child: LayoutBuilder(
-        builder: (ctx, box) {
-          SchedulerBinding.instance.addPostFrameCallback((_) {
-            final newWidth = ctx.size.width + 40;
-            final newHeight = ctx.size.height + 40;
-            if (newWidth != op.width || newHeight != op.height) {
-              op.width = newWidth;
-              op.height = newHeight;
-            }
-          });
+    return Observer(
+      builder: (ctx) {
+        return Positioned(
+          top: node.top,
+          left: node.left,
+          child: Container(
+            padding: _nodeEdgeInsets,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: _nodeBorderRadius,
+              border: Border.all(width: 1),
+            ),
+            child: LayoutBuilder(
+              builder: (ctx, box) {
+                SchedulerBinding.instance
+                    .addPostFrameCallback((_) => node.updateSize(ctx));
 
-          return Text(op.name);
-        },
-      ),
+                return Text(node.name);
+              },
+            ),
+          ).gestures(
+            dragStartBehavior: DragStartBehavior.down,
+            onPanUpdate: node.move,
+          ),
+        );
+      },
     );
   }
 }

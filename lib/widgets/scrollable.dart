@@ -77,6 +77,7 @@ class MultiScrollbar extends HookWidget {
   Widget build(ctx) {
     final position = controller.position;
     final offset = useState(0.0);
+    
     useEffect(() {
       final _listener = () {
         offset.value = controller.offset;

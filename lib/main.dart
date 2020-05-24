@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
 import 'package:neural_graph/graph_canvas.dart';
 import 'package:neural_graph/layers_menu.dart';
+import 'package:neural_graph/root_store.dart';
 import 'package:neural_graph/widgets/resizable.dart';
 import 'package:styled_widget/styled_widget.dart';
 
 void main() {
+  GetIt.instance.registerSingleton(RootStore()); 
   runApp(MyApp());
 }
 

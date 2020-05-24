@@ -4,8 +4,6 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:neural_graph/widgets/scrollable.dart';
 import 'package:styled_widget/styled_widget.dart';
 
-const _menuList = ["Convolutional", "Dense"];
-
 const _menuMap = {
   'Model': ["Input", "Loss", "Metric", "Optimizer", "Callback"],
   'Layers': [
