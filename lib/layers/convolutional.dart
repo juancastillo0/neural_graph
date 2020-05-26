@@ -8,5 +8,4 @@ class Convolutional implements Layer {
   @override
   // TODO: implement outputs
   Layer get outputs => throw UnimplementedError();
-  
 }
