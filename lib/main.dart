@@ -7,7 +7,7 @@ import 'package:neural_graph/widgets/resizable.dart';
 import 'package:styled_widget/styled_widget.dart';
 
 void main() {
-  GetIt.instance.registerSingleton(RootStore()); 
+  GetIt.instance.registerSingleton(RootStore());
   runApp(MyApp());
 }
 
