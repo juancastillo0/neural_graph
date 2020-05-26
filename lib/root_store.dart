@@ -13,6 +13,9 @@ abstract class _RootStore with Store {
     1: Node("conv1", 100, 300, Set()),
     2: Node("conv2", 20, 20, Set()..add(1)),
   });
+
+  @observable
+  bool isDragging = false;
 }
 
 RootStore useRoot() {

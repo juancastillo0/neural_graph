@@ -1,8 +1,10 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:flutter_hooks/flutter_hooks.dart' as hooks;
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:mobx/mobx.dart';
+import 'package:neural_graph/root_store.dart';
 import 'package:styled_widget/styled_widget.dart';
 
 part 'node.g.dart';
@@ -49,12 +51,14 @@ const _nodePadding = 18.0;
 const _nodeBorderRadius = const BorderRadius.all(const Radius.circular(6.0));
 const _nodeEdgeInsets = const EdgeInsets.all(_nodePadding);
 
-class NodeView extends StatelessWidget {
+class NodeView extends hooks.HookWidget {
   const NodeView({this.node, Key key}) : super(key: key);
   final Node node;
 
   @override
   Widget build(BuildContext context) {
+    final root = useRoot();
+
     return Observer(
       builder: (ctx) {
         return Positioned(
@@ -76,8 +80,11 @@ class NodeView extends StatelessWidget {
               },
             ),
           ).gestures(
+            onPanDown: (_) => root.isDragging = true,
+            onPanEnd: (_) => root.isDragging = false,
             dragStartBehavior: DragStartBehavior.down,
             onPanUpdate: node.move,
+            behavior: HitTestBehavior.opaque,
           ),
         );
       },

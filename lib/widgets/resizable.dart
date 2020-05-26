@@ -5,6 +5,8 @@ import 'package:styled_widget/styled_widget.dart';
 enum ResizeHorizontal { left, right, both }
 enum ResizeVertical { top, bottom, both }
 
+const _handleSize = 10.0;
+
 class Resizable extends StatefulWidget {
   final ResizeHorizontal horizontal;
   final double defaultWidth;
@@ -15,7 +17,10 @@ class Resizable extends StatefulWidget {
   final double minHeight;
 
   final Widget child;
+  final Widget handle;
+
   Resizable({
+    this.handle,
     this.horizontal,
     this.defaultWidth,
     this.child,
@@ -63,7 +68,7 @@ class _ResizableState extends State<Resizable> {
     if (widget.vertical != null) {
       final isBottom = widget.vertical == ResizeVertical.bottom;
       final handle = GestureDetector(
-        child: const Divider(height: 10), 
+        child: widget.handle ?? const Divider(height: _handleSize),
         onVerticalDragUpdate: _updateHeight(isBottom),
         behavior: HitTestBehavior.translucent,
         dragStartBehavior: DragStartBehavior.down,
@@ -75,12 +80,12 @@ class _ResizableState extends State<Resizable> {
           if (!isBottom) handle,
           widget.child.expanded(),
           if (isBottom) handle
-        ], 
+        ],
       ).constrained(height: _height);
     } else {
       final isRight = widget.horizontal == ResizeHorizontal.right;
       final handle = GestureDetector(
-        child: const VerticalDivider(width: 10),
+        child: widget.handle ?? const VerticalDivider(width: _handleSize),
         onHorizontalDragUpdate: _updateWidth(isRight),
         behavior: HitTestBehavior.translucent,
         dragStartBehavior: DragStartBehavior.down,

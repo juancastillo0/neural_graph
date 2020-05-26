@@ -71,8 +71,8 @@ class _MyHomePageState extends State<MyHomePage> {
               ).expanded(),
               Resizable(
                 defaultHeight: 300,
-                vertical: ResizeVertical.top,
-                child: Column(
+                vertical: ResizeVertical.top, 
+                child: Column( 
                   children: [
                     Text('You have pushed the button this many times:'),
                     Text(

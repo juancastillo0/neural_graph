@@ -38,8 +38,8 @@ class LayersMenu extends HookWidget {
       constraints: BoxConstraints.loose(Size(double.infinity, 200)),
       decoration: BoxDecoration(border: Border.all(width: 1)),
       child: MultiScrollable(
-        builder: (ctx, controller) => ListView(
-          controller: controller,
+        builder: (ctx, {verticalController, horizontalController}) => ListView(
+          controller: verticalController,
           shrinkWrap: true,
           children: _menuMap.entries.map((e) {
             return Column(
@@ -48,19 +48,19 @@ class LayersMenu extends HookWidget {
                 ListView.builder(
                   shrinkWrap: true,
                   physics: const NeverScrollableScrollPhysics(),
-                  padding: EdgeInsets.symmetric(vertical: 5),
+                  padding: EdgeInsets.symmetric(vertical: 5, horizontal: 15),
                   itemBuilder: (ctx, index) {
                     return Text(
                       e.value[index],
                       key: Key(index.toString()),
                       style: textTheme.subtitle1,
-                    ).padding(vertical: 6, horizontal: 15);
+                    );
                   },
                   itemCount: e.value.length,
-                  itemExtent: 30,
+                  itemExtent: 35,
                 ),
               ],
-            ).padding(top:8).border(top: 1, color: Colors.black26);
+            ).padding(top: 8).border(top: 1, color: Colors.black26);
           }).toList(),
         ),
       ),
