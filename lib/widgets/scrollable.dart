@@ -7,11 +7,16 @@ const _iconSize = 22.0;
 const _scrollIconPadding = const EdgeInsets.all(0);
 
 class MultiScrollController {
-  MultiScrollController({vertical, horizontal})
-      : this.vertical = vertical ?? ScrollController(),
-        this.horizontal = horizontal ?? ScrollController();
+  MultiScrollController({
+    ScrollController vertical,
+    ScrollController horizontal,
+    void Function(double) setScale,
+  })  : this.vertical = vertical ?? ScrollController(),
+        this.horizontal = horizontal ?? ScrollController(),
+        this._setScale = setScale;
   final ScrollController vertical;
   final ScrollController horizontal;
+  final void Function(double) _setScale;
 
   void onDrag(Offset delta) {
     if (delta.dx != 0) {
@@ -27,6 +32,14 @@ class MultiScrollController {
     }
   }
 
+  void onScale(double scale) {
+    if (_setScale != null) {
+      _setScale(scale.clamp(0.4, 2.5));
+      horizontal.jumpTo(horizontal.offset + 0.0001);
+      vertical.jumpTo(vertical.offset + 0.0001);
+    }
+  }
+
   void dispose() {
     vertical.dispose();
     horizontal.dispose();
@@ -34,21 +47,24 @@ class MultiScrollController {
 }
 
 class MultiScrollable extends StatefulWidget {
-  const MultiScrollable({this.builder, Key key}) : super(key: key);
+  const MultiScrollable({this.builder, Key key, this.setScale})
+      : super(key: key);
   final Widget Function(
     BuildContext context,
     MultiScrollController controller,
   ) builder;
+  final void Function(double) setScale;
 
   @override
   _MultiScrollableState createState() => _MultiScrollableState();
 }
 
 class _MultiScrollableState extends State<MultiScrollable> {
-  final controller = MultiScrollController();
+  MultiScrollController controller;
 
   @override
   void initState() {
+    controller = MultiScrollController(setScale: widget.setScale);
     Future.delayed(Duration.zero, () => setState(() {}));
     super.initState();
   }

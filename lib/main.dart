@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
-import 'package:neural_graph/graph_canvas.dart';
+import 'package:neural_graph/graph_canvas/graph_canvas.dart';
 import 'package:neural_graph/layers_menu.dart';
 import 'package:neural_graph/root_store.dart';
 import 'package:neural_graph/widgets/resizable.dart';

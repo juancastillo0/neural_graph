@@ -24,10 +24,26 @@ mixin _$RootStore on _RootStore, Store {
     });
   }
 
+  final _$graphCanvasAtom = Atom(name: '_RootStore.graphCanvas');
+
+  @override
+  GraphCanvasStore get graphCanvas {
+    _$graphCanvasAtom.reportRead();
+    return super.graphCanvas;
+  }
+
+  @override
+  set graphCanvas(GraphCanvasStore value) {
+    _$graphCanvasAtom.reportWrite(value, super.graphCanvas, () {
+      super.graphCanvas = value;
+    });
+  }
+
   @override
   String toString() {
     return '''
-isDragging: ${isDragging}
+isDragging: ${isDragging},
+graphCanvas: ${graphCanvas}
     ''';
   }
 }

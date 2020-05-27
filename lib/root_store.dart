@@ -1,5 +1,6 @@
 import 'package:get_it/get_it.dart';
 import 'package:mobx/mobx.dart';
+import 'package:neural_graph/graph_canvas/store_graph_canvas.dart';
 import 'package:neural_graph/node.dart';
 
 part 'root_store.g.dart';
@@ -16,6 +17,9 @@ abstract class _RootStore with Store {
 
   @observable
   bool isDragging = false;
+
+  @observable
+  GraphCanvasStore graphCanvas = GraphCanvasStore();
 }
 
 RootStore useRoot() {
