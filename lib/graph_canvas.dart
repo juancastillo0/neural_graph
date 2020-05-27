@@ -19,28 +19,25 @@ class GraphView extends HookWidget {
     return MultiScrollable(
       builder: (ctx, controller) {
         return MouseScrollListener(
-          onDrag: controller.onDrag,
-          child: KeyedSubtree(
-            key: Key("Canvas"),
-            child: Observer(
-              builder: (ctx) {
-                return CustomScrollGestures(
-                  controller: controller,
-                  allowDrag: !root.isDragging,
-                  child: CustomPaint(
-                    painter: ConnectionsPainter(root.nodes),
-                    child: Stack(
-                      children: root.nodes.entries.map((e) {
-                        return NodeView(
-                          node: e.value,
-                          key: Key(e.key.toString()),
-                        );
-                      }).toList(),
-                    ),
+          controller: controller,
+          child: Observer(
+            builder: (ctx) {
+              return CustomScrollGestures(
+                controller: controller,
+                allowDrag: !root.isDragging,
+                child: CustomPaint(
+                  painter: ConnectionsPainter(root.nodes),
+                  child: Stack(
+                    children: root.nodes.entries.map((e) {
+                      return NodeView(
+                        node: e.value,
+                        key: Key(e.key.toString()),
+                      );
+                    }).toList(),
                   ),
-                );
-              },
-            ),
+                ),
+              );
+            },
           ),
         );
       },
@@ -72,16 +69,30 @@ class CustomScrollGestures extends HookWidget {
       builder: (ctx, box) {
         // final center = Offset(box.maxWidth / 2, box.maxHeight / 2);
         // final fromCenter = prevPoint.value - center;
+        final onScaleUpdate = (ScaleUpdateDetails d) {
+          if (d.scale != 1) {
+            scale.value = (d.scale).clamp(0.4, 2.5);
+            size.value = Size(
+              initialSize.width * scale.value,
+              initialSize.height * scale.value,
+            );
+
+            translateOffset.value = (Offset(750, 500)) * (scale.value - 1);
+
+            controller.horizontal.jumpTo(controller.horizontal.offset + 0.0001);
+            controller.vertical.jumpTo(controller.vertical.offset + 0.0001);
+          } else {
+            controller.onDrag(d.localFocalPoint - prevPoint.value);
+          }
+          prevPoint.value = d.localFocalPoint;
+        };
 
         return Container(
           height: max(size.value.height, box.maxHeight),
           width: max(size.value.width, box.maxWidth),
           color: Colors.white,
-          child: child
-              .translate(
-                offset: translateOffset.value,
-              )
-              .scale(scale.value),
+          child:
+              child.translate(offset: translateOffset.value).scale(scale.value),
         )
             .scrollable(
               controller: controller.vertical,
@@ -93,36 +104,10 @@ class CustomScrollGestures extends HookWidget {
               physics: NeverScrollableScrollPhysics(),
             )
             .gestures(
-              onScaleUpdate: allowDrag
-                  ? (ScaleUpdateDetails d) {
-                      if (d.scale != 1) {
-                        scale.value = (d.scale).clamp(0.4, 2.5);
-                        size.value = Size(
-                          initialSize.width * scale.value,
-                          initialSize.height * scale.value,
-                        );
-
-                        translateOffset.value = (Offset(750, 500) -
-                                Offset(
-                                  controller.horizontal.offset,
-                                  controller.vertical.offset,
-                                )) *
-                            (scale.value - 1);
-                        print(translateOffset.value);
-
-                        controller.horizontal
-                            .jumpTo(controller.horizontal.offset + 0.0001);
-                        controller.vertical
-                            .jumpTo(controller.vertical.offset + 0.0001);
-                      } else {
-                        controller.onDrag(d.localFocalPoint - prevPoint.value);
-                      }
-                      prevPoint.value = d.localFocalPoint;
-                    }
-                  : null,
               onScaleStart: (details) =>
                   prevPoint.value = details.localFocalPoint,
               dragStartBehavior: DragStartBehavior.down,
+              onScaleUpdate: allowDrag ? onScaleUpdate : null,
             );
       },
     );
@@ -132,10 +117,10 @@ class CustomScrollGestures extends HookWidget {
 class MouseScrollListener extends StatefulWidget {
   MouseScrollListener({
     Key key,
-    @required this.onDrag,
+    @required this.controller,
     @required this.child,
   }) : super(key: key);
-  final void Function(Offset) onDrag;
+  final MultiScrollController controller;
   final Widget child;
 
   @override
@@ -149,9 +134,9 @@ class _MouseScrollListenerState extends State<MouseScrollListener> {
   void _onPointerSignal(PointerSignalEvent pointerSignal) {
     if (pointerSignal is PointerScrollEvent) {
       if (isShiftPressed) {
-        widget.onDrag(Offset(-pointerSignal.scrollDelta.dy, 0));
+        widget.controller.onDrag(Offset(-pointerSignal.scrollDelta.dy, 0));
       } else {
-        widget.onDrag(Offset(0, -pointerSignal.scrollDelta.dy));
+        widget.controller.onDrag(Offset(0, -pointerSignal.scrollDelta.dy));
       }
     }
   }
