@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -10,86 +12,163 @@ import 'package:neural_graph/widgets/scrollable.dart';
 import 'package:styled_widget/styled_widget.dart';
 
 class GraphView extends HookWidget {
-  final _focusNode = FocusNode();
-
   @override
   Widget build(ctx) {
     final root = useRoot();
 
     return MultiScrollable(
-      builder: (ctx, {verticalController, horizontalController}) {
-        final _dragCanvas = (Offset delta) {
-          final hp = horizontalController.position;
-          final dx = (horizontalController.offset - delta.dx)
-              .clamp(0, hp.maxScrollExtent);
-          horizontalController.jumpTo(dx);
-
-          final vp = verticalController.position;
-          final dy = (verticalController.offset - delta.dy)
-              .clamp(0, vp.maxScrollExtent);
-          verticalController.jumpTo(dy);
-        };
-
-        return Observer(
-          builder: (ctx) {
-            bool isShiftPressed = false;
-            return StatefulBuilder(
-              builder: (context, setState) {
-                return RawKeyboardListener(
-                  autofocus: true,
-                  focusNode: _focusNode,
-                  onKey: (RawKeyEvent event) => setState(
-                      () => isShiftPressed = event.data.isShiftPressed),
-                  child: Listener(
-                    onPointerSignal: (pointerSignal) {
-                      if (pointerSignal is PointerScrollEvent) {
-                        if (isShiftPressed) {
-                          _dragCanvas(Offset(-pointerSignal.scrollDelta.dy, 0));
-                        } else {
-                          _dragCanvas(Offset(0, -pointerSignal.scrollDelta.dy));
-                        }
-                      }
-                    },
-                    child: KeyedSubtree(
-                      key: Key("Canvas"),
-                      child: Container(
-                        height: 1000,
-                        width: 1500,
-                        color: Colors.white,
-                        child: CustomPaint(
-                          painter: ConnectionsPainter(root.nodes),
-                          child: Stack(
-                            children: root.nodes.entries.map((e) {
-                              return NodeView(
-                                node: e.value,
-                                key: Key(e.key.toString()),
-                              );
-                            }).toList(),
-                          ),
-                        ),
-                      )
-                          .scrollable(
-                            controller: verticalController,
-                            physics: NeverScrollableScrollPhysics(),
-                          )
-                          .scrollable(
-                            controller: horizontalController,
-                            scrollDirection: Axis.horizontal,
-                            physics: NeverScrollableScrollPhysics(),
-                          )
-                          .gestures(
-                            onPanUpdate: root.isDragging
-                                ? null
-                                : (d) => _dragCanvas(d.delta),
-                          ),
+      builder: (ctx, controller) {
+        return MouseScrollListener(
+          onDrag: controller.onDrag,
+          child: KeyedSubtree(
+            key: Key("Canvas"),
+            child: Observer(
+              builder: (ctx) {
+                return CustomScrollGestures(
+                  controller: controller,
+                  allowDrag: !root.isDragging,
+                  child: CustomPaint(
+                    painter: ConnectionsPainter(root.nodes),
+                    child: Stack(
+                      children: root.nodes.entries.map((e) {
+                        return NodeView(
+                          node: e.value,
+                          key: Key(e.key.toString()),
+                        );
+                      }).toList(),
                     ),
                   ),
                 );
               },
-            );
-          },
+            ),
+          ),
         );
       },
+    );
+  }
+}
+
+class CustomScrollGestures extends HookWidget {
+  const CustomScrollGestures({
+    Key key,
+    @required this.child,
+    @required this.controller,
+    this.initialSize = const Size(1500, 1000),
+    this.allowDrag = true,
+  }) : super(key: key);
+  final Widget child;
+  final MultiScrollController controller;
+  final bool allowDrag;
+  final Size initialSize;
+
+  @override
+  Widget build(ctx) {
+    final prevPoint = useState(Offset(0, 0));
+    final scale = useState(1.0);
+    final size = useState(initialSize);
+    final translateOffset = useState(Offset.zero);
+
+    return LayoutBuilder(
+      builder: (ctx, box) {
+        // final center = Offset(box.maxWidth / 2, box.maxHeight / 2);
+        // final fromCenter = prevPoint.value - center;
+
+        return Container(
+          height: max(size.value.height, box.maxHeight),
+          width: max(size.value.width, box.maxWidth),
+          color: Colors.white,
+          child: child
+              .translate(
+                offset: translateOffset.value,
+              )
+              .scale(scale.value),
+        )
+            .scrollable(
+              controller: controller.vertical,
+              physics: NeverScrollableScrollPhysics(),
+            )
+            .scrollable(
+              controller: controller.horizontal,
+              scrollDirection: Axis.horizontal,
+              physics: NeverScrollableScrollPhysics(),
+            )
+            .gestures(
+              onScaleUpdate: allowDrag
+                  ? (ScaleUpdateDetails d) {
+                      if (d.scale != 1) {
+                        scale.value = (d.scale).clamp(0.4, 2.5);
+                        size.value = Size(
+                          initialSize.width * scale.value,
+                          initialSize.height * scale.value,
+                        );
+
+                        translateOffset.value = (Offset(750, 500) -
+                                Offset(
+                                  controller.horizontal.offset,
+                                  controller.vertical.offset,
+                                )) *
+                            (scale.value - 1);
+                        print(translateOffset.value);
+
+                        controller.horizontal
+                            .jumpTo(controller.horizontal.offset + 0.0001);
+                        controller.vertical
+                            .jumpTo(controller.vertical.offset + 0.0001);
+                      } else {
+                        controller.onDrag(d.localFocalPoint - prevPoint.value);
+                      }
+                      prevPoint.value = d.localFocalPoint;
+                    }
+                  : null,
+              onScaleStart: (details) =>
+                  prevPoint.value = details.localFocalPoint,
+              dragStartBehavior: DragStartBehavior.down,
+            );
+      },
+    );
+  }
+}
+
+class MouseScrollListener extends StatefulWidget {
+  MouseScrollListener({
+    Key key,
+    @required this.onDrag,
+    @required this.child,
+  }) : super(key: key);
+  final void Function(Offset) onDrag;
+  final Widget child;
+
+  @override
+  _MouseScrollListenerState createState() => _MouseScrollListenerState();
+}
+
+class _MouseScrollListenerState extends State<MouseScrollListener> {
+  final _focusNode = FocusNode();
+  bool isShiftPressed = false;
+
+  void _onPointerSignal(PointerSignalEvent pointerSignal) {
+    if (pointerSignal is PointerScrollEvent) {
+      if (isShiftPressed) {
+        widget.onDrag(Offset(-pointerSignal.scrollDelta.dy, 0));
+      } else {
+        widget.onDrag(Offset(0, -pointerSignal.scrollDelta.dy));
+      }
+    }
+  }
+
+  void _onKey(RawKeyEvent event) =>
+      setState(() => isShiftPressed = event.data.isShiftPressed);
+
+  @override
+  Widget build(BuildContext context) {
+    return RawKeyboardListener(
+      autofocus: true,
+      focusNode: _focusNode,
+      onKey: _onKey,
+      child: Listener(
+        onPointerSignal: _onPointerSignal,
+        child: widget.child,
+      ),
     );
   }
 }

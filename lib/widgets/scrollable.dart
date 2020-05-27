@@ -3,40 +3,59 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:styled_widget/styled_widget.dart';
 
-const _iconSize = 24.0;
-const _scrollIconPadding = const EdgeInsets.all(2);
+const _iconSize = 22.0;
+const _scrollIconPadding = const EdgeInsets.all(0);
+
+class MultiScrollController {
+  MultiScrollController({vertical, horizontal})
+      : this.vertical = vertical ?? ScrollController(),
+        this.horizontal = horizontal ?? ScrollController();
+  final ScrollController vertical;
+  final ScrollController horizontal;
+
+  void onDrag(Offset delta) {
+    if (delta.dx != 0) {
+      final hp = horizontal.position;
+      final dx = (horizontal.offset - delta.dx).clamp(0, hp.maxScrollExtent);
+      horizontal.jumpTo(dx);
+    }
+
+    if (delta.dy != 0) {
+      final vp = vertical.position;
+      final dy = (vertical.offset - delta.dy).clamp(0, vp.maxScrollExtent);
+      vertical.jumpTo(dy);
+    }
+  }
+
+  void dispose() {
+    vertical.dispose();
+    horizontal.dispose();
+  }
+}
 
 class MultiScrollable extends StatefulWidget {
   const MultiScrollable({this.builder, Key key}) : super(key: key);
-  final Widget Function(BuildContext context,
-      {ScrollController verticalController,
-      ScrollController horizontalController}) builder;
+  final Widget Function(
+    BuildContext context,
+    MultiScrollController controller,
+  ) builder;
 
   @override
   _MultiScrollableState createState() => _MultiScrollableState();
 }
 
 class _MultiScrollableState extends State<MultiScrollable> {
-  final vController = ScrollController();
-  final hController = ScrollController();
-
-  void scrollListener() {
-    // print(vController.offset);
-    // print(vController.position);
-  }
+  final controller = MultiScrollController();
 
   @override
   void initState() {
-    vController.addListener(scrollListener);
     Future.delayed(Duration.zero, () => setState(() {}));
     super.initState();
   }
 
   @override
   void dispose() {
-    vController.removeListener(scrollListener);
-    vController.dispose();
-    hController.dispose();
+    controller.dispose();
     super.dispose();
   }
 
@@ -48,17 +67,14 @@ class _MultiScrollableState extends State<MultiScrollable> {
         Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            widget
-                .builder(
-                  context,
-                  horizontalController: hController,
-                  verticalController: vController,
-                )
-                .expanded(),
-            ButtonScrollbar(vController: vController)
+            widget.builder(context, controller).expanded(),
+            ButtonScrollbar(controller: controller.vertical)
           ],
         ).expanded(),
-        ButtonScrollbar(vController: hController, horizontal: true),
+        ButtonScrollbar(
+          controller: controller.horizontal,
+          horizontal: true,
+        ),
       ],
     );
   }
@@ -67,17 +83,17 @@ class _MultiScrollableState extends State<MultiScrollable> {
 class ButtonScrollbar extends StatelessWidget {
   const ButtonScrollbar({
     Key key,
-    @required this.vController,
+    @required this.controller,
     this.horizontal = false,
   }) : super(key: key);
 
-  final ScrollController vController;
+  final ScrollController controller;
   final bool horizontal;
 
   @override
   Widget build(BuildContext context) {
-    if (!vController.hasClients ||
-        vController.position?.viewportDimension == null)
+    if (!controller.hasClients ||
+        controller.position?.viewportDimension == null)
       return SizedBox(width: 0, height: 0);
 
     final children = [
@@ -87,7 +103,7 @@ class ButtonScrollbar extends StatelessWidget {
         padding: _scrollIconPadding,
       ).constrained(maxHeight: _iconSize, maxWidth: _iconSize),
       MultiScrollbar(
-        controller: vController,
+        controller: controller,
         horizontal: horizontal,
       ).expanded(),
       FlatButton(

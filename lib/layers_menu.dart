@@ -38,31 +38,34 @@ class LayersMenu extends HookWidget {
       constraints: BoxConstraints.loose(Size(double.infinity, 200)),
       decoration: BoxDecoration(border: Border.all(width: 1)),
       child: MultiScrollable(
-        builder: (ctx, {verticalController, horizontalController}) => ListView(
-          controller: verticalController,
-          shrinkWrap: true,
-          children: _menuMap.entries.map((e) {
-            return Column(
-              children: [
-                Text(e.key, style: textTheme.headline6),
-                ListView.builder(
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  padding: EdgeInsets.symmetric(vertical: 5, horizontal: 15),
-                  itemBuilder: (ctx, index) {
-                    return Text(
-                      e.value[index],
-                      key: Key(index.toString()),
-                      style: textTheme.subtitle1,
-                    );
-                  },
-                  itemCount: e.value.length,
-                  itemExtent: 35,
-                ),
-              ],
-            ).padding(top: 8).border(top: 1, color: Colors.black26);
-          }).toList(),
-        ),
+        builder: (ctx, controller) {
+          return ListView(
+            controller: controller.vertical,
+            shrinkWrap: true,
+            children: _menuMap.entries.map((e) {
+              return Column(
+                children: [
+                  Text(e.key, style: textTheme.headline6),
+                  ListView.builder(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    padding:
+                        const EdgeInsets.symmetric(vertical: 5, horizontal: 15),
+                    itemBuilder: (ctx, index) {
+                      return Text(
+                        e.value[index],
+                        key: Key(index.toString()),
+                        style: textTheme.subtitle1,
+                      );
+                    },
+                    itemCount: e.value.length,
+                    itemExtent: 35,
+                  ),
+                ],
+              ).padding(top: 8).border(top: 1, color: Colors.black26);
+            }).toList(),
+          );
+        },
       ),
     );
   }

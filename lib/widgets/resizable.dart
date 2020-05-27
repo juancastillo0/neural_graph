@@ -5,8 +5,6 @@ import 'package:styled_widget/styled_widget.dart';
 enum ResizeHorizontal { left, right, both }
 enum ResizeVertical { top, bottom, both }
 
-const _handleSize = 10.0;
-
 class Resizable extends StatefulWidget {
   final ResizeHorizontal horizontal;
   final double defaultWidth;
@@ -19,7 +17,7 @@ class Resizable extends StatefulWidget {
   final Widget child;
   final Widget handle;
 
-  Resizable({
+  const Resizable({
     this.handle,
     this.horizontal,
     this.defaultWidth,
@@ -45,31 +43,31 @@ class _ResizableState extends State<Resizable> {
     super.initState();
   }
 
-  _updateWidth(bool proportional) => (DragUpdateDetails details) {
-        setState(() {
-          if (proportional)
-            _width += details.delta.dx;
-          else
-            _width -= details.delta.dx;
-        });
-      };
-
-  _updateHeight(bool proportional) => (DragUpdateDetails details) {
-        setState(() {
-          if (proportional)
-            _height += details.delta.dy;
-          else
-            _height -= details.delta.dy;
-        });
-      };
+  _updateSize(bool proportional, bool horizontal) => horizontal
+      ? (DragUpdateDetails details) {
+          setState(() {
+            if (proportional)
+              _width += details.delta.dx;
+            else
+              _width -= details.delta.dx;
+          });
+        }
+      : (DragUpdateDetails details) {
+          setState(() {
+            if (proportional)
+              _height += details.delta.dy;
+            else
+              _height -= details.delta.dy;
+          });
+        };
 
   @override
   Widget build(ctx) {
     if (widget.vertical != null) {
       final isBottom = widget.vertical == ResizeVertical.bottom;
       final handle = GestureDetector(
-        child: widget.handle ?? const Divider(height: _handleSize),
-        onVerticalDragUpdate: _updateHeight(isBottom),
+        child: widget.handle ?? const _Handle(),
+        onVerticalDragUpdate: _updateSize(isBottom, false),
         behavior: HitTestBehavior.translucent,
         dragStartBehavior: DragStartBehavior.down,
       );
@@ -85,8 +83,8 @@ class _ResizableState extends State<Resizable> {
     } else {
       final isRight = widget.horizontal == ResizeHorizontal.right;
       final handle = GestureDetector(
-        child: widget.handle ?? const VerticalDivider(width: _handleSize),
-        onHorizontalDragUpdate: _updateWidth(isRight),
+        child: widget.handle ?? const _Handle(vertical: true),
+        onHorizontalDragUpdate: _updateSize(isRight, true),
         behavior: HitTestBehavior.translucent,
         dragStartBehavior: DragStartBehavior.down,
       );
@@ -99,6 +97,39 @@ class _ResizableState extends State<Resizable> {
           if (isRight) handle
         ],
       ).constrained(width: _width);
+    }
+  }
+}
+
+class _Handle extends StatelessWidget {
+  const _Handle({
+    this.size = 14,
+    this.color = Colors.black12,
+    this.vertical = false,
+    this.thickness = 1,
+  });
+
+  final double size;
+  final double thickness;
+  final Color color;
+  final bool vertical;
+
+  @override
+  Widget build(ctx) {
+    final margin = (size - thickness) / 2;
+
+    if (vertical) {
+      return Container(
+        color: color,
+        margin: EdgeInsets.symmetric(horizontal: margin),
+        constraints: BoxConstraints(maxWidth: thickness),
+      );
+    } else {
+      return Container(
+        color: color,
+        margin: EdgeInsets.symmetric(vertical: margin),
+        constraints: BoxConstraints(maxHeight: thickness),
+      );
     }
   }
 }
