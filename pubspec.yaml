@@ -25,7 +25,7 @@ dependencies:
     sdk: flutter
 
   formgen:
-    path: ../formgen/formgen/
+    path: ./formgen/formgen/
 
   # MobX
   mobx: ^1.2.1
@@ -51,7 +51,7 @@ dev_dependencies:
   lint: ^1.0.0
 
   formgen_generation:
-    path: ../formgen/formgen_generation/
+    path: ./formgen/formgen_generation/
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

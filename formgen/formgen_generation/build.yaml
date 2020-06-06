@@ -1,0 +1,15 @@
+targets:
+  $default:
+    builders:
+      formgen_generation|form_gen:
+        enabled: true
+
+builders:
+  form_gen:
+    target: ":formgen_generation"
+    import: "package:formgen_generation/formgen_generation.dart"
+    builder_factories: ["formGen"]
+    build_extensions: {".dart": [".form_gen.g.part"]}
+    auto_apply: dependents
+    build_to: cache
+    applies_builders: ["source_gen|combining_builder"]

@@ -9,7 +9,7 @@ packages:
     source: hosted
     version: "3.0.0"
   analyzer:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: analyzer
       url: "https://pub.dartlang.org"
@@ -37,14 +37,14 @@ packages:
     source: hosted
     version: "2.0.0"
   build:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: build
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.3.0"
   build_config:
-    dependency: transitive
+    dependency: "direct dev"
     description:
       name: build_config
       url: "https://pub.dartlang.org"
@@ -148,13 +148,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.16.1"
-  cupertino_icons:
-    dependency: "direct main"
-    description:
-      name: cupertino_icons
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "0.1.3"
   dart_style:
     dependency: transitive
     description:
@@ -181,20 +174,6 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
-  flutter_hooks:
-    dependency: "direct main"
-    description:
-      name: flutter_hooks
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "0.9.0"
-  flutter_mobx:
-    dependency: "direct main"
-    description:
-      name: flutter_mobx
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "1.1.0"
   flutter_test:
     dependency: "direct dev"
     description: flutter
@@ -203,45 +182,10 @@ packages:
   formgen:
     dependency: "direct main"
     description:
-      path: "formgen/formgen"
+      path: "../formgen"
       relative: true
     source: path
     version: "0.0.1"
-  formgen_generation:
-    dependency: "direct dev"
-    description:
-      path: "formgen/formgen_generation"
-      relative: true
-    source: path
-    version: "0.0.1"
-  freezed:
-    dependency: "direct dev"
-    description:
-      name: freezed
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "0.10.9"
-  freezed_annotation:
-    dependency: "direct main"
-    description:
-      name: freezed_annotation
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "0.7.1"
-  get:
-    dependency: "direct main"
-    description:
-      name: get
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "2.5.9"
-  get_it:
-    dependency: "direct main"
-    description:
-      name: get_it
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "4.0.2"
   glob:
     dependency: transitive
     description:
@@ -298,13 +242,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "3.0.1"
-  lint:
-    dependency: "direct dev"
-    description:
-      name: lint
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "1.2.0"
   logging:
     dependency: transitive
     description:
@@ -333,20 +270,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.9.6+3"
-  mobx:
-    dependency: "direct main"
-    description:
-      name: mobx
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "1.2.1"
-  mobx_codegen:
-    dependency: "direct dev"
-    description:
-      name: mobx_codegen
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "1.1.0"
   node_interop:
     dependency: transitive
     description:
@@ -430,7 +353,7 @@ packages:
     source: sdk
     version: "0.0.99"
   source_gen:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: source_gen
       url: "https://pub.dartlang.org"
@@ -471,13 +394,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.0.5"
-  styled_widget:
-    dependency: "direct main"
-    description:
-      name: styled_widget
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "0.2.1+2"
   term_glyph:
     dependency: transitive
     description:
@@ -491,7 +407,7 @@ packages:
       name: test_api
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.2.16"
+    version: "0.2.15"
   timing:
     dependency: transitive
     description:
@@ -535,4 +451,4 @@ packages:
     source: hosted
     version: "2.2.1"
 sdks:
-  dart: ">=2.8.0-dev.16.0 <3.0.0"
+  dart: ">=2.7.0 <3.0.0"
