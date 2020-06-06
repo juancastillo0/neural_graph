@@ -29,7 +29,7 @@ class ConnectionsPainter extends CustomPainter {
         paragraphB.addText("[24, 24, 12]");
 
         final paragraph = paragraphB.build();
-        paragraph.layout(ui.ParagraphConstraints(width: 200));
+        paragraph.layout(const ui.ParagraphConstraints(width: 200));
 
         canvas.drawParagraph(
           paragraph,

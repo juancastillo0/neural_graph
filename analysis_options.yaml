@@ -1,0 +1,19 @@
+include: package:lint/analysis_options.yaml
+linter:
+  rules:
+    avoid_print: false
+    sort_child_properties_last: false
+    avoid_classes_with_only_static_members: false
+    
+    type_annotate_public_apis: true
+    avoid_redundant_argument_values: true
+
+analyzer:
+  exclude:
+    - lib/**.g.dart
+    - lib/**.freezed.dart
+  enable-experiment:
+    - non-nullable
+    - extension-methods
+  errors:
+    missing_return: error

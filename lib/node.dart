@@ -1,5 +1,6 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_hooks/flutter_hooks.dart' as hooks;
 import 'package:flutter_mobx/flutter_mobx.dart';
@@ -48,8 +49,8 @@ abstract class _Node with Store {
 }
 
 const _nodePadding = 18.0;
-const _nodeBorderRadius = const BorderRadius.all(const Radius.circular(6.0));
-const _nodeEdgeInsets = const EdgeInsets.all(_nodePadding);
+const _nodeBorderRadius = BorderRadius.all(Radius.circular(6.0));
+const _nodeEdgeInsets = EdgeInsets.all(_nodePadding);
 
 class NodeView extends hooks.HookWidget {
   const NodeView({this.node, Key key}) : super(key: key);
@@ -64,27 +65,31 @@ class NodeView extends hooks.HookWidget {
         return Positioned(
           top: node.top,
           left: node.left,
-          child: Container(
-            padding: _nodeEdgeInsets,
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: _nodeBorderRadius,
-              border: Border.all(width: 1),
-            ),
-            child: LayoutBuilder(
-              builder: (ctx, box) {
-                SchedulerBinding.instance
-                    .addPostFrameCallback((_) => node.updateSize(ctx));
+          child: MouseRegion(
+            cursor: SystemMouseCursors.grab,
+            child: Container(
+              padding: _nodeEdgeInsets,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: _nodeBorderRadius,
+                border: Border.all(width: 1),
+              ),
+              child: LayoutBuilder(
+                builder: (ctx, box) {
+                  SchedulerBinding.instance.addPostFrameCallback(
+                    (_) => node.updateSize(ctx),
+                  );
 
-                return Text(node.name);
-              },
+                  return Text(node.name);
+                },
+              ),
+            ).gestures(
+              onPanDown: (_) => root.isDragging = true,
+              onPanEnd: (_) => root.isDragging = false,
+              dragStartBehavior: DragStartBehavior.down,
+              onPanUpdate: node.move,
+              behavior: HitTestBehavior.opaque,
             ),
-          ).gestures(
-            onPanDown: (_) => root.isDragging = true,
-            onPanEnd: (_) => root.isDragging = false,
-            dragStartBehavior: DragStartBehavior.down,
-            onPanUpdate: node.move,
-            behavior: HitTestBehavior.opaque,
           ),
         );
       },

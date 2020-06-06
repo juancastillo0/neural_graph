@@ -43,30 +43,29 @@ class _ResizableState extends State<Resizable> {
     super.initState();
   }
 
-  _updateSize(bool proportional, bool horizontal) => horizontal
-      ? (DragUpdateDetails details) {
-          setState(() {
-            if (proportional)
-              _width += details.delta.dx;
-            else
-              _width -= details.delta.dx;
-          });
-        }
-      : (DragUpdateDetails details) {
-          setState(() {
-            if (proportional)
-              _height += details.delta.dy;
-            else
-              _height -= details.delta.dy;
-          });
-        };
+  void Function(DragUpdateDetails) _updateSize(
+    bool proportional,
+    bool horizontal,
+  ) {
+    return horizontal
+        ? (DragUpdateDetails details) {
+            setState(() {
+              _width += proportional ? details.delta.dx : -details.delta.dx;
+            });
+          }
+        : (DragUpdateDetails details) {
+            setState(() {
+              _height += proportional ? details.delta.dy : -details.delta.dy;
+            });
+          };
+  }
 
   @override
-  Widget build(ctx) {
+  Widget build(BuildContext ctx) {
     if (widget.vertical != null) {
       final isBottom = widget.vertical == ResizeVertical.bottom;
       final handle = GestureDetector(
-        child: widget.handle ?? const _Handle(),
+        child: widget.handle ?? const Separator(),
         onVerticalDragUpdate: _updateSize(isBottom, false),
         behavior: HitTestBehavior.translucent,
         dragStartBehavior: DragStartBehavior.down,
@@ -83,7 +82,7 @@ class _ResizableState extends State<Resizable> {
     } else {
       final isRight = widget.horizontal == ResizeHorizontal.right;
       final handle = GestureDetector(
-        child: widget.handle ?? const _Handle(vertical: true),
+        child: widget.handle ?? const Separator(vertical: true),
         onHorizontalDragUpdate: _updateSize(isRight, true),
         behavior: HitTestBehavior.translucent,
         dragStartBehavior: DragStartBehavior.down,
@@ -101,8 +100,8 @@ class _ResizableState extends State<Resizable> {
   }
 }
 
-class _Handle extends StatelessWidget {
-  const _Handle({
+class Separator extends StatelessWidget {
+  const Separator({
     this.size = 14,
     this.color = Colors.black12,
     this.vertical = false,
@@ -115,7 +114,7 @@ class _Handle extends StatelessWidget {
   final bool vertical;
 
   @override
-  Widget build(ctx) {
+  Widget build(BuildContext ctx) {
     final margin = (size - thickness) / 2;
 
     if (vertical) {

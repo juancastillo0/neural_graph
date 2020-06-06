@@ -14,7 +14,7 @@ import 'package:styled_widget/styled_widget.dart';
 
 class GraphView extends HookWidget {
   @override
-  Widget build(ctx) {
+  Widget build(BuildContext ctx) {
     final root = useRoot();
 
     return MultiScrollable(
@@ -59,22 +59,22 @@ class CustomScrollGestures extends HookWidget {
   final bool allowDrag;
 
   @override
-  Widget build(ctx) {
-    final prevPoint = useState(Offset(0, 0));
+  Widget build(BuildContext ctx) {
+    final prevPoint = useState(const Offset(0, 0));
     final graphCanvas = useRoot().graphCanvas;
 
     return LayoutBuilder(
       builder: (ctx, box) {
         // final center = Offset(box.maxWidth / 2, box.maxHeight / 2);
         // final fromCenter = prevPoint.value - center;
-        final onScaleUpdate = (ScaleUpdateDetails d) {
+        void onScaleUpdate(ScaleUpdateDetails d) {
           if (d.scale != 1) {
             controller.onScale(d.scale);
           } else {
             controller.onDrag(d.localFocalPoint - prevPoint.value);
             prevPoint.value = d.localFocalPoint;
           }
-        };
+        }
 
         return Observer(
           builder: (ctx) {
@@ -92,12 +92,12 @@ class CustomScrollGestures extends HookWidget {
         )
             .scrollable(
               controller: controller.vertical,
-              physics: NeverScrollableScrollPhysics(),
+              physics: const NeverScrollableScrollPhysics(),
             )
             .scrollable(
               controller: controller.horizontal,
               scrollDirection: Axis.horizontal,
-              physics: NeverScrollableScrollPhysics(),
+              physics: const NeverScrollableScrollPhysics(),
             )
             .gestures(
               onScaleStart: (details) =>
@@ -111,7 +111,7 @@ class CustomScrollGestures extends HookWidget {
 }
 
 class MouseScrollListener extends StatefulWidget {
-  MouseScrollListener({
+  const MouseScrollListener({
     Key key,
     @required this.controller,
     @required this.child,

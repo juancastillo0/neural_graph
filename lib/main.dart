@@ -17,16 +17,27 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
-        primarySwatch: Colors.grey,
+        primaryColor: Colors.blue[900],
         visualDensity: VisualDensity.adaptivePlatformDensity,
+        inputDecorationTheme: const InputDecorationTheme(
+          isDense: true,
+          border: OutlineInputBorder(),
+          contentPadding: EdgeInsets.only(top: 3, bottom: 3, left: 10),
+          labelStyle: TextStyle(fontSize: 18),
+        ),
       ),
-      home: MyHomePage(title: 'Flutter Demo Home Page'),
+      onGenerateRoute: (settings) {
+        return MaterialPageRoute(
+          builder: (context) => const MyHomePage(title: 'Neural Graph'),
+          settings: settings,
+        );
+      },
     );
   }
 }
 
 class MyHomePage extends StatefulWidget {
-  MyHomePage({Key key, this.title}) : super(key: key);
+  const MyHomePage({Key key, this.title}) : super(key: key);
   final String title;
 
   @override
@@ -45,12 +56,10 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.title),
-      ),
+      appBar: AppBar(title: Text(widget.title)),
       body: Row(
         children: [
-          Resizable(
+          const Resizable(
             defaultWidth: 200,
             horizontal: ResizeHorizontal.right,
             child: LayersMenu(),
@@ -62,7 +71,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   GraphView().expanded(),
-                  Resizable(
+                  const Resizable(
                     defaultWidth: 150,
                     horizontal: ResizeHorizontal.left,
                     child: Text("COL2sssss"),
@@ -74,7 +83,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 vertical: ResizeVertical.top,
                 child: Column(
                   children: [
-                    Text('You have pushed the button this many times:'),
+                    const Text('You have pushed the button this many times:'),
                     Text(
                       '$_counter',
                       style: Theme.of(context).textTheme.headline4,
@@ -89,7 +98,7 @@ class _MyHomePageState extends State<MyHomePage> {
       floatingActionButton: FloatingActionButton(
         onPressed: _incrementCounter,
         tooltip: 'Increment',
-        child: Icon(Icons.add),
+        child: const Icon(Icons.add),
       ),
     );
   }

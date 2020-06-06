@@ -7,7 +7,7 @@ class GraphCanvasStore = _GraphCanvasStore with _$GraphCanvasStore;
 
 abstract class _GraphCanvasStore with Store {
   @observable
-  Size size = Size(1500, 1000);
+  Size size = const Size(1500, 1000);
   @observable
   double scale = 1;
 
