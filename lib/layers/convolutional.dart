@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_hooks/flutter_hooks.dart'
     show HookWidget, useState, useTextEditingController;
+import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:formgen/formgen.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:mobx/mobx.dart';
@@ -66,50 +67,105 @@ class ConvolutionalForm extends HookWidget {
       autovalidate: true,
       child: Expanded(
         child: MultiScrollable(
-          builder: (ctx, controller) => ListView(
-            controller: controller.vertical,
-            children: [
-              const ButtonSelect(
-                options: ConvDimension.values,
-                defaultOption: ConvDimension.two,
-                asString: enumToString,
-              ),
-              Switch(
-                value: state.useBias,
-                onChanged: (v) => state.useBias = v,
-              ),
-              ShapeField(
-                controller: dilationRateCont,
-                label: "dilationRate",
-              ),
-              if (state.separable)
-                TextFormField(
-                  decoration: const InputDecoration(
-                    labelText: "depthMultiplier",
-                  ),
-                  inputFormatters: [WhitelistingTextInputFormatter.digitsOnly],
-                  controller: depthMultiplierCont,
-                  keyboardType: const TextInputType.numberWithOptions(),
+          builder: (ctx, controller) {
+            final theme = Theme.of(ctx);
+            return SingleChildScrollView(
+              controller: controller.vertical,
+              child: DefaultTextStyle(
+                style: theme.textTheme.bodyText1.copyWith(fontSize: 16),
+                child: Table(
+                  border: TableBorder.symmetric(
+                      inside:
+                          const BorderSide(width: 10, style: BorderStyle.none)),
+                  columnWidths: const {
+                    0: IntrinsicColumnWidth(),
+                  },
+                  defaultVerticalAlignment: TableCellVerticalAlignment.middle,
+                  children: [
+                    const TableRow(children: [
+                      Text("Dimensions"),
+                      ButtonSelect(
+                        options: ConvDimension.values,
+                        defaultOption: ConvDimension.two,
+                        asString: enumToString,
+                      )
+                    ]),
+                    TableRow(children: [
+                      const Text("Use Bias"),
+                      Align(
+                        child: Switch(
+                          value: state.useBias,
+                          onChanged: (v) => state.useBias = v,
+                        ),
+                      ),
+                    ]),
+                    TableRow(children: [
+                      const Text("Dilation Rate"),
+                      Align(
+                        child: SizedBox(
+                          width: 200,
+                          child: ShapeField(
+                            controller: dilationRateCont,
+                            label: "dilationRate",
+                          ),
+                        ),
+                      )
+                    ]),
+                    if (state.separable)
+                      TableRow(
+                        children: [
+                          const Text("Depth Multiplier"),
+                          TextFormField(
+                            decoration: const InputDecoration(
+                              labelText: "depthMultiplier",
+                            ),
+                            inputFormatters: [
+                              WhitelistingTextInputFormatter.digitsOnly
+                            ],
+                            controller: depthMultiplierCont,
+                            keyboardType:
+                                const TextInputType.numberWithOptions(),
+                          )
+                        ],
+                      ),
+                    TableRow(children: [
+                      const Text("Strides"),
+                      ShapeField(
+                        controller: stridesCont,
+                        label: "strides",
+                      ),
+                    ]),
+                    const TableRow(children: [
+                      Text("Padding"),
+                      ButtonSelect(
+                        options: ConvPadding.values,
+                        defaultOption: ConvPadding.same,
+                        asString: enumToString,
+                      ),
+                    ]),
+                    TableRow(children: [
+                      const Text("Kernel Size"),
+                      ShapeField(
+                        controller: kernelSizeCont,
+                        label: "kernelSize",
+                      ),
+                    ]),
+                    TableRow(children: [
+                      const Text("Separable"),
+                      Align(
+                        child: Observer(
+                          builder: (ctx) => Switch(
+                            value: state.separable,
+                            onChanged: (v) => state.separable = v,
+                          ),
+                        ),
+                      )
+                    ]),
+                  ],
                 ),
-              ShapeField(
-                controller: stridesCont,
-                label: "strides",
               ),
-              const ButtonSelect(
-                options: ConvPadding.values,
-                defaultOption: ConvPadding.same,
-                asString: enumToString,
-              ),
-              ShapeField(
-                controller: kernelSizeCont,
-                label: "kernelSize",
-              ),
-              Switch(
-                value: state.separable,
-                onChanged: (v) => state.separable = v,
-              ),
-            ],
-          ),
+            );
+          },
         ),
       ),
     );
@@ -166,16 +222,18 @@ class ButtonSelect<T> extends HookWidget {
   @override
   Widget build(BuildContext ctx) {
     final selected = useState(defaultOption);
-
+    final theme = Theme.of(ctx);
     return ButtonBar(
+      alignment: MainAxisAlignment.center,
+      layoutBehavior: ButtonBarLayoutBehavior.constrained,
+      buttonPadding: EdgeInsets.zero,
       children: options.map((e) {
         final s = asString == null ? e.toString() : asString(e);
         return FlatButton(
           key: Key(s),
           onPressed: () => selected.value = e,
           child: Text(s),
-          colorBrightness:
-              e == selected.value ? Brightness.dark : Brightness.light,
+          color: e == selected.value ? theme.primaryColor : null,
         );
       }).toList(),
     );

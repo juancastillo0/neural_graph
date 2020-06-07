@@ -61,7 +61,7 @@ class _MyHomePageState extends State<MyHomePage> {
       body: Row(
         children: [
           const Resizable(
-            defaultWidth: 200,
+            defaultWidth: 230,
             horizontal: ResizeHorizontal.right,
             child: LayersMenu(),
           ),
