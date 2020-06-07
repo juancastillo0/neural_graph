@@ -48,6 +48,34 @@ abstract class _Convolutional with Store implements Layer {
   Layer get outputs => throw UnimplementedError();
 }
 
+TableRow tableRow({
+  String name,
+  String description,
+  Widget field,
+  double maxWidth = 250,
+  double maxHeight,
+}) {
+  return TableRow(
+    children: [
+      Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 20),
+        child: Text(name),
+      ),
+      Tooltip(
+        message: description,
+        child: const Icon(Icons.info_outline),
+      ),
+      Center(
+        child: SizedBox(
+          width: maxWidth,
+          height: maxHeight,
+          child: field,
+        ),
+      ),
+    ],
+  );
+}
+
 class ConvolutionalForm extends HookWidget {
   const ConvolutionalForm({
     Key key,
@@ -73,49 +101,60 @@ class ConvolutionalForm extends HookWidget {
               controller: controller.vertical,
               child: DefaultTextStyle(
                 style: theme.textTheme.bodyText1.copyWith(fontSize: 16),
-                child: Table(
-                  border: TableBorder.symmetric(
-                      inside:
-                          const BorderSide(width: 10, style: BorderStyle.none)),
-                  columnWidths: const {
-                    0: IntrinsicColumnWidth(),
-                  },
-                  defaultVerticalAlignment: TableCellVerticalAlignment.middle,
-                  children: [
-                    const TableRow(children: [
-                      Text("Dimensions"),
-                      ButtonSelect(
-                        options: ConvDimension.values,
-                        defaultOption: ConvDimension.two,
-                        asString: enumToString,
-                      )
-                    ]),
-                    TableRow(children: [
-                      const Text("Use Bias"),
-                      Align(
-                        child: Switch(
-                          value: state.useBias,
-                          onChanged: (v) => state.useBias = v,
+                child: Padding(
+                  padding: const EdgeInsets.only(bottom: 8.0),
+                  child: Table(
+                    border: TableBorder.symmetric(
+                      inside: const BorderSide(
+                        width: 10,
+                        style: BorderStyle.none,
+                      ),
+                    ),
+                    columnWidths: const {
+                      0: IntrinsicColumnWidth(),
+                      1: IntrinsicColumnWidth(),
+                    },
+                    defaultVerticalAlignment: TableCellVerticalAlignment.middle,
+                    children: [
+                      tableRow(
+                        name: "Dimensions",
+                        description: "Number of dimension in the input tensor",
+                        field: const ButtonSelect(
+                          options: ConvDimension.values,
+                          defaultOption: ConvDimension.two,
+                          asString: enumToString,
                         ),
                       ),
-                    ]),
-                    TableRow(children: [
-                      const Text("Dilation Rate"),
-                      Align(
-                        child: SizedBox(
-                          width: 200,
-                          child: ShapeField(
-                            controller: dilationRateCont,
-                            label: "dilationRate",
+                      tableRow(
+                        name: "Use Bias",
+                        description:
+                            "Use learnable parameter added to the output",
+                        field: Align(
+                          child: Switch(
+                            value: state.useBias,
+                            onChanged: (v) => state.useBias = v,
                           ),
                         ),
-                      )
-                    ]),
-                    if (state.separable)
-                      TableRow(
-                        children: [
-                          const Text("Depth Multiplier"),
-                          TextFormField(
+                      ),
+                      tableRow(
+                          name: "Dilation Rate",
+                          description:
+                              "List of number of omited rows/cols in each dimension",
+                          field: Align(
+                            child: SizedBox(
+                              width: 200,
+                              child: ShapeField(
+                                controller: dilationRateCont,
+                                label: "dilationRate",
+                              ),
+                            ),
+                          )),
+                      if (state.separable)
+                        tableRow(
+                          name: "Depth Multiplier",
+                          description:
+                              "Expansion rate in a separable convolution",
+                          field: TextFormField(
                             decoration: const InputDecoration(
                               labelText: "depthMultiplier",
                             ),
@@ -125,43 +164,48 @@ class ConvolutionalForm extends HookWidget {
                             controller: depthMultiplierCont,
                             keyboardType:
                                 const TextInputType.numberWithOptions(),
-                          )
-                        ],
-                      ),
-                    TableRow(children: [
-                      const Text("Strides"),
-                      ShapeField(
-                        controller: stridesCont,
-                        label: "strides",
-                      ),
-                    ]),
-                    const TableRow(children: [
-                      Text("Padding"),
-                      ButtonSelect(
-                        options: ConvPadding.values,
-                        defaultOption: ConvPadding.same,
-                        asString: enumToString,
-                      ),
-                    ]),
-                    TableRow(children: [
-                      const Text("Kernel Size"),
-                      ShapeField(
-                        controller: kernelSizeCont,
-                        label: "kernelSize",
-                      ),
-                    ]),
-                    TableRow(children: [
-                      const Text("Separable"),
-                      Align(
-                        child: Observer(
-                          builder: (ctx) => Switch(
-                            value: state.separable,
-                            onChanged: (v) => state.separable = v,
                           ),
                         ),
-                      )
-                    ]),
-                  ],
+                      tableRow(
+                        name: "Strides",
+                        description: "",
+                        field: ShapeField(
+                          controller: stridesCont,
+                          label: "strides",
+                        ),
+                      ),
+                      tableRow(
+                        name: "Padding",
+                        description: "",
+                        field: const ButtonSelect(
+                          options: ConvPadding.values,
+                          defaultOption: ConvPadding.same,
+                          asString: enumToString,
+                        ),
+                      ),
+                      tableRow(
+                        name: "Kernel Size",
+                        description: "Size of the filter in each dimension",
+                        field: ShapeField(
+                          controller: kernelSizeCont,
+                          label: "kernelSize",
+                        ),
+                      ),
+                      tableRow(
+                        name: "Separable",
+                        description:
+                            "Whether the convolution is separated into pointwise and depthwise or full",
+                        field: Align(
+                          child: Observer(
+                            builder: (ctx) => Switch(
+                              value: state.separable,
+                              onChanged: (v) => state.separable = v,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             );
