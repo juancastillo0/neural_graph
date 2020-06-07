@@ -28,16 +28,17 @@ class FormGenGenerator extends GeneratorForAnnotation<FormGen> {
 
     print(paddingElem.metadata); // [@EnumField EnumField()]
 
-    if (paddingElem.type.element.runtimeType == EnumElementImpl){
-      final enumType = (paddingElem.type.element as EnumElementImpl);
-      print(enumType.fields); // [int index, List<ConvPadding> values, ConvPadding same, ConvPadding valid, ConvPadding causal]
+    if (paddingElem.type.element.runtimeType == EnumElementImpl) {
+      final enumType = paddingElem.type.element as EnumElementImpl;
+      // [int index, List<ConvPadding> values, ConvPadding same, ConvPadding valid, ConvPadding causal]
+      print(enumType.fields);
     }
     print(
         "isEnumElementImpl: ${paddingElem.type.element.runtimeType == EnumElementImpl}");
 
     paddingElem.type.element.visitChildren(enumVisitor);
-    print(enumVisitor
-        .fields); // {index: int, values: List<ConvPadding>, same: ConvPadding, valid: ConvPadding, causal: ConvPadding}
+    // {index: int, values: List<ConvPadding>, same: ConvPadding, valid: ConvPadding, causal: ConvPadding}
+    print(enumVisitor.fields);
 
     return "// Hey! Annotation found!";
   }
@@ -48,13 +49,13 @@ class ModelVisitor extends SimpleElementVisitor {
   Map<String, FieldElement> fields = Map();
 
   @override
-  visitConstructorElement(ConstructorElement element) {
+  dynamic visitConstructorElement(ConstructorElement element) {
     className = element.returnType;
     return super.visitConstructorElement(element);
   }
 
   @override
-  visitFieldElement(FieldElement element) {
+  dynamic visitFieldElement(FieldElement element) {
     fields[element.name] = element;
     return super.visitFieldElement(element);
   }
@@ -65,7 +66,7 @@ class EnumVisitor extends SimpleElementVisitor {
   Map<String, DartType> fields = Map();
 
   @override
-  visitFieldElement(FieldElement element) {
+  dynamic visitFieldElement(FieldElement element) {
     fields[element.name] = element.type;
     return super.visitFieldElement(element);
   }

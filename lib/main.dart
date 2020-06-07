@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:neural_graph/graph_canvas/graph_canvas.dart';
+import 'package:neural_graph/layers/convolutional.dart';
 import 'package:neural_graph/layers_menu.dart';
 import 'package:neural_graph/root_store.dart';
 import 'package:neural_graph/widgets/resizable.dart';
@@ -22,7 +23,7 @@ class MyApp extends StatelessWidget {
         inputDecorationTheme: const InputDecorationTheme(
           isDense: true,
           border: OutlineInputBorder(),
-          contentPadding: EdgeInsets.only(top: 3, bottom: 3, left: 10),
+          // contentPadding: EdgeInsets.only(top: 3, bottom: 3, left: 10),
           labelStyle: TextStyle(fontSize: 18),
         ),
       ),
@@ -88,6 +89,9 @@ class _MyHomePageState extends State<MyHomePage> {
                       '$_counter',
                       style: Theme.of(context).textTheme.headline4,
                     ),
+                    ConvolutionalForm(
+                      state: Convolutional(),
+                    )
                   ],
                 ),
               )
