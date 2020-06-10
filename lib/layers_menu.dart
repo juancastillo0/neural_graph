@@ -117,36 +117,40 @@ class _ListSection extends HookWidget {
             ),
             IconButton(
               icon: Icon(open.value
-                  ? Icons.keyboard_arrow_down
-                  : Icons.keyboard_arrow_up),
+                  ? Icons.keyboard_arrow_up
+                  : Icons.keyboard_arrow_down),
               onPressed: () => open.value = !open.value,
-              constraints: const BoxConstraints(minWidth: 36, minHeight:30),
+              constraints: const BoxConstraints(minWidth: 36, minHeight: 30),
             )
           ],
         ),
         const SizedBox(height: 6),
-        ListView.builder(
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          padding: const EdgeInsets.symmetric(
-            vertical: 5,
-          ),
-          itemBuilder: (ctx, index) {
-            final text = e.value[index];
-            return FlatButton(
-              onPressed: () {},
-              child: Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  text,
-                  key: Key(text),
-                  style: textTheme.subtitle1,
+        AnimatedContainer(
+          duration: const Duration(milliseconds: 200),
+          curve: Curves.bounceOut,
+          height: open.value ? e.value.length * 35.0 + 10 : 0,
+          child: ListView.builder(
+            physics: const NeverScrollableScrollPhysics(),
+            padding: const EdgeInsets.symmetric(
+              vertical: 5,
+            ),
+            itemCount: e.value.length,
+            itemExtent: 35,
+            itemBuilder: (ctx, index) {
+              final text = e.value[index];
+              return FlatButton(
+                onPressed: () {},
+                child: Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    text,
+                    key: Key(text),
+                    style: textTheme.subtitle1,
+                  ),
                 ),
-              ),
-            );
-          },
-          itemCount: e.value.length,
-          itemExtent: 35,
+              );
+            },
+          ),
         ),
       ],
     );
