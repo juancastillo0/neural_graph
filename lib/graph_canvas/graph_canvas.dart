@@ -142,20 +142,27 @@ class _MouseScrollListenerState extends State<MouseScrollListener> {
     }
   }
 
-  void _onKey(RawKeyEvent event) => setState(() {
-        isShiftPressed = event.data.isShiftPressed;
-        isCtrlPressed = event.data.isControlPressed;
-      });
+  void _onKey(RawKeyEvent event) {
+    setState(() {
+      isShiftPressed = event.data.isShiftPressed;
+      isCtrlPressed = event.data.isControlPressed;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-    return RawKeyboardListener(
-      autofocus: true,
-      focusNode: _focusNode,
-      onKey: _onKey,
-      child: Listener(
-        onPointerSignal: _onPointerSignal,
-        child: widget.child,
+    return MouseRegion(
+      onEnter: (_) => _focusNode.requestFocus(),
+      onExit: (_) => _focusNode.unfocus(
+          disposition: UnfocusDisposition.previouslyFocusedChild),
+      child: RawKeyboardListener(
+        autofocus: true,
+        focusNode: _focusNode,
+        onKey: _onKey,
+        child: Listener(
+          onPointerSignal: _onPointerSignal,
+          child: widget.child,
+        ),
       ),
     );
   }
