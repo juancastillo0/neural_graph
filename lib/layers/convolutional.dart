@@ -2,8 +2,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_hooks/flutter_hooks.dart'
-    show HookWidget, useMemoized;
+import 'package:flutter_hooks/flutter_hooks.dart' show HookWidget, useMemoized;
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:formgen/formgen.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
@@ -68,11 +67,15 @@ TableRow tableRow({
         message: description,
         child: const Icon(Icons.info_outline),
       ),
-      Center(
-        child: SizedBox(
-          width: maxWidth,
-          height: max(minHeight, maxHeight ?? 0),
-          child: field,
+      Align(
+        alignment: Alignment.centerLeft,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20),
+          child: SizedBox(
+            width: maxWidth,
+            height: max(minHeight, maxHeight ?? 0),
+            child: field,
+          ),
         ),
       ),
     ],
@@ -129,7 +132,6 @@ class ConvolutionalForm extends HookWidget {
                     child: Padding(
                       padding: const EdgeInsets.only(bottom: 8.0),
                       child: Table(
-
                         border: TableBorder.symmetric(
                           inside: const BorderSide(
                             width: 10,
