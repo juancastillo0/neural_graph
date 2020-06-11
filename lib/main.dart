@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:get_it/get_it.dart';
 import 'package:neural_graph/graph_canvas/graph_canvas.dart';
-import 'package:neural_graph/layers/convolutional.dart';
 import 'package:neural_graph/layers_menu.dart';
 import 'package:neural_graph/root_store.dart';
 import 'package:neural_graph/widgets/resizable.dart';
@@ -46,6 +46,7 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  final root = RootStore.instance;
   int _counter = 0;
 
   void _incrementCounter() {
@@ -82,17 +83,20 @@ class _MyHomePageState extends State<MyHomePage> {
               Resizable(
                 defaultHeight: 300,
                 vertical: ResizeVertical.top,
-                child: Column(
-                  children: [
-                    const Text('You have pushed the button this many times:'),
-                    Text(
-                      '$_counter',
-                      style: Theme.of(context).textTheme.headline4,
-                    ),
-                    ConvolutionalForm(
-                      state: Convolutional(),
-                    )
-                  ],
+                child: Observer(
+                  builder: (context) {
+                    return Column(
+                      children: [
+                        const Text(
+                            'You have pushed the button this many times:'),
+                        Text(
+                          '$_counter',
+                          style: Theme.of(context).textTheme.headline4,
+                        ),
+                        root.selectedNode.data.form()
+                      ],
+                    );
+                  },
                 ),
               )
             ],

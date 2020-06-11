@@ -127,7 +127,7 @@ class _ListSection extends HookWidget {
         const SizedBox(height: 6),
         AnimatedContainer(
           duration: const Duration(milliseconds: 200),
-          curve: Curves.bounceOut,
+          curve: Curves.easeInCubic,
           height: open.value ? e.value.length * 35.0 + 10 : 0,
           child: ListView.builder(
             physics: const NeverScrollableScrollPhysics(),
@@ -138,14 +138,33 @@ class _ListSection extends HookWidget {
             itemExtent: 35,
             itemBuilder: (ctx, index) {
               final text = e.value[index];
-              return FlatButton(
-                onPressed: () {},
-                child: Align(
-                  alignment: Alignment.centerLeft,
-                  child: Text(
-                    text,
-                    key: Key(text),
-                    style: textTheme.subtitle1,
+              return Draggable<String>(
+                data: text,
+                feedback: Container(
+                  height: 35,
+                  color: Colors.white,
+                  child: Center(
+                    child: Text(
+                      text,
+                      style: textTheme.subtitle1,
+                    ),
+                  ),
+                ),
+                child: FlatButton(
+                  onPressed: () {},
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        text,
+                        key: Key(text),
+                        style: textTheme.subtitle1,
+                      ),
+                      const Icon(
+                        Icons.info_outline,
+                        size: 18,
+                      )
+                    ],
                   ),
                 ),
               );

@@ -24,6 +24,21 @@ mixin _$RootStore on _RootStore, Store {
     });
   }
 
+  final _$selectedNodeAtom = Atom(name: '_RootStore.selectedNode');
+
+  @override
+  Node get selectedNode {
+    _$selectedNodeAtom.reportRead();
+    return super.selectedNode;
+  }
+
+  @override
+  set selectedNode(Node value) {
+    _$selectedNodeAtom.reportWrite(value, super.selectedNode, () {
+      super.selectedNode = value;
+    });
+  }
+
   final _$graphCanvasAtom = Atom(name: '_RootStore.graphCanvas');
 
   @override
@@ -39,10 +54,24 @@ mixin _$RootStore on _RootStore, Store {
     });
   }
 
+  final _$_RootStoreActionController = ActionController(name: '_RootStore');
+
+  @override
+  void createNode(Offset offset) {
+    final _$actionInfo =
+        _$_RootStoreActionController.startAction(name: '_RootStore.createNode');
+    try {
+      return super.createNode(offset);
+    } finally {
+      _$_RootStoreActionController.endAction(_$actionInfo);
+    }
+  }
+
   @override
   String toString() {
     return '''
 isDragging: ${isDragging},
+selectedNode: ${selectedNode},
 graphCanvas: ${graphCanvas}
     ''';
   }

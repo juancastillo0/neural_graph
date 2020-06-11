@@ -27,16 +27,27 @@ class GraphView extends HookWidget {
               return CustomScrollGestures(
                 controller: controller,
                 allowDrag: !root.isDragging,
-                child: CustomPaint(
-                  painter: ConnectionsPainter(root.nodes),
-                  child: Stack(
-                    children: root.nodes.entries.map((e) {
-                      return NodeView(
-                        node: e.value,
-                        key: Key(e.key.toString()),
-                      );
-                    }).toList(),
-                  ),
+                child: DragTarget<String>(
+                  onAcceptWithDetails: (details) {
+                    print(details.offset);
+                    print(details.data);
+                    if (details.data == "Convolutional") {
+                      root.createNode(details.offset);
+                    }
+                  },
+                  builder: (context, candidateData, rejectedData) {
+                    return CustomPaint(
+                      painter: ConnectionsPainter(root.nodes),
+                      child: Stack(
+                        children: root.nodes.entries.map((e) {
+                          return NodeView(
+                            node: e.value,
+                            key: Key(e.key.toString()),
+                          );
+                        }).toList(),
+                      ),
+                    );
+                  },
                 ),
               );
             },

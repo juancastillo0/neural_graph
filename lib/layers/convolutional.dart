@@ -47,6 +47,10 @@ abstract class _Convolutional with Store implements Layer {
   @override
   // TODO: implement outputs
   Layer get outputs => throw UnimplementedError();
+
+  @override
+  Widget form([Key key]) =>
+      ConvolutionalForm(key: key, state: this as Convolutional);
 }
 
 TableRow tableRow({

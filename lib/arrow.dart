@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:neural_graph/node.dart';
 
 class ConnectionsPainter extends CustomPainter {
-  final Map<int, Node> operations;
+  final Map<String, Node> operations;
   const ConnectionsPainter(this.operations);
   static final _paint = Paint()
     ..color = Colors.black
@@ -15,7 +15,7 @@ class ConnectionsPainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     for (final op in operations.values) {
       for (final input in op.inputs) {
-        final other = operations[input];
+        final other = operations[input.key];
         canvas.drawLine(op.center, other.center, _paint);
 
         final paragraphB = ui.ParagraphBuilder(ui.ParagraphStyle(
