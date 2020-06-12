@@ -2,7 +2,6 @@ include: package:lint/analysis_options.yaml
 linter:
   rules:
     avoid_print: false
-    sort_child_properties_last: false
     avoid_classes_with_only_static_members: false
     
     type_annotate_public_apis: true

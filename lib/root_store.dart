@@ -19,16 +19,17 @@ final _charsKey =
 
 abstract class _RootStore with Store {
   _RootStore() {
-    final node1 = Node("conv1", 100, 300, {}, Convolutional());
+    final node1 = Node('1', "conv1", 100, 300, {}, Convolutional());
     nodes = ObservableMap.of({
       '1': node1,
-      '2': Node("conv2", 20, 20, {const NodeRef('1')}, Convolutional()),
+      '2': Node('2', "conv2", 20, 20, {const NodeRef('1')}, Convolutional()),
     });
     selectedNode = node1;
   }
-  
+
   final random = Random();
 
+  @observable
   ObservableMap<String, Node> nodes;
 
   @observable
@@ -43,7 +44,7 @@ abstract class _RootStore with Store {
   @action
   void createNode(Offset offset) {
     final newKey = _generateKey();
-    nodes[newKey] = Node("", offset.dy, offset.dx, {}, Convolutional());
+    nodes[newKey] = Node(newKey, "", offset.dy, offset.dx, {}, Convolutional());
   }
 
   String _generateKey([int length = 7]) {

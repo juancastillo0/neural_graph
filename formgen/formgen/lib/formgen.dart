@@ -6,6 +6,6 @@ class FormGen {
   final bool allRequired;
 }
 
-class EnumField { 
+class EnumField {
   const EnumField();
 }

@@ -65,10 +65,10 @@ class _ResizableState extends State<Resizable> {
     if (widget.vertical != null) {
       final isBottom = widget.vertical == ResizeVertical.bottom;
       final handle = GestureDetector(
-        child: widget.handle ?? const Separator(),
         onVerticalDragUpdate: _updateSize(isBottom, false),
         behavior: HitTestBehavior.translucent,
         dragStartBehavior: DragStartBehavior.down,
+        child: widget.handle ?? const Separator(),
       );
 
       return Column(
@@ -82,10 +82,10 @@ class _ResizableState extends State<Resizable> {
     } else {
       final isRight = widget.horizontal == ResizeHorizontal.right;
       final handle = GestureDetector(
-        child: widget.handle ?? const Separator(vertical: true),
         onHorizontalDragUpdate: _updateSize(isRight, true),
         behavior: HitTestBehavior.translucent,
         dragStartBehavior: DragStartBehavior.down,
+        child: widget.handle ?? const Separator(vertical: true),
       );
 
       return Row(

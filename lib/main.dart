@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:get_it/get_it.dart';
 import 'package:neural_graph/graph_canvas/graph_canvas.dart';
 import 'package:neural_graph/layers_menu.dart';
 import 'package:neural_graph/root_store.dart';
 import 'package:neural_graph/widgets/resizable.dart';
-import 'package:styled_widget/styled_widget.dart';
 
 void main() {
   GetIt.instance.registerSingleton(RootStore());
@@ -23,7 +23,9 @@ class MyApp extends StatelessWidget {
         inputDecorationTheme: const InputDecorationTheme(
           isDense: true,
           border: OutlineInputBorder(),
-          // contentPadding: EdgeInsets.only(top: 3, bottom: 3, left: 10),
+          errorStyle: TextStyle(height: 0),
+          contentPadding:
+              EdgeInsets.only(top: 7, bottom: 7, left: 10, right: 10),
           labelStyle: TextStyle(fontSize: 18),
         ),
       ),
@@ -47,13 +49,6 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   final root = RootStore.instance;
-  int _counter = 0;
-
-  void _incrementCounter() {
-    setState(() {
-      _counter++;
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -66,48 +61,89 @@ class _MyHomePageState extends State<MyHomePage> {
             horizontal: ResizeHorizontal.right,
             child: LayersMenu(),
           ),
-          Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  GraphView().expanded(),
-                  const Resizable(
-                    defaultWidth: 150,
-                    horizontal: ResizeHorizontal.left,
-                    child: Text("COL2sssss"),
+          Expanded(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Expanded(
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Expanded(child: GraphView()),
+                      const Resizable(
+                        defaultWidth: 150,
+                        horizontal: ResizeHorizontal.left,
+                        child: Text("COL2sssss"),
+                      ),
+                    ],
                   ),
-                ],
-              ).expanded(),
-              Resizable(
-                defaultHeight: 300,
-                vertical: ResizeVertical.top,
-                child: Observer(
-                  builder: (context) {
-                    return Column(
-                      children: [
-                        const Text(
-                            'You have pushed the button this many times:'),
-                        Text(
-                          '$_counter',
-                          style: Theme.of(context).textTheme.headline4,
-                        ),
-                        root.selectedNode.data.form()
-                      ],
-                    );
-                  },
                 ),
-              )
-            ],
-          ).expanded(),
+                const Resizable(
+                  defaultHeight: 300,
+                  vertical: ResizeVertical.top,
+                  child: PropertiesView(),
+                )
+              ],
+            ),
+          ),
         ],
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ),
+    );
+  }
+}
+
+class PropertiesView extends HookWidget {
+  const PropertiesView({Key key}) : super(key: key);
+  @override
+  Widget build(BuildContext ctx) {
+    final root = useRoot();
+    final contoller = useTextEditingController(text: root.selectedNode.name);
+
+    return Observer(
+      builder: (context) {
+        if (contoller.text != root.selectedNode.name) {
+          contoller.text = root.selectedNode.name;
+        }
+
+        bool isRepeated(String value) {
+          return root.nodes.values.any((element) =>
+              element.key != root.selectedNode.key && element.name == value);
+        }
+
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 18,
+                    vertical: 10,
+                  ),
+                  child: Text(
+                    root.selectedNode.data.runtimeType.toString(),
+                    style: Theme.of(context).textTheme.headline6,
+                  ),
+                ),
+                SizedBox(
+                  width: 150,
+                  child: TextFormField(
+                    autovalidate: true,
+                    controller: contoller,
+                    decoration: const InputDecoration(hintText: "Name"),
+                    onChanged: (value) {
+                      if (!isRepeated(value)) root.selectedNode.name = value;
+                    },
+                    validator: (value) =>
+                        root.selectedNode.name != value ? "" : null,
+                  ),
+                ),
+              ],
+            ),
+            root.selectedNode.data.form()
+          ],
+        );
+      },
     );
   }
 }

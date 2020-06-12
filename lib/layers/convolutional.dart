@@ -321,8 +321,8 @@ class ButtonSelect<T> extends HookWidget {
         return FlatButton(
           key: Key(s),
           onPressed: () => onChange(e),
-          child: Text(s),
           color: e == selected ? theme.primaryColor : null,
+          child: Text(s),
         );
       }).toList(),
     );

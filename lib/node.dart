@@ -13,25 +13,9 @@ part 'node.g.dart';
 
 class Node = _Node with _$Node;
 
-class NodeRef {
-  const NodeRef(this.key);
-  final String key;
-
-  Node get value => RootStore.instance.nodes[key];
-
-  @override
-  bool operator ==(dynamic other) {
-    if (other is NodeRef) {
-      return key == other.key;
-    }
-    return false;
-  }
-
-  @override
-  int get hashCode => key.hashCode;
-}
-
 abstract class _Node with Store {
+  String key;
+
   @observable
   String name;
   @observable
@@ -66,7 +50,25 @@ abstract class _Node with Store {
     }
   }
 
-  _Node(this.name, this.top, this.left, this.inputs, this.data);
+  _Node(this.key, this.name, this.top, this.left, this.inputs, this.data);
+}
+
+class NodeRef {
+  const NodeRef(this.key);
+  final String key;
+
+  Node get value => RootStore.instance.nodes[key];
+
+  @override
+  bool operator ==(dynamic other) {
+    if (other is NodeRef) {
+      return key == other.key;
+    }
+    return false;
+  }
+
+  @override
+  int get hashCode => key.hashCode;
 }
 
 const _nodePadding = 18.0;
@@ -93,15 +95,24 @@ class NodeView extends hooks.HookWidget {
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: _nodeBorderRadius,
-                border: Border.all(width: 1),
+                boxShadow: root.selectedNode == node
+                    ? [
+                        BoxShadow(
+                          blurRadius: 1,
+                          spreadRadius: 1,
+                          color: Colors.blue[900],
+                          offset: const Offset(0, 1),
+                        )
+                      ]
+                    : null,
+                border: Border.all(),
               ),
               child: LayoutBuilder(
                 builder: (ctx, box) {
                   SchedulerBinding.instance.addPostFrameCallback(
                     (_) => node.updateSize(ctx),
                   );
-
-                  return Text(node.name);
+                  return Observer(builder: (ctx) => Text(node.name));
                 },
               ),
             ).gestures(

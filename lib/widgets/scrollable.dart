@@ -118,18 +118,18 @@ class ButtonScrollbar extends StatelessWidget {
 
     final children = [
       FlatButton(
-        child: Icon(horizontal ? Icons.arrow_left : Icons.arrow_drop_up),
         onPressed: null,
         padding: _scrollIconPadding,
+        child: Icon(horizontal ? Icons.arrow_left : Icons.arrow_drop_up),
       ).constrained(maxHeight: _iconSize, maxWidth: _iconSize),
       MultiScrollbar(
         controller: controller,
         horizontal: horizontal,
       ).expanded(),
       FlatButton(
-        child: Icon(horizontal ? Icons.arrow_right : Icons.arrow_drop_down),
         onPressed: null,
         padding: _scrollIconPadding,
+        child: Icon(horizontal ? Icons.arrow_right : Icons.arrow_drop_down),
       ).constrained(maxHeight: _iconSize, maxWidth: _iconSize)
     ];
 
@@ -195,11 +195,11 @@ class MultiScrollbar extends HookWidget {
                 onEnter: (_) => hovering.value = true,
                 onExit: (_) => hovering.value = false,
                 child: SizedBox(
+                  height: horizontal ? double.infinity : handleSize,
+                  width: horizontal ? handleSize : double.infinity,
                   child: Container(
                     color: hovering.value ? Colors.black26 : Colors.black12,
                   ),
-                  height: horizontal ? double.infinity : handleSize,
-                  width: horizontal ? handleSize : double.infinity,
                 ).gestures(
                   dragStartBehavior: DragStartBehavior.down,
                   onPanUpdate: (DragUpdateDetails p) {
