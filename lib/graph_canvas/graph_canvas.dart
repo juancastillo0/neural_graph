@@ -12,6 +12,19 @@ import 'package:neural_graph/root_store.dart';
 import 'package:neural_graph/widgets/scrollable.dart';
 import 'package:styled_widget/styled_widget.dart';
 
+extension GlobalPaintBoundsExt on BuildContext {
+  Rect get globalPaintBounds {
+    final renderObject = findRenderObject();
+    final translation = renderObject?.getTransformTo(null)?.getTranslation();
+    if (translation != null && renderObject.paintBounds != null) {
+      return renderObject.paintBounds
+          .shift(Offset(translation.x, translation.y));
+    } else {
+      return null;
+    }
+  }
+}
+
 class GraphView extends HookWidget {
   @override
   Widget build(BuildContext ctx) {
@@ -29,10 +42,16 @@ class GraphView extends HookWidget {
                 allowDrag: !root.isDragging,
                 child: DragTarget<String>(
                   onAcceptWithDetails: (details) {
-                    print(details.offset);
-                    print(details.data);
+                    final bounds = ctx.globalPaintBounds;
+                    final offset = details.offset -
+                        bounds.topLeft +
+                        Offset(
+                          controller.horizontal.offset,
+                          controller.vertical.offset,
+                        );
+
                     if (details.data == "Convolutional") {
-                      root.createNode(details.offset);
+                      root.createNode(offset);
                     }
                   },
                   builder: (context, candidateData, rejectedData) {
