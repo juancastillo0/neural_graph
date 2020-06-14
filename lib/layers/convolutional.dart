@@ -2,7 +2,8 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_hooks/flutter_hooks.dart' show HookWidget, useMemoized;
+import 'package:flutter_hooks/flutter_hooks.dart'
+    show HookWidget, useEffect, useMemoized;
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:formgen/formgen.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
@@ -86,21 +87,62 @@ TableRow tableRow({
   );
 }
 
-class FormFieldState {
+class FormFieldState<T> {
   final TextEditingController controller;
   final FocusNode focusNode;
   String error;
+  final T Function() _getValue;
+  final Function(T) _setValue;
 
-  FormFieldState({FocusNode focusNode, TextEditingController controller})
+  T get value => _getValue();
+  set value(T newValue) => _setValue(newValue);
+
+  FormFieldState(
+      {@required T Function() getValue,
+      @required Function(T) setValue,
+      FocusNode focusNode,
+      TextEditingController controller})
       : controller = controller ?? TextEditingController(),
-        focusNode = focusNode ?? FocusNode();
+        focusNode = focusNode ?? FocusNode(),
+        _getValue = getValue,
+        _setValue = setValue;
+
+  void dispose() {
+    focusNode.dispose();
+    controller.dispose();
+  }
 }
 
 class ConvolutionalFormFields {
-  final depthMultiplierCont = FormFieldState();
-  final dilationRateCont = FormFieldState();
-  final stridesCont = FormFieldState();
-  final kernelSizeCont = FormFieldState();
+  ConvolutionalFormFields(Convolutional state) {
+    depthMultiplier = FormFieldState(
+      getValue: () => state.depthMultiplier,
+      setValue: (v) => state.depthMultiplier = v,
+    );
+    kernelSize = FormFieldState(
+      getValue: () => state.kernelSize,
+      setValue: (v) => state.kernelSize = v,
+    );
+    strides = FormFieldState(
+      getValue: () => state.strides,
+      setValue: (v) => state.strides = v,
+    );
+    dilationRate = FormFieldState(
+      getValue: () => state.dilationRate,
+      setValue: (v) => state.dilationRate = v,
+    );
+  }
+  FormFieldState<double> depthMultiplier;
+  FormFieldState<List<int>> dilationRate;
+  FormFieldState<List<int>> strides;
+  FormFieldState<List<int>> kernelSize;
+
+  void dispose() {
+    depthMultiplier.dispose();
+    dilationRate.dispose();
+    strides.dispose();
+    kernelSize.dispose();
+  }
 }
 
 class ConvolutionalForm extends HookWidget {
@@ -113,181 +155,222 @@ class ConvolutionalForm extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
-    final fields = useMemoized(() => ConvolutionalFormFields());
+    final fields = useMemoized(
+      () => ConvolutionalFormFields(state),
+      [state],
+    );
+    useEffect(() => () => fields.dispose);
 
-    return FocusTraversalGroup(
-      child: Form(
-        autovalidate: true,
-        child: Expanded(
-          child: MultiScrollable(
-            builder: (ctx, controller) {
-              final theme = Theme.of(ctx);
-              return SingleChildScrollView(
-                controller: controller.vertical,
-                child: Theme(
-                  data: theme.copyWith(
-                      inputDecorationTheme: const InputDecorationTheme(
-                    isDense: true,
-                    // contentPadding: EdgeInsets.only(top: 3, bottom: 3, left: 10),
-                    labelStyle: TextStyle(fontSize: 18),
-                  )),
-                  child: DefaultTextStyle(
-                    style: theme.textTheme.bodyText1.copyWith(fontSize: 16),
-                    child: Padding(
-                      padding: const EdgeInsets.only(bottom: 8.0),
-                      child: Table(
-                        border: TableBorder.symmetric(
-                          inside: const BorderSide(
-                            width: 10,
-                            style: BorderStyle.none,
+    return Expanded(
+      child: MultiScrollable(
+        builder: (ctx, controller) {
+          final theme = Theme.of(ctx);
+          return SingleChildScrollView(
+            controller: controller.vertical,
+            child: Theme(
+              data: theme.copyWith(
+                  inputDecorationTheme: const InputDecorationTheme(
+                isDense: true,
+                // contentPadding: EdgeInsets.only(top: 3, bottom: 3, left: 10),
+                labelStyle: TextStyle(fontSize: 18),
+              )),
+              child: DefaultTextStyle(
+                style: theme.textTheme.bodyText1.copyWith(fontSize: 16),
+                child: Padding(
+                  padding: const EdgeInsets.only(bottom: 8.0),
+                  child: FocusTraversalGroup(
+                    child: Table(
+                      border: TableBorder.symmetric(
+                        inside: const BorderSide(
+                          width: 10,
+                          style: BorderStyle.none,
+                        ),
+                      ),
+                      columnWidths: const {
+                        0: IntrinsicColumnWidth(),
+                        1: IntrinsicColumnWidth(),
+                      },
+                      defaultVerticalAlignment:
+                          TableCellVerticalAlignment.middle,
+                      children: [
+                        tableRow(
+                          name: "Dimensions",
+                          description:
+                              "Number of dimension in the input tensor",
+                          field: Observer(builder: (context) {
+                            return ButtonSelect<ConvDimension>(
+                              options: ConvDimension.values,
+                              selected: state.dimensions,
+                              asString: enumToString,
+                              onChange: (v) => state.dimensions = v,
+                            );
+                          }),
+                        ),
+                        tableRow(
+                          name: "Use Bias",
+                          description:
+                              "Use learnable parameter added to the output",
+                          field: Align(
+                            child: Observer(
+                              builder: (_) => Switch(
+                                value: state.useBias,
+                                onChanged: (v) => state.useBias = v,
+                              ),
+                            ),
                           ),
                         ),
-                        columnWidths: const {
-                          0: IntrinsicColumnWidth(),
-                          1: IntrinsicColumnWidth(),
-                        },
-                        defaultVerticalAlignment:
-                            TableCellVerticalAlignment.middle,
-                        children: [
-                          tableRow(
-                            name: "Dimensions",
-                            description:
-                                "Number of dimension in the input tensor",
-                            field: Observer(builder: (context) {
-                              return ButtonSelect<ConvDimension>(
-                                options: ConvDimension.values,
-                                selected: state.dimensions,
-                                asString: enumToString,
-                                onChange: (v) => state.dimensions = v,
-                              );
-                            }),
+                        tableRow(
+                          name: "Dilation Rate",
+                          description:
+                              "List of number of omited rows/cols in each dimension",
+                          field: ShapeField(
+                            field: fields.dilationRate,
+                            state: state,
                           ),
+                        ),
+                        if (state.separable)
                           tableRow(
-                            name: "Use Bias",
+                            name: "Depth Multiplier",
                             description:
-                                "Use learnable parameter added to the output",
-                            field: Align(
-                              child: Observer(
-                                builder: (_) => Switch(
-                                  value: state.useBias,
-                                  onChanged: (v) => state.useBias = v,
-                                ),
+                                "Expansion rate in a separable convolution",
+                            field: TextFormField(
+                              inputFormatters: [
+                                WhitelistingTextInputFormatter.digitsOnly,
+                                BlacklistingTextInputFormatter
+                                    .singleLineFormatter,
+                              ],
+                              controller: fields.depthMultiplier.controller,
+                              keyboardType:
+                                  const TextInputType.numberWithOptions(
+                                      decimal: true),
+                            ),
+                          ),
+                        tableRow(
+                          name: "Strides",
+                          description: "",
+                          field: ShapeField(
+                            field: fields.strides,
+                            state: state,
+                          ),
+                        ),
+                        tableRow(
+                          name: "Padding",
+                          description: "Border padding behaviour",
+                          field: Observer(
+                            builder: (_) => ButtonSelect<ConvPadding>(
+                              options: ConvPadding.values,
+                              selected: state.padding,
+                              onChange: (v) => state.padding = v,
+                              asString: enumToString,
+                            ),
+                          ),
+                        ),
+                        tableRow(
+                          name: "Kernel Size",
+                          description: "Size of the filter in each dimension",
+                          field: ShapeField(
+                            field: fields.kernelSize,
+                            state: state,
+                          ),
+                        ),
+                        tableRow(
+                          name: "Separable",
+                          description:
+                              "Whether the convolution is separated into pointwise and depthwise or full",
+                          field: Align(
+                            child: Observer(
+                              builder: (ctx) => Switch(
+                                value: state.separable,
+                                onChanged: (v) => state.separable = v,
                               ),
                             ),
                           ),
-                          tableRow(
-                            name: "Dilation Rate",
-                            description:
-                                "List of number of omited rows/cols in each dimension",
-                            field: ShapeField(
-                              state: fields.dilationRateCont,
-                            ),
-                          ),
-                          if (state.separable)
-                            tableRow(
-                              name: "Depth Multiplier",
-                              description:
-                                  "Expansion rate in a separable convolution",
-                              field: TextFormField(
-                                inputFormatters: [
-                                  WhitelistingTextInputFormatter.digitsOnly,
-                                  BlacklistingTextInputFormatter
-                                      .singleLineFormatter,
-                                ],
-                                controller:
-                                    fields.depthMultiplierCont.controller,
-                                keyboardType:
-                                    const TextInputType.numberWithOptions(
-                                        decimal: true),
-                              ),
-                            ),
-                          tableRow(
-                            name: "Strides",
-                            description: "",
-                            field: ShapeField(
-                              state: fields.stridesCont,
-                            ),
-                          ),
-                          tableRow(
-                            name: "Padding",
-                            description: "Border padding behaviour",
-                            field: Observer(
-                              builder: (_) => ButtonSelect<ConvPadding>(
-                                options: ConvPadding.values,
-                                selected: state.padding,
-                                onChange: (v) => state.padding = v,
-                                asString: enumToString,
-                              ),
-                            ),
-                          ),
-                          tableRow(
-                            name: "Kernel Size",
-                            description: "Size of the filter in each dimension",
-                            field: ShapeField(
-                              state: fields.kernelSizeCont,
-                            ),
-                          ),
-                          tableRow(
-                            name: "Separable",
-                            description:
-                                "Whether the convolution is separated into pointwise and depthwise or full",
-                            field: Align(
-                              child: Observer(
-                                builder: (ctx) => Switch(
-                                  value: state.separable,
-                                  onChanged: (v) => state.separable = v,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
                   ),
                 ),
-              );
-            },
-          ),
-        ),
+              ),
+            ),
+          );
+        },
       ),
     );
   }
 }
 
-final shapeRegex = RegExp(r"^[1-9]\d*(,[1-9]\d*){0,2}(,)?$");
-
 class ShapeField extends StatelessWidget {
   const ShapeField({
     Key key,
+    @required this.field,
     @required this.state,
   }) : super(key: key);
 
-  final FormFieldState state;
+  final FormFieldState<List<int>> field;
+  final Convolutional state;
+  // final cc = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
-    return TextFormField(
-      controller: state.controller,
-      keyboardType: TextInputType.number,
-      textAlign: TextAlign.center,
-      focusNode: state.focusNode,
-      inputFormatters: [
-        WhitelistingTextInputFormatter(shapeRegex),
-      ],
-      onChanged: (value) {
+    return Observer(
+      builder: (ctx) {
+        print("field.value ${field.value}");
+        final stringValue = shapeToString(field.value);
+        if (field.controller.text != stringValue &&
+            field.controller.text != "$stringValue,") {
+          field.controller.text = stringValue;
+        }
+
+        final shapeRegex = shapeRegexFn(state);
         final pattern = shapeRegex.pattern;
-        if (!shapeRegex.hasMatch(value) && pattern.endsWith("\$")) {
+        if (!shapeRegex.hasMatch(field.controller.text) &&
+            pattern.endsWith("\$")) {
           //"Should be a list of comma separated integers. '2,64,38'"
           final permShapeRegex =
               RegExp(pattern.substring(0, pattern.length - 1));
-          state.controller.text =
-              permShapeRegex.firstMatch(value)?.group(0) ?? "";
+          field.controller.text =
+              permShapeRegex.firstMatch(field.controller.text)?.group(0) ?? "";
+          field.value = shapeFromString(field.controller.text);
         }
+        return TextFormField(
+          controller: field.controller,
+          keyboardType: TextInputType.number,
+          textAlign: TextAlign.center,
+          focusNode: field.focusNode,
+          inputFormatters: [
+            WhitelistingTextInputFormatter(shapeRegex),
+          ],
+          onChanged: (value) {
+            print(
+                "value $value field.value ${field.value} field.controller ${field.controller.text}");
+
+            field.value = shapeFromString(value);
+          },
+          // onFieldSubmitted: (_) =>
+          //     state.focusNode.focusInDirection(TraversalDirection.down),
+        );
       },
-      // onFieldSubmitted: (_) =>
-      //     state.focusNode.focusInDirection(TraversalDirection.down),
     );
   }
+
+  List<int> shapeFromString(String value) {
+    return value
+        .split(",")
+        .map((e) => int.tryParse(e))
+        .where((e) => e != null)
+        .toList();
+  }
+
+  String shapeToString(List<int> value) {
+    return value.map((v) => v.toString()).join(",");
+  }
+}
+
+RegExp shapeRegexFn(Convolutional state) {
+  //ignore: prefer_interpolation_to_compose_strings
+  return RegExp(r"^[1-9]\d*(,[1-9]\d*){0," +
+      state.dimensions.index.toString() +
+      r"}(,)?$");
 }
 
 // @freezed
