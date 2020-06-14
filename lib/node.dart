@@ -95,16 +95,16 @@ class NodeView extends hooks.HookWidget {
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: _nodeBorderRadius,
-                boxShadow: root.selectedNode == node
-                    ? [
-                        BoxShadow(
-                          blurRadius: 1,
-                          spreadRadius: 1,
-                          color: Colors.blue[900],
-                          offset: const Offset(0, 1),
-                        )
-                      ]
-                    : null,
+                boxShadow: [
+                  BoxShadow(
+                    blurRadius: 1,
+                    spreadRadius: 0.5,
+                    color: root.selectedNode == node
+                        ? Colors.blue[900]
+                        : Colors.black26,
+                    offset: const Offset(0, 1),
+                  ),
+                ],
                 border: Border.all(),
               ),
               child: LayoutBuilder(
