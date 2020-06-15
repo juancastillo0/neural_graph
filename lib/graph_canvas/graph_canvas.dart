@@ -30,40 +30,81 @@ class GraphView extends HookWidget {
   Widget build(BuildContext ctx) {
     final root = useRoot();
 
-    return MultiScrollable(
-      setScale: (s) => root.graphCanvas.scale = s,
-      builder: (ctx, controller) {
-        return MouseScrollListener(
-          controller: controller,
-          child: Observer(
-            builder: (ctx) {
-              return CustomScrollGestures(
+    return Column(
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: [
+            FlatButton.icon(
+              icon: const Icon(Icons.add_circle_outline),
+              onPressed: root.startAddingConnection,
+              label: const Text("Connection"),
+            ),
+            Observer(
+              builder: (ctx) => Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Text("Scale: "),
+                  IconButton(
+                    icon: const Icon(Icons.remove_circle_outline),
+                    onPressed: () {
+                      root.graphCanvas.scale -= 0.1;
+                    },
+                  ),
+                  Text(root.graphCanvas.scale.toStringAsPrecision(2)),
+                  IconButton(
+                    icon: const Icon(Icons.add_circle_outline),
+                    onPressed: () {
+                      root.graphCanvas.scale += 0.1;
+                    },
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+        Expanded(
+          child: MultiScrollable(
+            setScale: (s) => root.graphCanvas.scale = s,
+            builder: (ctx, controller) {
+              return MouseScrollListener(
                 controller: controller,
-                allowDrag: !root.isDragging,
-                child: DragTarget<String>(
-                  onAcceptWithDetails: (details) {
-                    final bounds = ctx.globalPaintBounds;
-                    final offset = details.offset -
-                        bounds.topLeft +
-                        Offset(
-                          controller.horizontal.offset,
-                          controller.vertical.offset,
-                        );
+                child: Observer(
+                  builder: (ctx) {
+                    return CustomScrollGestures(
+                      controller: controller,
+                      allowDrag: !root.isDragging,
+                      child: DragTarget<String>(
+                        onAcceptWithDetails: (details) {
+                          final bounds = ctx.globalPaintBounds;
+                          final offset = details.offset -
+                              bounds.topLeft +
+                              Offset(
+                                controller.horizontal.offset,
+                                controller.vertical.offset,
+                              );
 
-                    if (details.data == "Convolutional") {
-                      root.createNode(offset);
-                    }
-                  },
-                  builder: (context, candidateData, rejectedData) {
-                    return CustomPaint(
-                      painter: ConnectionsPainter(root.nodes),
-                      child: Stack(
-                        children: root.nodes.entries.map((e) {
-                          return NodeView(
-                            node: e.value,
-                            key: Key(e.key.toString()),
+                          if (details.data == "Convolutional") {
+                            root.createNode(offset);
+                          }
+                        },
+                        builder: (context, candidateData, rejectedData) {
+                          return CustomPaint(
+                            painter: ConnectionsPainter(root.nodes),
+                            child: Observer(
+                              builder: (ctx) => Stack(
+                                children: root.nodes.entries.map(
+                                  (e) {
+                                    return NodeView(
+                                      node: e.value,
+                                      key: Key(e.key.toString()),
+                                    );
+                                  },
+                                ).toList(),
+                              ),
+                            ),
                           );
-                        }).toList(),
+                        },
                       ),
                     );
                   },
@@ -71,8 +112,8 @@ class GraphView extends HookWidget {
               );
             },
           ),
-        );
-      },
+        ),
+      ],
     );
   }
 }

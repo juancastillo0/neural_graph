@@ -39,6 +39,21 @@ mixin _$RootStore on _RootStore, Store {
     });
   }
 
+  final _$isAddingConnectionAtom = Atom(name: '_RootStore.isAddingConnection');
+
+  @override
+  AddingConnectionState get isAddingConnection {
+    _$isAddingConnectionAtom.reportRead();
+    return super.isAddingConnection;
+  }
+
+  @override
+  set isAddingConnection(AddingConnectionState value) {
+    _$isAddingConnectionAtom.reportWrite(value, super.isAddingConnection, () {
+      super.isAddingConnection = value;
+    });
+  }
+
   final _$selectedNodeAtom = Atom(name: '_RootStore.selectedNode');
 
   @override
@@ -72,6 +87,39 @@ mixin _$RootStore on _RootStore, Store {
   final _$_RootStoreActionController = ActionController(name: '_RootStore');
 
   @override
+  void deleteSelected() {
+    final _$actionInfo = _$_RootStoreActionController.startAction(
+        name: '_RootStore.deleteSelected');
+    try {
+      return super.deleteSelected();
+    } finally {
+      _$_RootStoreActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
+  void startAddingConnection() {
+    final _$actionInfo = _$_RootStoreActionController.startAction(
+        name: '_RootStore.startAddingConnection');
+    try {
+      return super.startAddingConnection();
+    } finally {
+      _$_RootStoreActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
+  void addConnection(Node node) {
+    final _$actionInfo = _$_RootStoreActionController.startAction(
+        name: '_RootStore.addConnection');
+    try {
+      return super.addConnection(node);
+    } finally {
+      _$_RootStoreActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
   void createNode(Offset offset) {
     final _$actionInfo =
         _$_RootStoreActionController.startAction(name: '_RootStore.createNode');
@@ -87,6 +135,7 @@ mixin _$RootStore on _RootStore, Store {
     return '''
 nodes: ${nodes},
 isDragging: ${isDragging},
+isAddingConnection: ${isAddingConnection},
 selectedNode: ${selectedNode},
 graphCanvas: ${graphCanvas}
     ''';

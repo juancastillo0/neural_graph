@@ -69,7 +69,9 @@ class _MyHomePageState extends State<MyHomePage> {
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Expanded(child: GraphView()),
+                      Expanded(
+                        child: GraphView(),
+                      ),
                       const Resizable(
                         defaultWidth: 150,
                         horizontal: ResizeHorizontal.left,
@@ -138,6 +140,10 @@ class PropertiesView extends HookWidget {
                         root.selectedNode.name != value ? "" : null,
                   ),
                 ),
+                IconButton(
+                  icon: const Icon(Icons.delete),
+                  onPressed: root.deleteSelected,
+                )
               ],
             ),
             root.selectedNode.data.form()
