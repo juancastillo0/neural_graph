@@ -71,7 +71,7 @@ class GraphView extends HookWidget {
                     return CustomScrollGestures(
                       controller: controller,
                       allowDrag: !root.isDragging,
-                      child: DragTarget<String>( 
+                      child: DragTarget<String>(
                         onAcceptWithDetails: (details) {
                           final offset =
                               controller.toCanvasOffset(details.offset);
