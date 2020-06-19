@@ -88,6 +88,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 analyzer
 args
 csslib
+intl
 logging
 
 Copyright 2013, the Dart project authors. All rights reserved.
