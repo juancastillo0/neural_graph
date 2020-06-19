@@ -6,24 +6,12 @@ import 'package:flutter/services.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:neural_graph/arrow.dart';
+import 'package:neural_graph/graph_canvas/adding_node_state.dart';
 import 'package:neural_graph/graph_canvas/store_graph_canvas.dart';
 import 'package:neural_graph/node.dart';
 import 'package:neural_graph/root_store.dart';
 import 'package:neural_graph/widgets/scrollable.dart';
 import 'package:styled_widget/styled_widget.dart';
-
-extension GlobalPaintBoundsExt on BuildContext {
-  Rect get globalPaintBounds {
-    final renderObject = findRenderObject();
-    final translation = renderObject?.getTransformTo(null)?.getTranslation();
-    if (translation != null && renderObject.paintBounds != null) {
-      return renderObject.paintBounds
-          .shift(Offset(translation.x, translation.y));
-    } else {
-      return null;
-    }
-  }
-}
 
 class GraphView extends HookWidget {
   @override
@@ -35,10 +23,19 @@ class GraphView extends HookWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
-            FlatButton.icon(
-              icon: const Icon(Icons.add_circle_outline),
-              onPressed: root.startAddingConnection,
-              label: const Text("Connection"),
+            Observer(
+              builder: (ctx) {
+                final isAdding = !root.addingConnection.isNone();
+                return FlatButton.icon(
+                  icon: const Icon(Icons.add_circle_outline),
+                  onPressed: isAdding
+                      ? () => root.addingConnection =
+                          const AddingConnectionState.none()
+                      : root.startAddingConnection,
+                  color: isAdding ? Colors.black12 : null,
+                  label: const Text("Connection"),
+                );
+              },
             ),
             Observer(
               builder: (ctx) => Row(
@@ -74,35 +71,47 @@ class GraphView extends HookWidget {
                     return CustomScrollGestures(
                       controller: controller,
                       allowDrag: !root.isDragging,
-                      child: DragTarget<String>(
+                      child: DragTarget<String>( 
                         onAcceptWithDetails: (details) {
-                          final bounds = ctx.globalPaintBounds;
-                          final offset = details.offset -
-                              bounds.topLeft +
-                              Offset(
-                                controller.horizontal.offset,
-                                controller.vertical.offset,
-                              );
-
+                          final offset =
+                              controller.toCanvasOffset(details.offset);
                           if (details.data == "Convolutional") {
                             root.createNode(offset);
                           }
                         },
                         builder: (context, candidateData, rejectedData) {
-                          return CustomPaint(
-                            painter: ConnectionsPainter(root.nodes),
-                            child: Observer(
-                              builder: (ctx) => Stack(
-                                children: root.nodes.entries.map(
-                                  (e) {
-                                    return NodeView(
-                                      node: e.value,
-                                      key: Key(e.key.toString()),
-                                    );
-                                  },
-                                ).toList(),
-                              ),
-                            ),
+                          return Observer(
+                            builder: (ctx) {
+                              return MouseRegion(
+                                onHover: root.addingConnection.isNone()
+                                    ? null
+                                    : (hoverEvent) {
+                                        root.graphCanvas.mousePosition =
+                                            controller.toCanvasOffset(
+                                                hoverEvent.position);
+                                      },
+                                child: CustomPaint(
+                                  painter: ConnectionsPainter(
+                                    root.nodes,
+                                    root.addingConnection,
+                                    root.graphCanvas.mousePosition,
+                                  ),
+                                  child: Observer(
+                                    key: const Key("nodes"),
+                                    builder: (ctx) => Stack(
+                                      children: root.nodes.entries.map(
+                                        (e) {
+                                          return NodeView(
+                                            node: e.value,
+                                            key: Key(e.key.toString()),
+                                          );
+                                        },
+                                      ).toList(),
+                                    ),
+                                  ),
+                                ),
+                              );
+                            },
                           );
                         },
                       ),
@@ -199,6 +208,12 @@ class _MouseScrollListenerState extends State<MouseScrollListener> {
   bool isShiftPressed = false;
   bool isCtrlPressed = false;
   GraphCanvasStore graphCanvas = RootStore.instance.graphCanvas;
+
+  @override
+  void dispose() {
+    _focusNode.dispose();
+    super.dispose();
+  }
 
   void _onPointerSignal(PointerSignalEvent pointerSignal) {
     if (pointerSignal is PointerScrollEvent) {

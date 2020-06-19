@@ -39,18 +39,18 @@ mixin _$RootStore on _RootStore, Store {
     });
   }
 
-  final _$isAddingConnectionAtom = Atom(name: '_RootStore.isAddingConnection');
+  final _$addingConnectionAtom = Atom(name: '_RootStore.addingConnection');
 
   @override
-  AddingConnectionState get isAddingConnection {
-    _$isAddingConnectionAtom.reportRead();
-    return super.isAddingConnection;
+  AddingConnectionState get addingConnection {
+    _$addingConnectionAtom.reportRead();
+    return super.addingConnection;
   }
 
   @override
-  set isAddingConnection(AddingConnectionState value) {
-    _$isAddingConnectionAtom.reportWrite(value, super.isAddingConnection, () {
-      super.isAddingConnection = value;
+  set addingConnection(AddingConnectionState value) {
+    _$addingConnectionAtom.reportWrite(value, super.addingConnection, () {
+      super.addingConnection = value;
     });
   }
 
@@ -135,7 +135,7 @@ mixin _$RootStore on _RootStore, Store {
     return '''
 nodes: ${nodes},
 isDragging: ${isDragging},
-isAddingConnection: ${isAddingConnection},
+addingConnection: ${addingConnection},
 selectedNode: ${selectedNode},
 graphCanvas: ${graphCanvas}
     ''';

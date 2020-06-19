@@ -7,7 +7,6 @@ import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:mobx/mobx.dart';
 import 'package:neural_graph/layers/layers.dart';
 import 'package:neural_graph/root_store.dart';
-import 'package:styled_widget/styled_widget.dart';
 
 part 'node.g.dart';
 
@@ -89,39 +88,49 @@ class NodeView extends hooks.HookWidget {
           top: node.top,
           left: node.left,
           child: MouseRegion(
-            cursor: SystemMouseCursors.grab,
-            child: Container(
-              padding: _nodeEdgeInsets,
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: _nodeBorderRadius,
-                boxShadow: [
-                  BoxShadow(
-                    blurRadius: 1,
-                    spreadRadius: 0.5,
-                    color: root.selectedNode == node
-                        ? Colors.blue[900]
-                        : Colors.black26,
-                    offset: const Offset(0, 1),
-                  ),
-                ],
-                border: Border.all(),
-              ),
-              child: LayoutBuilder(
-                builder: (ctx, box) {
-                  SchedulerBinding.instance.addPostFrameCallback(
-                    (_) => node.updateSize(ctx),
-                  );
-                  return Observer(builder: (ctx) => Text(node.name));
-                },
-              ),
-            ).gestures(
+            cursor: root.addingConnection.isNone()
+                ? SystemMouseCursors.grab
+                : SystemMouseCursors.click,
+            child: GestureDetector(
+              behavior: HitTestBehavior.opaque,
               onPanDown: (_) => root.isDragging = true,
               onPanEnd: (_) => root.isDragging = false,
               dragStartBehavior: DragStartBehavior.down,
-              onTap: () => root.selectedNode = node,
+              onTap: () {
+                root.selectedNode = node;
+                if (!root.addingConnection.isNone()) {
+                  root.addConnection(node);
+                }
+              },
               onPanUpdate: node.move,
-              behavior: HitTestBehavior.opaque,
+              child: Container(
+                padding: _nodeEdgeInsets,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: _nodeBorderRadius,
+                  boxShadow: [
+                    BoxShadow(
+                      blurRadius: 1,
+                      spreadRadius: 0.5,
+                      color: root.selectedNode == node
+                          ? Colors.blue[900]
+                          : Colors.black26,
+                      offset: const Offset(0, 1),
+                    ),
+                  ],
+                  border: Border.all(),
+                ),
+                child: LayoutBuilder(
+                  builder: (ctx, box) {
+                    SchedulerBinding.instance.addPostFrameCallback(
+                      (_) => node.updateSize(ctx),
+                    );
+                    return Observer(
+                      builder: (ctx) => Text(node.name),
+                    );
+                  },
+                ),
+              ),
             ),
           ),
         );

@@ -19,6 +19,7 @@ class MyApp extends StatelessWidget {
       title: 'Neural Graph',
       theme: ThemeData(
         primaryColor: Colors.blue[900],
+        toggleableActiveColor: Colors.blue[900],
         visualDensity: VisualDensity.adaptivePlatformDensity,
         inputDecorationTheme: const InputDecorationTheme(
           isDense: true,

@@ -47,11 +47,27 @@ mixin _$GraphCanvasStore on _GraphCanvasStore, Store {
     });
   }
 
+  final _$mousePositionAtom = Atom(name: '_GraphCanvasStore.mousePosition');
+
+  @override
+  Offset get mousePosition {
+    _$mousePositionAtom.reportRead();
+    return super.mousePosition;
+  }
+
+  @override
+  set mousePosition(Offset value) {
+    _$mousePositionAtom.reportWrite(value, super.mousePosition, () {
+      super.mousePosition = value;
+    });
+  }
+
   @override
   String toString() {
     return '''
 size: ${size},
 scale: ${scale},
+mousePosition: ${mousePosition},
 translateOffset: ${translateOffset}
     ''';
   }

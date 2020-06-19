@@ -5,8 +5,13 @@ import 'package:neural_graph/node.dart';
 part 'adding_node_state.freezed.dart';
 
 @freezed
-abstract class AddingConnectionState with _$AddingConnectionState {
-  const factory AddingConnectionState.none() = _None; 
+abstract class AddingConnectionState implements _$AddingConnectionState {
+  const AddingConnectionState._();
+  const factory AddingConnectionState.none() = _None;
   const factory AddingConnectionState.adding() = _Adding;
   const factory AddingConnectionState.addedInput(Node input) = _Added;
+
+  bool isNone() => maybeWhen(orElse: () => false, none: () => true);
+  bool isAddedInput() =>
+      maybeWhen(orElse: () => false, addedInput: (_) => true);
 }

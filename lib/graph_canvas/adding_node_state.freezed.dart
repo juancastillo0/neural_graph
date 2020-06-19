@@ -89,8 +89,8 @@ class __$NoneCopyWithImpl<$Res>
   _None get _value => super._value as _None;
 }
 
-class _$_None with DiagnosticableTreeMixin implements _None {
-  const _$_None();
+class _$_None extends _None with DiagnosticableTreeMixin {
+  const _$_None() : super._();
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
@@ -168,7 +168,8 @@ class _$_None with DiagnosticableTreeMixin implements _None {
   }
 }
 
-abstract class _None implements AddingConnectionState {
+abstract class _None extends AddingConnectionState {
+  const _None._() : super._();
   const factory _None() = _$_None;
 }
 
@@ -187,8 +188,8 @@ class __$AddingCopyWithImpl<$Res>
   _Adding get _value => super._value as _Adding;
 }
 
-class _$_Adding with DiagnosticableTreeMixin implements _Adding {
-  const _$_Adding();
+class _$_Adding extends _Adding with DiagnosticableTreeMixin {
+  const _$_Adding() : super._();
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
@@ -267,7 +268,8 @@ class _$_Adding with DiagnosticableTreeMixin implements _Adding {
   }
 }
 
-abstract class _Adding implements AddingConnectionState {
+abstract class _Adding extends AddingConnectionState {
+  const _Adding._() : super._();
   const factory _Adding() = _$_Adding;
 }
 
@@ -296,8 +298,10 @@ class __$AddedCopyWithImpl<$Res>
   }
 }
 
-class _$_Added with DiagnosticableTreeMixin implements _Added {
-  const _$_Added(this.input) : assert(input != null);
+class _$_Added extends _Added with DiagnosticableTreeMixin {
+  const _$_Added(this.input)
+      : assert(input != null),
+        super._();
 
   @override
   final Node input;
@@ -388,7 +392,8 @@ class _$_Added with DiagnosticableTreeMixin implements _Added {
   }
 }
 
-abstract class _Added implements AddingConnectionState {
+abstract class _Added extends AddingConnectionState {
+  const _Added._() : super._();
   const factory _Added(Node input) = _$_Added;
 
   Node get input;

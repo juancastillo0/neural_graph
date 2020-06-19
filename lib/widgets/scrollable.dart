@@ -3,21 +3,24 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:styled_widget/styled_widget.dart';
+import 'package:neural_graph/common/extensions.dart';
 
 const _iconSize = 24.0;
 const _scrollIconPadding = EdgeInsets.all(0);
 
 class MultiScrollController {
-  MultiScrollController({
-    ScrollController vertical,
-    ScrollController horizontal,
-    void Function(double) setScale,
-  })  : vertical = vertical ?? ScrollController(),
+  MultiScrollController(
+      {ScrollController vertical,
+      ScrollController horizontal,
+      void Function(double) setScale,
+      @required this.context})
+      : vertical = vertical ?? ScrollController(),
         horizontal = horizontal ?? ScrollController(),
         _setScale = setScale;
   final ScrollController vertical;
   final ScrollController horizontal;
   final void Function(double) _setScale;
+  final BuildContext context;
 
   void onDrag(Offset delta) {
     if (delta.dx != 0) {
@@ -41,6 +44,16 @@ class MultiScrollController {
       horizontal.jumpTo(horizontal.offset + 0.0001);
       vertical.jumpTo(vertical.offset + 0.0001);
     }
+  }
+
+  Offset toCanvasOffset(Offset offset) {
+    final bounds = context.globalPaintBounds;
+    return offset -
+        bounds.topLeft +
+        Offset(
+          horizontal.offset,
+          vertical.offset,
+        );
   }
 
   void dispose() {
@@ -67,7 +80,10 @@ class _MultiScrollableState extends State<MultiScrollable> {
 
   @override
   void initState() {
-    controller = MultiScrollController(setScale: widget.setScale);
+    controller = MultiScrollController(
+      setScale: widget.setScale,
+      context: context,
+    );
     Future.delayed(Duration.zero, () => setState(() {}));
     super.initState();
   }

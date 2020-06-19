@@ -10,6 +10,8 @@ abstract class _GraphCanvasStore with Store {
   Size size = const Size(1500, 1000);
   @observable
   double scale = 1;
+  @observable
+  Offset mousePosition;
 
   @computed
   Offset get translateOffset =>

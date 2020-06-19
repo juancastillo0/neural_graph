@@ -2,17 +2,32 @@ import 'dart:ui' as ui;
 
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:neural_graph/graph_canvas/adding_node_state.dart';
 import 'package:neural_graph/node.dart';
 
 class ConnectionsPainter extends CustomPainter {
   final Map<String, Node> operations;
-  const ConnectionsPainter(this.operations);
+  final AddingConnectionState addingConnection;
+  final Offset mousePositionForConnection;
+
+  const ConnectionsPainter(
+    this.operations,
+    this.addingConnection,
+    this.mousePositionForConnection,
+  );
   static final _paint = Paint()
     ..color = Colors.black
     ..strokeWidth = 2.0;
 
   @override
   void paint(Canvas canvas, Size size) {
+    addingConnection.maybeWhen(
+      orElse: () {},
+      addedInput: (node) {
+        canvas.drawLine(node.center, mousePositionForConnection, _paint);
+      },
+    );
+
     for (final op in operations.values) {
       for (final input in op.inputs) {
         final other = operations[input.key];

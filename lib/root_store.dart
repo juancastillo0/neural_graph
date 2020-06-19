@@ -9,7 +9,7 @@ import 'package:neural_graph/layers/convolutional.dart';
 import 'package:neural_graph/node.dart';
 
 part 'root_store.g.dart';
- 
+
 class RootStore extends _RootStore with _$RootStore {
   static RootStore get instance => GetIt.instance.get<RootStore>();
 }
@@ -37,7 +37,7 @@ abstract class _RootStore with Store {
   bool isDragging = false;
 
   @observable
-  AddingConnectionState isAddingConnection = const AddingConnectionState.none();
+  AddingConnectionState addingConnection = const AddingConnectionState.none();
 
   @observable
   Node selectedNode;
@@ -57,13 +57,13 @@ abstract class _RootStore with Store {
 
   @action
   void startAddingConnection() {
-    isAddingConnection = const AddingConnectionState.adding();
+    addingConnection = const AddingConnectionState.adding();
   }
 
   @action
   void addConnection(Node node) {
-    isAddingConnection = isAddingConnection.when(
-      none: () => isAddingConnection,
+    addingConnection = addingConnection.when(
+      none: () => addingConnection,
       adding: () => AddingConnectionState.addedInput(node),
       addedInput: (inputNode) {
         node.inputs.add(NodeRef(inputNode.key));
