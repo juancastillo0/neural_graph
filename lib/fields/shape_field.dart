@@ -49,7 +49,7 @@ class ShapeField extends StatelessWidget {
           textAlign: TextAlign.center,
           focusNode: field.focusNode,
           inputFormatters: [
-            FilteringTextInputFormatter.allow(shapeRegex),
+            WhitelistingTextInputFormatter(shapeRegex),
           ],
           onChanged: (value) {
             // print(

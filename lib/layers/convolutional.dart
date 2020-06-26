@@ -201,8 +201,8 @@ class ConvolutionalForm extends HookWidget {
               description: "Expansion rate in a separable convolution",
               field: TextFormField(
                 inputFormatters: [
-                  FilteringTextInputFormatter.digitsOnly,
-                  FilteringTextInputFormatter.singleLineFormatter,
+                  WhitelistingTextInputFormatter.digitsOnly,
+                  BlacklistingTextInputFormatter.singleLineFormatter,
                 ],
                 controller: fields.depthMultiplier.controller,
                 keyboardType:
