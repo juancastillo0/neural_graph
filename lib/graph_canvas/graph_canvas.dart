@@ -48,7 +48,9 @@ class GraphView extends HookWidget {
                       root.graphCanvas.scale -= 0.1;
                     },
                   ),
-                  Text(root.graphCanvas.scale.toStringAsPrecision(2)),
+                  Text(
+                    root.graphCanvas.scale.toStringAsPrecision(2),
+                  ),
                   IconButton(
                     icon: const Icon(Icons.add_circle_outline),
                     onPressed: () {
@@ -60,69 +62,77 @@ class GraphView extends HookWidget {
             ),
           ],
         ),
-        Expanded(
-          child: MultiScrollable(
-            setScale: (s) => root.graphCanvas.scale = s,
-            builder: (ctx, controller) {
-              return MouseScrollListener(
+        const Expanded(
+          child: CanvasView(),
+        ),
+      ],
+    );
+  }
+}
+
+class CanvasView extends HookWidget {
+  const CanvasView({Key key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext ctx) {
+    final root = useRoot();
+    return MultiScrollable(
+      setScale: (s) => root.graphCanvas.scale = s,
+      builder: (ctx, controller) {
+        return MouseScrollListener(
+          controller: controller,
+          child: Observer(
+            builder: (ctx) {
+              return CustomScrollGestures(
                 controller: controller,
-                child: Observer(
-                  builder: (ctx) {
-                    return CustomScrollGestures(
-                      controller: controller,
-                      allowDrag: !root.isDragging,
-                      child: DragTarget<String>(
-                        onAcceptWithDetails: (details) {
-                          final offset =
-                              controller.toCanvasOffset(details.offset);
-                          if (details.data == "Convolutional") {
-                            root.createNode(offset);
-                          }
-                        },
-                        builder: (context, candidateData, rejectedData) {
-                          return Observer(
-                            builder: (ctx) {
-                              return MouseRegion(
-                                onHover: root.addingConnection.isNone()
-                                    ? null
-                                    : (hoverEvent) {
-                                        root.graphCanvas.mousePosition =
-                                            controller.toCanvasOffset(
-                                                hoverEvent.position);
-                                      },
-                                child: CustomPaint(
-                                  painter: ConnectionsPainter(
-                                    root.nodes,
-                                    root.addingConnection,
-                                    root.graphCanvas.mousePosition,
-                                  ),
-                                  child: Observer(
-                                    key: const Key("nodes"),
-                                    builder: (ctx) => Stack(
-                                      children: root.nodes.entries.map(
-                                        (e) {
-                                          return NodeView(
-                                            node: e.value,
-                                            key: Key(e.key.toString()),
-                                          );
-                                        },
-                                      ).toList(),
-                                    ),
-                                  ),
-                                ),
-                              );
-                            },
-                          );
-                        },
-                      ),
+                allowDrag: !root.isDragging,
+                child: DragTarget<String>(
+                  onAcceptWithDetails: (details) {
+                    final offset = controller.toCanvasOffset(details.offset);
+                    if (details.data == "Convolutional") {
+                      root.createNode(offset);
+                    }
+                  },
+                  builder: (context, candidateData, rejectedData) {
+                    return Observer(
+                      builder: (ctx) {
+                        return MouseRegion(
+                          onHover: root.addingConnection.isNone()
+                              ? null
+                              : (hoverEvent) {
+                                  root.graphCanvas.mousePosition = controller
+                                      .toCanvasOffset(hoverEvent.position);
+                                },
+                          child: CustomPaint(
+                            painter: ConnectionsPainter(
+                              root.nodes,
+                              root.addingConnection,
+                              root.graphCanvas.mousePosition,
+                            ),
+                            child: Observer(
+                              key: const Key("nodes"),
+                              builder: (ctx) => Stack(
+                                children: root.nodes.entries.map(
+                                  (e) {
+                                    return NodeView(
+                                      node: e.value,
+                                      key: Key(e.key.toString()),
+                                    );
+                                  },
+                                ).toList(),
+                              ),
+                            ),
+                          ),
+                        );
+                      },
                     );
                   },
                 ),
               );
             },
           ),
-        ),
-      ],
+        );
+      },
     );
   }
 }

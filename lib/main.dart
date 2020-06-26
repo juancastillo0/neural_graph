@@ -50,7 +50,7 @@ class MyApp extends StatelessWidget {
               appBar: AppBar(),
               backgroundColor: Colors.white,
               body: const Center(
-                child:Text("/fam"),
+                child: Text("/fam"),
               ),
             ),
             settings: settings,
