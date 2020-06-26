@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 abstract class Layer {
+  String get layerId;
+
   Layer get inputs;
   Layer get outputs;
 

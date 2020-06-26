@@ -31,10 +31,38 @@ class MyApp extends StatelessWidget {
         ),
       ),
       onGenerateRoute: (settings) {
-        return MaterialPageRoute(
-          builder: (context) => const MyHomePage(title: 'Neural Graph'),
-          settings: settings,
-        );
+        print(settings);
+        if (settings.name == "/fam/m") {
+          return MaterialPageRoute(
+            builder: (context) => Scaffold(
+              appBar: AppBar(),
+              backgroundColor: Colors.white,
+              body: const Center(
+                child: Text("/fam/m"),
+              ),
+            ),
+            settings: settings,
+          );
+        }
+        if (settings.name == "/fam") {
+          return MaterialPageRoute(
+            builder: (context) => Scaffold(
+              appBar: AppBar(),
+              backgroundColor: Colors.white,
+              body: const Center(
+                child:Text("/fam"),
+              ),
+            ),
+            settings: settings,
+          );
+        }
+        if (settings.name == "/") {
+          return MaterialPageRoute(
+            builder: (context) => const MyHomePage(title: 'Neural Graph'),
+            settings: settings,
+          );
+        }
+        return null;
       },
     );
   }
@@ -124,7 +152,7 @@ class PropertiesView extends HookWidget {
                     vertical: 10,
                   ),
                   child: Text(
-                    root.selectedNode.data.runtimeType.toString(),
+                    root.selectedNode.data.layerId,
                     style: Theme.of(context).textTheme.headline6,
                   ),
                 ),
