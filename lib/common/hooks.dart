@@ -1,0 +1,66 @@
+import 'package:flutter/widgets.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
+
+class Disposable<T> {
+  const Disposable(this.data, this.dispose);
+
+  final void Function() dispose;
+  final T data;
+}
+
+T useDisposable<T>(T Function() disposableBuilder, [List<Object> keys]) {
+  final data = disposableBuilder();
+  assert((data as dynamic).dispose is void Function());
+
+  final d = Disposable(data, (data as dynamic).dispose as void Function());
+  return Hook.use(_DisposableHook(() => d, keys: keys));
+}
+
+class _DisposableHook<T> extends Hook<T> {
+  final Disposable<T> Function() disposableBuilder;
+
+  const _DisposableHook(this.disposableBuilder,
+      {List<Object> keys = const <dynamic>[]})
+      : assert(disposableBuilder != null),
+        assert(keys != null),
+        super(keys: keys);
+
+  @override
+  _DisposableHookState<T> createState() => _DisposableHookState<T>();
+}
+
+class _DisposableHookState<T> extends HookState<T, _DisposableHook<T>> {
+  Disposable<T> disposable;
+
+  void createDisposable() {
+    disposable = hook.disposableBuilder();
+  }
+
+  @override
+  void initHook() {
+    super.initHook();
+    createDisposable();
+  }
+
+  @override
+  T build(BuildContext context) {
+    return disposable.data;
+  }
+
+  @override
+  void didUpdateHook(_DisposableHook<T> oldHook) {
+    super.didUpdateHook(oldHook);
+
+    if (hook.keys == null) {
+      dispose();
+      createDisposable();
+    }
+  }
+
+  @override
+  void dispose() {
+    if (disposable != null) {
+      disposable.dispose();
+    }
+  }
+}
