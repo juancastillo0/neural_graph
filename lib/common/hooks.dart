@@ -51,7 +51,15 @@ class _DisposableHookState<T> extends HookState<T, _DisposableHook<T>> {
   void didUpdateHook(_DisposableHook<T> oldHook) {
     super.didUpdateHook(oldHook);
 
-    if (hook.keys == null) {
+    final oldKeys = oldHook.keys;
+    final keys = hook.keys;
+
+    final hasDifferentKeys =
+        Iterable<int>.generate(keys.length).any((i) => oldKeys[i] != keys[i]);
+    print(hasDifferentKeys);
+    print(keys);
+    print(oldKeys);
+    if (false) {
       dispose();
       createDisposable();
     }
@@ -59,6 +67,7 @@ class _DisposableHookState<T> extends HookState<T, _DisposableHook<T>> {
 
   @override
   void dispose() {
+    print("dispose!!");
     if (disposable != null) {
       disposable.dispose();
     }

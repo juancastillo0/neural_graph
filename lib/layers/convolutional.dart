@@ -103,7 +103,7 @@ class ConvolutionalForm extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
-    final fields = useDisposable(
+    final fields = useMemoized(
       () => ConvolutionalFormFields(state),
       [state],
     );

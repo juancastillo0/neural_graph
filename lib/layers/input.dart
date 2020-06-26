@@ -43,7 +43,7 @@ class InputForm extends HookWidget {
   final Input state;
   @override
   Widget build(BuildContext ctx) {
-    final shapeField = useDisposable(
+    final shapeField = useMemoized(
       () => FormFieldValue<List<int>>(
         getValue: () => state.shape,
         setValue: (v) => state.shape = v,
