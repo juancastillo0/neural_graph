@@ -1,7 +1,11 @@
+import 'dart:math';
+
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:neural_graph/main.dart';
 import 'package:styled_widget/styled_widget.dart';
 import 'package:neural_graph/common/extensions.dart';
 
@@ -19,6 +23,7 @@ class MultiScrollController {
         _setScale = setScale;
   final ScrollController vertical;
   final ScrollController horizontal;
+  // TODO: better scale management.
   final void Function(double) _setScale;
   final BuildContext context;
 
@@ -75,7 +80,7 @@ class MultiScrollable extends StatefulWidget {
   _MultiScrollableState createState() => _MultiScrollableState();
 }
 
-class _MultiScrollableState extends State<MultiScrollable> {
+class _MultiScrollableState extends State<MultiScrollable> with RouteAware {
   MultiScrollController controller;
 
   @override
@@ -84,14 +89,27 @@ class _MultiScrollableState extends State<MultiScrollable> {
       setScale: widget.setScale,
       context: context,
     );
-    Future.delayed(Duration.zero, () => setState(() {}));
+    SchedulerBinding.instance.addPostFrameCallback((_) => setState(() {}));
     super.initState();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    routeObserver.subscribe(this, ModalRoute.of(context));
   }
 
   @override
   void dispose() {
     controller.dispose();
+    routeObserver.unsubscribe(this);
     super.dispose();
+  }
+
+  @override
+  void didPopNext() {
+    setState(() {});
+    super.didPopNext();
   }
 
   @override
@@ -115,7 +133,7 @@ class _MultiScrollableState extends State<MultiScrollable> {
   }
 }
 
-class ButtonScrollbar extends StatelessWidget {
+class ButtonScrollbar extends HookWidget {
   const ButtonScrollbar({
     Key key,
     @required this.controller,
@@ -125,28 +143,70 @@ class ButtonScrollbar extends StatelessWidget {
   final ScrollController controller;
   final bool horizontal;
 
+  void onPressedScrollButtonStart() {
+    controller.jumpTo(max(controller.offset - 20, 0));
+  }
+
+  void onPressedScrollButtonEnd() {
+    controller.jumpTo(
+      min(controller.offset + 20, controller.position.maxScrollExtent),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    final isPressedButton = useState(false);
     if (!controller.hasClients ||
         controller.position?.viewportDimension == null) {
       return const SizedBox(width: 0, height: 0);
     }
 
+    Future onLongPressStartForward(LongPressStartDetails _) async {
+      isPressedButton.value = true;
+      while (isPressedButton.value &&
+          controller.offset < controller.position.maxScrollExtent) {
+        await controller.animateTo(
+          min(controller.offset + 50, controller.position.maxScrollExtent),
+          duration: const Duration(milliseconds: 150),
+          curve: Curves.linear,
+        );
+      }
+    }
+
+    Future onLongPressStartBackward(LongPressStartDetails _) async {
+      isPressedButton.value = true;
+      while (isPressedButton.value && controller.offset > 0) {
+        await controller.animateTo(
+          max(controller.offset - 50, 0),
+          duration: const Duration(milliseconds: 150),
+          curve: Curves.linear,
+        );
+      }
+    }
+
     final children = [
-      FlatButton(
-        onPressed: null,
-        padding: _scrollIconPadding,
-        child: Icon(horizontal ? Icons.arrow_left : Icons.arrow_drop_up),
-      ).constrained(maxHeight: _iconSize, maxWidth: _iconSize),
+      GestureDetector(
+        onLongPressStart: onLongPressStartBackward,
+        onLongPressEnd: (details) => isPressedButton.value = false,
+        child: FlatButton(
+          onPressed: onPressedScrollButtonStart,
+          padding: _scrollIconPadding,
+          child: Icon(horizontal ? Icons.arrow_left : Icons.arrow_drop_up),
+        ).constrained(maxHeight: _iconSize, maxWidth: _iconSize),
+      ),
       MultiScrollbar(
         controller: controller,
         horizontal: horizontal,
       ).expanded(),
-      FlatButton(
-        onPressed: null,
-        padding: _scrollIconPadding,
-        child: Icon(horizontal ? Icons.arrow_right : Icons.arrow_drop_down),
-      ).constrained(maxHeight: _iconSize, maxWidth: _iconSize)
+      GestureDetector(
+        onLongPressStart: onLongPressStartForward,
+        onLongPressEnd: (details) => isPressedButton.value = false,
+        child: FlatButton(
+          onPressed: onPressedScrollButtonEnd,
+          padding: _scrollIconPadding,
+          child: Icon(horizontal ? Icons.arrow_right : Icons.arrow_drop_down),
+        ).constrained(maxHeight: _iconSize, maxWidth: _iconSize),
+      )
     ];
 
     return ConstrainedBox(
@@ -179,13 +239,20 @@ class MultiScrollbar extends HookWidget {
     final offset = useState(0.0);
     final maxScrollExtent = useState(position.maxScrollExtent);
     final hovering = useState(false);
+    final dragging = useState(false);
 
     maxScrollExtent.value =
         position.maxScrollExtent + position.viewportDimension;
 
     useEffect(() {
-      void _listener() => offset.value = controller.offset;
-      controller.addListener(_listener);
+      void _listener() {
+        final position = controller.position;
+        maxScrollExtent.value =
+            position.maxScrollExtent + position.viewportDimension;
+        offset.value = controller.offset;
+      }
+
+      controller.position.addListener(_listener);
       return () => controller.removeListener(_listener);
     }, [controller]);
 
@@ -214,10 +281,14 @@ class MultiScrollbar extends HookWidget {
                   height: horizontal ? double.infinity : handleSize,
                   width: horizontal ? handleSize : double.infinity,
                   child: Container(
-                    color: hovering.value ? Colors.black26 : Colors.black12,
+                    color: hovering.value || dragging.value
+                        ? Colors.black26
+                        : Colors.black12,
                   ),
                 ).gestures(
                   dragStartBehavior: DragStartBehavior.down,
+                  onPanDown: (_) => dragging.value = true,
+                  onPanEnd: (_) => dragging.value = false,
                   onPanUpdate: (DragUpdateDetails p) {
                     final _delta = horizontal ? p.delta.dx : p.delta.dy;
                     final _offset = (controller.offset + _delta / rate)

@@ -7,6 +7,21 @@ import 'package:neural_graph/layers_menu.dart';
 import 'package:neural_graph/root_store.dart';
 import 'package:neural_graph/widgets/resizable.dart';
 
+final RouteObserver<ModalRoute> routeObserver = RouteObserver<ModalRoute>();
+
+final theme = ThemeData(
+  primaryColor: Colors.blue[900],
+  toggleableActiveColor: Colors.blue[900],
+  visualDensity: VisualDensity.adaptivePlatformDensity,
+  inputDecorationTheme: const InputDecorationTheme(
+    isDense: true,
+    border: OutlineInputBorder(),
+    errorStyle: TextStyle(height: 0),
+    contentPadding: EdgeInsets.only(top: 7, bottom: 7, left: 10, right: 10),
+    labelStyle: TextStyle(fontSize: 18),
+  ),
+);
+
 void main() {
   GetIt.instance.registerSingleton(RootStore());
   runApp(MyApp());
@@ -17,19 +32,8 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Neural Graph',
-      theme: ThemeData(
-        primaryColor: Colors.blue[900],
-        toggleableActiveColor: Colors.blue[900],
-        visualDensity: VisualDensity.adaptivePlatformDensity,
-        inputDecorationTheme: const InputDecorationTheme(
-          isDense: true,
-          border: OutlineInputBorder(),
-          errorStyle: TextStyle(height: 0),
-          contentPadding:
-              EdgeInsets.only(top: 7, bottom: 7, left: 10, right: 10),
-          labelStyle: TextStyle(fontSize: 18),
-        ),
-      ),
+      theme: theme,
+      navigatorObservers: [routeObserver],
       onGenerateRoute: (settings) {
         print(settings);
         if (settings.name == "/fam/m") {
@@ -37,9 +41,7 @@ class MyApp extends StatelessWidget {
             builder: (context) => Scaffold(
               appBar: AppBar(),
               backgroundColor: Colors.white,
-              body: const Center(
-                child: Text("/fam/m"),
-              ),
+              body: const Center(child: Text("/fam/m")),
             ),
             settings: settings,
           );
@@ -49,9 +51,7 @@ class MyApp extends StatelessWidget {
             builder: (context) => Scaffold(
               appBar: AppBar(),
               backgroundColor: Colors.white,
-              body: const Center(
-                child: Text("/fam"),
-              ),
+              body: const Center(child: Text("/fam")),
             ),
             settings: settings,
           );
