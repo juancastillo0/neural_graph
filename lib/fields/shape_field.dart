@@ -5,7 +5,7 @@ import 'package:neural_graph/fields/form.dart';
 
 RegExp shapeRegexFn(int dimensions) {
   //ignore: prefer_interpolation_to_compose_strings
-  return RegExp(r"^[1-9]\d*(,[1-9]\d*){0," + dimensions.toString() + r"}(,)?$");
+  return RegExp(r"^[1-9]\d*(,[1-9]\d*){0," + (dimensions ?? 7).toString() + r"}(,)?$");
 }
 
 class ShapeField extends StatelessWidget {
