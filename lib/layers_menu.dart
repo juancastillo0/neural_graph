@@ -131,9 +131,7 @@ class _ListSection extends HookWidget {
           height: open.value ? e.value.length * 35.0 + 10 : 0,
           child: ListView.builder(
             physics: const NeverScrollableScrollPhysics(),
-            padding: const EdgeInsets.symmetric(
-              vertical: 5,
-            ),
+            padding: const EdgeInsets.symmetric(vertical: 5),
             itemCount: e.value.length,
             itemExtent: 35,
             itemBuilder: (ctx, index) {
@@ -155,10 +153,14 @@ class _ListSection extends HookWidget {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(
-                        text,
-                        key: Key(text),
-                        style: textTheme.subtitle1,
+                      Expanded(
+                        child: Text(
+                          text,
+                          key: Key(text),
+                          style: textTheme.subtitle1,
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 1,
+                        ),
                       ),
                       const Icon(
                         Icons.info_outline,
