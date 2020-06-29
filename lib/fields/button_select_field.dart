@@ -27,10 +27,7 @@ class ButtonSelect<T> extends HookWidget {
   Widget build(BuildContext ctx) {
     final theme = Theme.of(ctx);
     final isDropdown = useState(false);
-    SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
-      print(ctx.size);
-    });
-
+    final checkedShouldBeDropdown = useState(false);
     double buttonTop;
 
     String _asString(T e) => asString == null ? e.toString() : asString(e);
@@ -53,32 +50,41 @@ class ButtonSelect<T> extends HookWidget {
         ),
       );
     }
-    return ButtonBar(
-      alignment: MainAxisAlignment.center,
-      layoutBehavior: ButtonBarLayoutBehavior.constrained,
-      buttonPadding: EdgeInsets.zero,
-      children: options.map((e) {
-        final s = _asString(e);
 
-        return FlatButton(
-          key: Key(s),
-          onPressed: () => onChange(e),
-          color: e == selected ? theme.primaryColor : null,
-          child: Builder(builder: (ctx) {
-            SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
-              print("Text ${ctx.size} ${ctx.globalPaintBounds}");
-              if (buttonTop == null) {
-                buttonTop = ctx.globalPaintBounds.top;
-                return;
-              }
-              if (buttonTop != ctx.globalPaintBounds.top) {
-                isDropdown.value = true;
-              }
-            });
-            return Text(s);
-          }),
-        );
-      }).toList(),
+    return Visibility(
+      // TODO: can be calculate when we need a dropdown?
+      visible: options.length <= 3 || checkedShouldBeDropdown.value,
+      maintainState: true,
+      child: ButtonBar(
+        alignment: MainAxisAlignment.center,
+        layoutBehavior: ButtonBarLayoutBehavior.constrained,
+        buttonPadding: EdgeInsets.zero,
+        children: options.map((e) {
+          final s = _asString(e);
+
+          return FlatButton(
+            key: Key(s),
+            onPressed: () => onChange(e),
+            color: e == selected ? theme.primaryColor : null,
+            child: Builder(builder: (ctx) {
+              SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
+                print("Text ${ctx.size} ${ctx.globalPaintBounds}");
+                if (buttonTop == null) {
+                  buttonTop = ctx.globalPaintBounds.top;
+                  return;
+                }
+                if (!checkedShouldBeDropdown.value) {
+                  if (buttonTop != ctx.globalPaintBounds.top) {
+                    isDropdown.value = true;
+                  }
+                  checkedShouldBeDropdown.value = true;
+                }
+              });
+              return Text(s);
+            }),
+          );
+        }).toList(),
+      ),
     );
   }
 }
