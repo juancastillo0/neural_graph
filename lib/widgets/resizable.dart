@@ -1,5 +1,6 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:styled_widget/styled_widget.dart';
 
 enum ResizeHorizontal { left, right, both }
@@ -68,7 +69,10 @@ class _ResizableState extends State<Resizable> {
         onVerticalDragUpdate: _updateSize(isBottom, false),
         behavior: HitTestBehavior.translucent,
         dragStartBehavior: DragStartBehavior.down,
-        child: widget.handle ?? const Separator(),
+        child: MouseRegion(
+          cursor: SystemMouseCursors.verticalDoubleArrow,
+          child: widget.handle ?? const Separator(),
+        ),
       );
 
       return Column(
@@ -85,7 +89,10 @@ class _ResizableState extends State<Resizable> {
         onHorizontalDragUpdate: _updateSize(isRight, true),
         behavior: HitTestBehavior.translucent,
         dragStartBehavior: DragStartBehavior.down,
-        child: widget.handle ?? const Separator(vertical: true),
+        child: MouseRegion(
+          cursor: SystemMouseCursors.horizontalDoubleArrow,
+          child: widget.handle ?? const Separator(vertical: true),
+        ),
       );
 
       return Row(
