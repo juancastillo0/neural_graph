@@ -1,9 +1,7 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:mobx/mobx.dart';
-import 'package:flutter_hooks/flutter_hooks.dart'
-    show HookWidget, useEffect, useMemoized;
-import 'package:neural_graph/common/hooks.dart';
+import 'package:flutter_hooks/flutter_hooks.dart' show HookWidget, useMemoized;
 import 'package:neural_graph/fields/button_select_field.dart';
 import 'package:neural_graph/fields/form.dart';
 import 'package:neural_graph/fields/shape_field.dart';
@@ -19,10 +17,10 @@ abstract class _Input with Store implements Layer {
   String get layerId => _layerId;
 
   @observable
-  DType dtype;
+  DType dtype = DType.float32;
 
   @observable
-  List<int> shape;
+  List<int> shape = [32];
 
   @override
   //  TODO: implement inputs

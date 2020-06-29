@@ -8,6 +8,7 @@ import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:neural_graph/arrow.dart';
 import 'package:neural_graph/graph_canvas/adding_node_state.dart';
 import 'package:neural_graph/graph_canvas/store_graph_canvas.dart';
+import 'package:neural_graph/layers/layers.dart';
 import 'package:neural_graph/node.dart';
 import 'package:neural_graph/root_store.dart';
 import 'package:neural_graph/widgets/scrollable.dart';
@@ -89,8 +90,11 @@ class CanvasView extends HookWidget {
                 child: DragTarget<String>(
                   onAcceptWithDetails: (details) {
                     final offset = controller.toCanvasOffset(details.offset);
-                    if (details.data == "Convolutional") {
-                      root.createNode(offset);
+                    final constructor = Layer.layerConstructors[details.data];
+                    if (constructor != null) {
+                      root.createNode(offset, constructor());
+                    } else {
+                      logger.e("Wrong layer name ${details.data}");
                     }
                   },
                   builder: (context, candidateData, rejectedData) {

@@ -2,10 +2,12 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
+import 'package:logger/logger.dart';
 import 'package:mobx/mobx.dart';
 import 'package:neural_graph/graph_canvas/adding_node_state.dart';
 import 'package:neural_graph/graph_canvas/store_graph_canvas.dart';
 import 'package:neural_graph/layers/convolutional.dart';
+import 'package:neural_graph/layers/layers.dart';
 import 'package:neural_graph/node.dart';
 
 part 'root_store.g.dart';
@@ -13,6 +15,8 @@ part 'root_store.g.dart';
 class RootStore extends _RootStore with _$RootStore {
   static RootStore get instance => GetIt.instance.get<RootStore>();
 }
+
+final logger = Logger();
 
 final _charsKey =
     'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_-0123456789'
@@ -76,9 +80,9 @@ abstract class _RootStore with Store {
   GraphCanvasStore graphCanvas = GraphCanvasStore();
 
   @action
-  void createNode(Offset offset) {
+  void createNode(Offset offset, Layer layer) {
     final newKey = _generateKey();
-    final newNode = Node(newKey, "", offset.dy, offset.dx, {}, Convolutional());
+    final newNode = Node(newKey, "", offset.dy, offset.dx, {}, layer);
     nodes[newKey] = newNode;
     selectedNode = newNode;
   }
