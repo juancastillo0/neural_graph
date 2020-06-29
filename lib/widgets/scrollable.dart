@@ -82,6 +82,7 @@ class MultiScrollable extends StatefulWidget {
 
 class _MultiScrollableState extends State<MultiScrollable> with RouteAware {
   MultiScrollController controller;
+  double innerWidth;
 
   @override
   void initState() {
@@ -116,17 +117,34 @@ class _MultiScrollableState extends State<MultiScrollable> with RouteAware {
   Widget build(BuildContext context) {
     return Column(
       mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            widget.builder(context, controller).expanded(),
-            ButtonScrollbar(controller: controller.vertical)
-          ],
-        ).expanded(),
-        ButtonScrollbar(
-          controller: controller.horizontal,
-          horizontal: true,
+        Expanded(
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Expanded(
+                child: Builder(builder: (ctx) {
+                  SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
+                    if (ctx.size.width != innerWidth) {
+                      setState(() {
+                        innerWidth = ctx.size.width;
+                      });
+                    }
+                  });
+                  return widget.builder(context, controller);
+                }),
+              ),
+              ButtonScrollbar(controller: controller.vertical)
+            ],
+          ),
+        ),
+        SizedBox(
+          width: innerWidth ?? double.infinity,
+          child: ButtonScrollbar(
+            controller: controller.horizontal,
+            horizontal: true,
+          ),
         ),
       ],
     );
@@ -235,34 +253,21 @@ class MultiScrollbar extends HookWidget {
 
   @override
   Widget build(BuildContext ctx) {
+    useListenable(controller);
     final position = controller.position;
-    final offset = useState(0.0);
-    final maxScrollExtent = useState(position.maxScrollExtent);
+    final offset = controller.offset;
+    final scrollExtent = position.maxScrollExtent + position.viewportDimension;
+
+    // TODO: refactor handle's change of color into a separate widget
     final hovering = useState(false);
     final dragging = useState(false);
-
-    maxScrollExtent.value =
-        position.maxScrollExtent + position.viewportDimension;
-
-    useEffect(() {
-      void _listener() {
-        final position = controller.position;
-        maxScrollExtent.value =
-            position.maxScrollExtent + position.viewportDimension;
-        offset.value = controller.offset;
-      }
-
-      controller.position.addListener(_listener);
-      return () => controller.removeListener(_listener);
-    }, [controller]);
 
     return LayoutBuilder(
       builder: (ctx, box) {
         final maxSize = horizontal ? box.maxWidth : box.maxHeight;
-        final handleSize =
-            maxSize * position.viewportDimension / maxScrollExtent.value;
+        final handleSize = maxSize * position.viewportDimension / scrollExtent;
         final rate = (maxSize - handleSize) / position.maxScrollExtent;
-        final top = rate * offset.value;
+        final top = rate * offset;
 
         return Flex(
           direction: horizontal ? Axis.horizontal : Axis.vertical,
