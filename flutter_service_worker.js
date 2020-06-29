@@ -3,12 +3,12 @@ const MANIFEST = 'flutter-app-manifest';
 const TEMP = 'flutter-temp-cache';
 const CACHE_NAME = 'flutter-app-cache';
 const RESOURCES = {
-  "main.dart.js": "f1a30dec0852a2b8fc1c51f972ba41ba",
+  "main.dart.js": "bc264f46a6d5b298e2d364ba5489ab67",
 "favicon.png": "5dcef449791fa27946b3d35ad8803796",
 "manifest.json": "7fb4abc2f68b85ccf8536cd8408943c5",
 "assets/fonts/MaterialIcons-Regular.ttf": "56d3ffdef7a25659eab6a68a3fbfaf16",
 "assets/FontManifest.json": "01700ba55b08a6141f33e168c4a6c22f",
-"assets/NOTICES": "acf612f8b56b3a3f6c9318799c1543ae",
+"assets/NOTICES": "1590330390510164e4ab6f7c95d2e91c",
 "assets/packages/cupertino_icons/assets/CupertinoIcons.ttf": "115e937bb829a890521f72d2e664b632",
 "assets/AssetManifest.json": "2efbb41d7877d10aac9d091f58ccd7b9",
 "icons/Icon-512.png": "96e752610906ba2a93c65f8abe1645f1",
@@ -128,7 +128,7 @@ self.addEventListener("fetch", (event) => {
 self.addEventListener('message', (event) => {
   // SkipWaiting can be used to immediately activate a waiting service worker.
   // This will also require a page refresh triggered by the main worker.
-  if (event.message == 'skipWaiting') {
+  if (event.data == 'skipWaiting') {
     return self.skipWaiting();
   }
 
