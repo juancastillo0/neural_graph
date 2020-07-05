@@ -17,31 +17,33 @@ class MultiScrollController {
       {ScrollController vertical,
       ScrollController horizontal,
       void Function(double) setScale,
-      @required this.context})
+      @required BuildContext context})
       : vertical = vertical ?? ScrollController(),
         horizontal = horizontal ?? ScrollController(),
-        _setScale = setScale;
+        _setScale = setScale,
+        _context = context;
   final ScrollController vertical;
   final ScrollController horizontal;
-  // TODO: better scale management.
   final void Function(double) _setScale;
-  final BuildContext context;
+  final BuildContext _context;
 
   void onDrag(Offset delta) {
     if (delta.dx != 0) {
       final hp = horizontal.position;
-      final dx =
-          (horizontal.offset - delta.dx).clamp(0, hp.maxScrollExtent) as double;
+      final dx = (horizontal.offset - delta.dx).clamp(0.0, hp.maxScrollExtent)
+          as double;
       horizontal.jumpTo(dx);
     }
 
     if (delta.dy != 0) {
       final vp = vertical.position;
       final dy =
-          (vertical.offset - delta.dy).clamp(0, vp.maxScrollExtent) as double;
+          (vertical.offset - delta.dy).clamp(0.0, vp.maxScrollExtent) as double;
       vertical.jumpTo(dy);
     }
   }
+
+  Rect get globalPaintBounds => _context.globalPaintBounds;
 
   void onScale(double scale) {
     if (_setScale != null) {
@@ -49,16 +51,6 @@ class MultiScrollController {
       horizontal.jumpTo(horizontal.offset + 0.0001);
       vertical.jumpTo(vertical.offset + 0.0001);
     }
-  }
-
-  Offset toCanvasOffset(Offset offset) {
-    final bounds = context.globalPaintBounds;
-    return offset -
-        bounds.topLeft +
-        Offset(
-          horizontal.offset,
-          vertical.offset,
-        );
   }
 
   void dispose() {

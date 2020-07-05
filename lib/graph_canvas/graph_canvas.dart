@@ -18,6 +18,7 @@ class GraphView extends HookWidget {
   @override
   Widget build(BuildContext ctx) {
     final root = useRoot();
+    final graphCanvas = root.graphCanvas;
 
     return Column(
       children: [
@@ -46,16 +47,16 @@ class GraphView extends HookWidget {
                   IconButton(
                     icon: const Icon(Icons.remove_circle_outline),
                     onPressed: () {
-                      root.graphCanvas.scale -= 0.1;
+                      graphCanvas.scale -= 0.1;
                     },
                   ),
                   Text(
-                    root.graphCanvas.scale.toStringAsPrecision(2),
+                    graphCanvas.scale.toStringAsPrecision(2),
                   ),
                   IconButton(
                     icon: const Icon(Icons.add_circle_outline),
                     onPressed: () {
-                      root.graphCanvas.scale += 0.1;
+                      graphCanvas.scale += 0.1;
                     },
                   ),
                 ],
@@ -77,9 +78,13 @@ class CanvasView extends HookWidget {
   @override
   Widget build(BuildContext ctx) {
     final root = useRoot();
+    final graphCanvas = root.graphCanvas;
+
     return MultiScrollable(
       setScale: (s) => root.graphCanvas.scale = s,
       builder: (ctx, controller) {
+        graphCanvas.controller = controller;
+
         return MouseScrollListener(
           controller: controller,
           child: Observer(
@@ -89,7 +94,7 @@ class CanvasView extends HookWidget {
                 allowDrag: !root.isDragging,
                 child: DragTarget<String>(
                   onAcceptWithDetails: (details) {
-                    final offset = controller.toCanvasOffset(details.offset);
+                    final offset = graphCanvas.toCanvasOffset(details.offset);
                     final constructor = Layer.layerConstructors[details.data];
                     if (constructor != null) {
                       root.createNode(offset, constructor());
@@ -104,7 +109,7 @@ class CanvasView extends HookWidget {
                           onHover: root.addingConnection.isNone()
                               ? null
                               : (hoverEvent) {
-                                  root.graphCanvas.mousePosition = controller
+                                  graphCanvas.mousePosition = graphCanvas
                                       .toCanvasOffset(hoverEvent.position);
                                 },
                           child: CustomPaint(
@@ -163,6 +168,8 @@ class CustomScrollGestures extends HookWidget {
         // final fromCenter = prevPoint.value - center;
         void onScaleUpdate(ScaleUpdateDetails d) {
           if (d.scale != 1) {
+            print(d.localFocalPoint);
+            print(graphCanvas.toCanvasOffset(d.localFocalPoint));
             controller.onScale(d.scale);
           } else {
             controller.onDrag(d.localFocalPoint - prevPoint.value);
@@ -170,35 +177,34 @@ class CustomScrollGestures extends HookWidget {
           }
         }
 
-        return Observer(
-          builder: (ctx) {
-            final _height = graphCanvas.size.height * graphCanvas.scale;
-            final _width = graphCanvas.size.width * graphCanvas.scale;
-            return Container(
-              height: max(_height, box.maxHeight),
-              width: max(_width, box.maxWidth),
-              color: Colors.white,
-              child: child
-                  .translate(offset: graphCanvas.translateOffset)
-                  .scale(graphCanvas.scale),
-            );
-          },
-        )
-            .scrollable(
+        return GestureDetector(
+          onScaleStart: (details) => prevPoint.value = details.localFocalPoint,
+          dragStartBehavior: DragStartBehavior.down,
+          onScaleUpdate: allowDrag ? onScaleUpdate : null,
+          child: SingleChildScrollView(
+            controller: controller.horizontal,
+            scrollDirection: Axis.horizontal,
+            physics: const NeverScrollableScrollPhysics(),
+            child: SingleChildScrollView(
               controller: controller.vertical,
               physics: const NeverScrollableScrollPhysics(),
-            )
-            .scrollable(
-              controller: controller.horizontal,
-              scrollDirection: Axis.horizontal,
-              physics: const NeverScrollableScrollPhysics(),
-            )
-            .gestures(
-              onScaleStart: (details) =>
-                  prevPoint.value = details.localFocalPoint,
-              dragStartBehavior: DragStartBehavior.down,
-              onScaleUpdate: allowDrag ? onScaleUpdate : null,
-            );
+              child: Observer(
+                builder: (ctx) {
+                  final _height = graphCanvas.size.height * graphCanvas.scale;
+                  final _width = graphCanvas.size.width * graphCanvas.scale;
+                  return Container(
+                    height: max(_height, box.maxHeight),
+                    width: max(_width, box.maxWidth),
+                    color: Colors.white,
+                    child: child
+                        .translate(offset: graphCanvas.translateOffset)
+                        .scale(graphCanvas.scale),
+                  );
+                },
+              ),
+            ),
+          ),
+        );
       },
     );
   }

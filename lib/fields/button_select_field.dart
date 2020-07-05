@@ -68,7 +68,7 @@ class ButtonSelect<T> extends HookWidget {
             color: e == selected ? theme.primaryColor : null,
             child: Builder(builder: (ctx) {
               SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
-                print("Text ${ctx.size} ${ctx.globalPaintBounds}");
+                // print("Text ${ctx.size} ${ctx.globalPaintBounds}");
                 if (buttonTop == null) {
                   buttonTop = ctx.globalPaintBounds.top;
                   return;
