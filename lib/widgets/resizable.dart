@@ -70,7 +70,7 @@ class _ResizableState extends State<Resizable> {
         behavior: HitTestBehavior.translucent,
         dragStartBehavior: DragStartBehavior.down,
         child: MouseRegion(
-          cursor: SystemMouseCursors.verticalDoubleArrow,
+          cursor: SystemMouseCursors.resizeUpDown,
           child: widget.handle ?? const Separator(),
         ),
       );
@@ -90,7 +90,7 @@ class _ResizableState extends State<Resizable> {
         behavior: HitTestBehavior.translucent,
         dragStartBehavior: DragStartBehavior.down,
         child: MouseRegion(
-          cursor: SystemMouseCursors.horizontalDoubleArrow,
+          cursor: SystemMouseCursors.resizeLeftRight,
           child: widget.handle ?? const Separator(vertical: true),
         ),
       );

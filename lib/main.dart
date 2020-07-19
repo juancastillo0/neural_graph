@@ -102,9 +102,17 @@ class _MyHomePageState extends State<MyHomePage> {
                         child: GraphView(),
                       ),
                       const Resizable(
-                        defaultWidth: 150,
+                        defaultWidth: 200,
                         horizontal: ResizeHorizontal.left,
-                        child: Text("COL2sssss"),
+                        child: Text("ddw"),
+                        // InteractiveViewer(
+                        //   constrained: false,
+                        //   child: Center(
+                        //     child: Image.network(
+                        //       "https://www.woodlandtrust.org.uk/media/3817/ash-tree-overall-tree-blue-skies-alamy-bj7mxm-jeremy-inglis.jpg",
+                        //     ),
+                        //   ),
+                        // )
                       ),
                     ],
                   ),

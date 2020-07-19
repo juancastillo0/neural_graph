@@ -27,6 +27,11 @@ class GraphView extends HookWidget {
           children: [
             Observer(
               builder: (ctx) {
+                return Text(graphCanvas.mousePosition.toString());
+              },
+            ),
+            Observer(
+              builder: (ctx) {
                 final isAdding = !root.addingConnection.isNone();
                 return FlatButton.icon(
                   icon: const Icon(Icons.add_circle_outline),
@@ -106,12 +111,10 @@ class CanvasView extends HookWidget {
                     return Observer(
                       builder: (ctx) {
                         return MouseRegion(
-                          onHover: root.addingConnection.isNone()
-                              ? null
-                              : (hoverEvent) {
-                                  graphCanvas.mousePosition = graphCanvas
-                                      .toCanvasOffset(hoverEvent.position);
-                                },
+                          onHover: (hoverEvent) {
+                            graphCanvas.mousePosition =
+                                graphCanvas.toCanvasOffset(hoverEvent.position);
+                          },
                           child: CustomPaint(
                             painter: ConnectionsPainter(
                               root.nodes,
@@ -159,18 +162,28 @@ class CustomScrollGestures extends HookWidget {
 
   @override
   Widget build(BuildContext ctx) {
-    final prevPoint = useState(const Offset(0, 0));
     final graphCanvas = useRoot().graphCanvas;
+    final prevPoint = useState(const Offset(0, 0));
+    final initScale = useState(graphCanvas.scale);
 
     return LayoutBuilder(
       builder: (ctx, box) {
-        // final center = Offset(box.maxWidth / 2, box.maxHeight / 2);
-        // final fromCenter = prevPoint.value - center;
         void onScaleUpdate(ScaleUpdateDetails d) {
           if (d.scale != 1) {
-            print(d.localFocalPoint);
-            print(graphCanvas.toCanvasOffset(d.localFocalPoint));
-            controller.onScale(d.scale);
+            // print(
+            //     "graphCanvas.toCanvasOffset(d.focalPoint) ${graphCanvas.toCanvasOffset2(d.focalPoint)}");
+            // print(
+            //     "graphCanvas.toCanvasOffset(prevPoint.value) ${graphCanvas.toCanvasOffset2(prevPoint.value)}");
+            final _p = graphCanvas.toCanvasOffset(prevPoint.value);
+            final _prev = graphCanvas.scale;
+            controller.onScale(d.scale * initScale.value);
+            final _p2 = graphCanvas.toCanvasOffset(prevPoint.value);
+            print("$_p $_p2");
+            final center = Offset(box.maxWidth / 2, box.maxHeight / 2);
+            final fromCenter =
+                (prevPoint.value - center) * _prev / graphCanvas.scale;
+            controller.onDrag((_p2 - _p) * graphCanvas.scale);
+            prevPoint.value = d.localFocalPoint;
           } else {
             controller.onDrag(d.localFocalPoint - prevPoint.value);
             prevPoint.value = d.localFocalPoint;
@@ -178,7 +191,10 @@ class CustomScrollGestures extends HookWidget {
         }
 
         return GestureDetector(
-          onScaleStart: (details) => prevPoint.value = details.localFocalPoint,
+          onScaleStart: (details) {
+            initScale.value = graphCanvas.scale;
+            prevPoint.value = details.localFocalPoint;
+          },
           dragStartBehavior: DragStartBehavior.down,
           onScaleUpdate: allowDrag ? onScaleUpdate : null,
           child: SingleChildScrollView(
@@ -190,15 +206,23 @@ class CustomScrollGestures extends HookWidget {
               physics: const NeverScrollableScrollPhysics(),
               child: Observer(
                 builder: (ctx) {
-                  final _height = graphCanvas.size.height * graphCanvas.scale;
-                  final _width = graphCanvas.size.width * graphCanvas.scale;
+                  final multiplier = graphCanvas.scale;
+                  final _height = graphCanvas.size.height * multiplier;
+                  final _width = graphCanvas.size.width * multiplier;
+
                   return Container(
-                    height: max(_height, box.maxHeight),
-                    width: max(_width, box.maxWidth),
-                    color: Colors.white,
-                    child: child
-                        .translate(offset: graphCanvas.translateOffset)
-                        .scale(graphCanvas.scale),
+                    height: _height,
+                    width: _width,
+                    color: Colors.transparent,
+                    child: Stack(
+                      children: [
+                        Positioned.fill(
+                          child: child
+                              .scale(graphCanvas.scale)
+                              .translate(offset: graphCanvas.translateOffset),
+                        ),
+                      ],
+                    ),
                   );
                 },
               ),

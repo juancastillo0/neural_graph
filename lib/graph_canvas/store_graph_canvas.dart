@@ -19,12 +19,18 @@ abstract class _GraphCanvasStore with Store {
   Offset toCanvasOffset(Offset offset) {
     final bounds = controller.globalPaintBounds;
     final _canvasOffset = offset +
-        Offset(
-          controller.horizontal.offset,
-          controller.vertical.offset,
-        ) -
+        controller.offset -
         bounds.topLeft;
     return _canvasOffset / scale;
+  }
+
+  Offset toCanvasOffset2(Offset offset) {
+    final bounds = controller.globalPaintBounds;
+    final ph = controller.horizontal.position;
+    final pv = controller.vertical.position;
+    return offset * scale +
+        controller.offset * scale -
+        bounds.topLeft;
   }
 
   @computed

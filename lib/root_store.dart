@@ -24,7 +24,7 @@ final _charsKey =
 
 abstract class _RootStore with Store {
   _RootStore() {
-    final node1 = Node('1', "conv1", 100, 300, {}, Convolutional());
+    final node1 = Node('1', "conv1", 920, 1420, {}, Convolutional());
     nodes = ObservableMap.of({
       '1': node1,
       '2': Node('2', "conv2", 20, 20, {const NodeRef('1')}, Convolutional()),

@@ -43,13 +43,19 @@ class MultiScrollController {
     }
   }
 
+  Offset get offset => Offset(
+        horizontal.offset,
+        vertical.offset,
+      );
   Rect get globalPaintBounds => _context.globalPaintBounds;
 
   void onScale(double scale) {
     if (_setScale != null) {
       _setScale(scale.clamp(0.4, 2.5) as double);
-      horizontal.jumpTo(horizontal.offset + 0.0001);
-      vertical.jumpTo(vertical.offset + 0.0001);
+      final multiplerH = horizontal.offset <= 0.01 ? 1 : -1;
+      final multiplerV = vertical.offset <= 0.01 ? 1 : -1;
+      horizontal.jumpTo(horizontal.offset + multiplerH * 0.0001);
+      vertical.jumpTo(vertical.offset + multiplerV * 0.0001);
     }
   }
 
