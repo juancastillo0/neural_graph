@@ -22,6 +22,10 @@ jobs:
         uses: subosito/flutter-action@v1
         with:
           channel: "dev"
+      
+      - name: Use Flutter master channel
+        run: flutter channel master
+        run: flutter upgrade
 
       - name: Enable Flutter web
         run: flutter config --enable-web
