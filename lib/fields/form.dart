@@ -15,34 +15,32 @@ class DefaultForm extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Expanded(
-      child: MultiScrollable(
-        builder: (ctx, controller) {
-          final theme = Theme.of(ctx);
-          return SingleChildScrollView(
-            controller: controller.vertical,
-            child: Theme(
-              data: theme.copyWith(
-                  inputDecorationTheme: const InputDecorationTheme(
-                isDense: true,
-                // contentPadding: EdgeInsets.only(top: 3, bottom: 3, left: 10),
-                labelStyle: TextStyle(fontSize: 18),
-              )),
-              child: DefaultTextStyle(
-                style: theme.textTheme.bodyText1.copyWith(fontSize: 16),
-                child: Padding(
-                  padding: const EdgeInsets.only(bottom: 8.0),
-                  child: FocusTraversalGroup(
-                    child: Form(
-                      child: child,
-                    ),
+    return MultiScrollable(
+      builder: (ctx, controller) {
+        final theme = Theme.of(ctx);
+        return SingleChildScrollView(
+          controller: controller.vertical,
+          child: Theme(
+            data: theme.copyWith(
+                inputDecorationTheme: const InputDecorationTheme(
+              isDense: true,
+              // contentPadding: EdgeInsets.only(top: 3, bottom: 3, left: 10),
+              labelStyle: TextStyle(fontSize: 18),
+            )),
+            child: DefaultTextStyle(
+              style: theme.textTheme.bodyText1.copyWith(fontSize: 16),
+              child: Padding(
+                padding: const EdgeInsets.only(bottom: 8.0),
+                child: FocusTraversalGroup(
+                  child: Form(
+                    child: child,
                   ),
                 ),
               ),
             ),
-          );
-        },
-      ),
+          ),
+        );
+      },
     );
   }
 }

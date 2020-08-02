@@ -183,7 +183,9 @@ class PropertiesView extends HookWidget {
                 )
               ],
             ),
-            root.selectedNode.data.form()
+            Expanded(
+              child: root.selectedNode.data.form(),
+            )
           ],
         );
       },
