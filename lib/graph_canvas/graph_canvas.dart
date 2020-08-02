@@ -86,66 +86,73 @@ class CanvasView extends HookWidget {
     final graphCanvas = root.graphCanvas;
 
     return MultiScrollable(
-      setScale: (s) => root.graphCanvas.scale = s,
-      builder: (ctx, controller) {
-        graphCanvas.controller = controller;
+        setScale: (s) => root.graphCanvas.scale = s,
+        builder: (ctx, controller) {
+          graphCanvas.controller = controller;
 
-        return MouseScrollListener(
-          controller: controller,
-          child: Observer(
-            builder: (ctx) {
+          return MouseScrollListener(
+            controller: controller,
+            child: Observer(builder: (ctx) {
               return CustomScrollGestures(
                 controller: controller,
                 allowDrag: !root.isDragging,
-                child: DragTarget<String>(
-                  onAcceptWithDetails: (details) {
-                    final offset = graphCanvas.toCanvasOffset(details.offset);
-                    final constructor = Layer.layerConstructors[details.data];
-                    if (constructor != null) {
-                      root.createNode(offset, constructor());
-                    } else {
-                      logger.e("Wrong layer name ${details.data}");
-                    }
-                  },
-                  builder: (context, candidateData, rejectedData) {
-                    return Observer(
-                      builder: (ctx) {
-                        return MouseRegion(
-                          onHover: (hoverEvent) {
-                            graphCanvas.mousePosition =
-                                graphCanvas.toCanvasOffset(hoverEvent.position);
-                          },
-                          child: CustomPaint(
-                            painter: ConnectionsPainter(
-                              root.nodes,
-                              root.addingConnection,
-                              root.graphCanvas.mousePosition,
-                            ),
-                            child: Observer(
-                              key: const Key("nodes"),
-                              builder: (ctx) => Stack(
-                                children: root.nodes.entries.map(
-                                  (e) {
-                                    return NodeView(
-                                      node: e.value,
-                                      key: Key(e.key.toString()),
-                                    );
-                                  },
-                                ).toList(),
+                child: Observer(
+                  builder: (context) => SizedBox(
+                    width: graphCanvas.size.width,
+                    height: graphCanvas.size.height,
+                    child: DragTarget<String>(
+                      onAcceptWithDetails: (details) {
+                        final offset =
+                            graphCanvas.toCanvasOffset(details.offset);
+                        final constructor =
+                            Layer.layerConstructors[details.data];
+                        if (constructor != null) {
+                          root.createNode(offset, constructor());
+                        } else {
+                          logger.e("Wrong layer name ${details.data}");
+                        }
+                      },
+                      builder: (context, candidateData, rejectedData) {
+                        return Observer(
+                          builder: (ctx) {
+                            return MouseRegion(
+                              onHover: root.addingConnection.isAddedInput()
+                                  ? (hoverEvent) {
+                                      graphCanvas.mousePosition = graphCanvas
+                                          .toCanvasOffset(hoverEvent.position);
+                                    }
+                                  : null,
+                              child: CustomPaint(
+                                painter: ConnectionsPainter(
+                                  root.nodes,
+                                  root.addingConnection,
+                                  root.graphCanvas.mousePosition,
+                                ),
+                                child: Observer(
+                                  key: const Key("nodes"),
+                                  builder: (ctx) => Stack(
+                                    children: root.nodes.entries.map(
+                                      (e) {
+                                        return NodeView(
+                                          node: e.value,
+                                          key: Key(e.key.toString()),
+                                        );
+                                      },
+                                    ).toList(),
+                                  ),
+                                ),
                               ),
-                            ),
-                          ),
+                            );
+                          },
                         );
                       },
-                    );
-                  },
+                    ),
+                  ),
                 ),
               );
-            },
-          ),
-        );
-      },
-    );
+            }),
+          );
+        });
   }
 }
 
@@ -210,18 +217,20 @@ class CustomScrollGestures extends HookWidget {
                   final _height = graphCanvas.size.height * multiplier;
                   final _width = graphCanvas.size.width * multiplier;
 
-                  return Container(
+                  return SizedBox(
                     height: _height,
                     width: _width,
-                    color: Colors.transparent,
-                    child: Stack(
-                      children: [
-                        Positioned.fill(
-                          child: child
-                              .scale(graphCanvas.scale)
-                              .translate(offset: graphCanvas.translateOffset),
-                        ),
-                      ],
+                    child: ClipRect(
+                      child: OverflowBox(
+                        alignment: Alignment.topLeft,
+                        minWidth: 0.0,
+                        minHeight: 0.0,
+                        maxWidth: double.infinity,
+                        maxHeight: double.infinity,
+                        child: child
+                            .scale(graphCanvas.scale)
+                            .translate(offset: graphCanvas.translateOffset),
+                      ),
                     ),
                   );
                 },

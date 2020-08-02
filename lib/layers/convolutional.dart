@@ -53,7 +53,8 @@ abstract class _Convolutional with Store implements Layer {
 
   @override
   Widget form([Key key]) => DefaultForm(
-        child: ConvolutionalForm(key: key, state: this as Convolutional),
+        key: key,
+        child: ConvolutionalForm(state: this as Convolutional),
       );
 }
 
@@ -201,8 +202,9 @@ class ConvolutionalForm extends HookWidget {
                   BlacklistingTextInputFormatter.singleLineFormatter,
                 ],
                 controller: fields.depthMultiplier.controller,
-                keyboardType:
-                    const TextInputType.numberWithOptions(decimal: true),
+                keyboardType: const TextInputType.numberWithOptions(
+                  decimal: true,
+                ),
               ),
             ),
         ],

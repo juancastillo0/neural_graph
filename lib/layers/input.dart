@@ -32,7 +32,8 @@ abstract class _Input with Store implements Layer {
 
   @override
   Widget form([Key key]) => DefaultForm(
-        child: InputForm(key: key, state: this as Input),
+        key: key,
+        child: InputForm(state: this as Input),
       );
 }
 
