@@ -55,12 +55,12 @@ class FormFieldValue<T> {
   T get value => _getValue();
   set value(T newValue) => _setValue(newValue);
 
-  FormFieldValue(
-      {@required T Function() getValue,
-      @required Function(T) setValue,
-      FocusNode focusNode,
-      TextEditingController controller})
-      : controller = controller ?? TextEditingController(),
+  FormFieldValue({
+    @required T Function() getValue,
+    @required Function(T) setValue,
+    FocusNode focusNode,
+    TextEditingController controller,
+  })  : controller = controller ?? TextEditingController(),
         focusNode = focusNode ?? FocusNode(),
         _getValue = getValue,
         _setValue = setValue;
