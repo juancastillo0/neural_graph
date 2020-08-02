@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:neural_graph/node.dart';
 import 'package:neural_graph/widgets/resizable.dart';
 import 'package:neural_graph/widgets/scrollable.dart';
 
@@ -127,7 +128,7 @@ class _ListSection extends HookWidget {
         const SizedBox(height: 6),
         AnimatedContainer(
           duration: const Duration(milliseconds: 200),
-          curve: Curves.easeInCubic,
+          curve: Curves.easeOutCubic,
           height: open.value ? e.value.length * 35.0 + 10 : 0,
           child: ListView.builder(
             physics: const NeverScrollableScrollPhysics(),
@@ -138,9 +139,9 @@ class _ListSection extends HookWidget {
               final text = e.value[index];
               return Draggable<String>(
                 data: text,
-                feedback: Container(
-                  height: 35,
-                  color: Colors.white,
+                dragAnchor: DragAnchor.pointer,
+                feedback: NodeContainer(
+                  isSelected: true,
                   child: Center(
                     child: Text(
                       text,

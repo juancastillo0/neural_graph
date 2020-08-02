@@ -109,7 +109,7 @@ class CanvasView extends HookWidget {
                         if (constructor != null) {
                           root.createNode(offset, constructor());
                         } else {
-                          logger.e("Wrong layer name ${details.data}");
+                          log.e("Wrong layer name ${details.data}");
                         }
                       },
                       builder: (context, candidateData, rejectedData) {

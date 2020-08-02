@@ -16,7 +16,7 @@ class RootStore extends _RootStore with _$RootStore {
   static RootStore get instance => GetIt.instance.get<RootStore>();
 }
 
-final logger = Logger();
+final log = Logger();
 
 final _charsKey =
     'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_-0123456789'

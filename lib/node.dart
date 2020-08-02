@@ -103,23 +103,8 @@ class NodeView extends hooks.HookWidget {
                 }
               },
               onPanUpdate: node.move,
-              child: Container(
-                padding: _nodeEdgeInsets,
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: _nodeBorderRadius,
-                  boxShadow: [
-                    BoxShadow(
-                      blurRadius: 1,
-                      spreadRadius: 0.5,
-                      color: root.selectedNode == node
-                          ? Colors.blue[900]
-                          : Colors.black26,
-                      offset: const Offset(0, 1),
-                    ),
-                  ],
-                  border: Border.all(),
-                ),
+              child: NodeContainer(
+                isSelected: root.selectedNode == node,
                 child: LayoutBuilder(
                   builder: (ctx, box) {
                     SchedulerBinding.instance.addPostFrameCallback(
@@ -135,6 +120,38 @@ class NodeView extends hooks.HookWidget {
           ),
         );
       },
+    );
+  }
+}
+
+class NodeContainer extends StatelessWidget {
+  const NodeContainer({
+    Key key,
+    @required this.isSelected,
+    @required this.child,
+  }) : super(key: key);
+
+  final bool isSelected;
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: _nodeEdgeInsets,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: _nodeBorderRadius,
+        boxShadow: [
+          BoxShadow(
+            blurRadius: 1,
+            spreadRadius: 0.5,
+            color: isSelected ? Colors.blue[900] : Colors.black26,
+            offset: const Offset(0, 1),
+          ),
+        ],
+        border: Border.all(),
+      ),
+      child: child,
     );
   }
 }
