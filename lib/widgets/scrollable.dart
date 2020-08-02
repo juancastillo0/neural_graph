@@ -81,6 +81,7 @@ class MultiScrollable extends StatefulWidget {
 class _MultiScrollableState extends State<MultiScrollable> with RouteAware {
   MultiScrollController controller;
   double innerWidth;
+  double innerHeight;
 
   @override
   void initState() {
@@ -113,6 +114,8 @@ class _MultiScrollableState extends State<MultiScrollable> with RouteAware {
 
   @override
   Widget build(BuildContext context) {
+    final child = widget.builder(context, controller);
+
     return Column(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -122,27 +125,32 @@ class _MultiScrollableState extends State<MultiScrollable> with RouteAware {
             mainAxisSize: MainAxisSize.min,
             children: [
               Expanded(
-                child: Builder(builder: (ctx) {
-                  SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
-                    if (ctx.size.width != innerWidth) {
-                      setState(() {
-                        innerWidth = ctx.size.width;
-                      });
-                    }
-                  });
-                  return widget.builder(context, controller);
-                }),
+                child: LayoutBuilder(
+                  builder: (context, box) {
+                    SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
+                      if (innerWidth != box.maxWidth ||
+                          innerHeight != box.maxHeight) {
+                        setState(() {
+                          innerWidth = box.maxWidth;
+                          innerHeight = box.maxHeight;
+                        });
+                      }
+                    });
+                    return child;
+                  },
+                ),
               ),
-              ButtonScrollbar(controller: controller.vertical)
+              ButtonScrollbar(
+                controller: controller.vertical,
+                maxSize: innerHeight,
+              ),
             ],
           ),
         ),
-        SizedBox(
-          width: innerWidth ?? double.infinity,
-          child: ButtonScrollbar(
-            controller: controller.horizontal,
-            horizontal: true,
-          ),
+        ButtonScrollbar(
+          controller: controller.horizontal,
+          horizontal: true,
+          maxSize: innerWidth,
         ),
       ],
     );
@@ -153,11 +161,13 @@ class ButtonScrollbar extends HookWidget {
   const ButtonScrollbar({
     Key key,
     @required this.controller,
+    @required this.maxSize,
     this.horizontal = false,
   }) : super(key: key);
 
   final ScrollController controller;
   final bool horizontal;
+  final double maxSize;
 
   void onPressedScrollButtonStart() {
     controller.jumpTo(max(controller.offset - 20, 0));
@@ -173,7 +183,8 @@ class ButtonScrollbar extends HookWidget {
   Widget build(BuildContext context) {
     final isPressedButton = useState(false);
     if (!controller.hasClients ||
-        controller.position?.viewportDimension == null) {
+        controller.position?.viewportDimension == null ||
+        controller.position.viewportDimension < maxSize) {
       return const SizedBox(width: 0, height: 0);
     }
 
@@ -210,10 +221,12 @@ class ButtonScrollbar extends HookWidget {
           child: Icon(horizontal ? Icons.arrow_left : Icons.arrow_drop_up),
         ).constrained(maxHeight: _iconSize, maxWidth: _iconSize),
       ),
-      MultiScrollbar(
-        controller: controller,
-        horizontal: horizontal,
-      ).expanded(),
+      Expanded(
+        child: MultiScrollbar(
+          controller: controller,
+          horizontal: horizontal,
+        ),
+      ),
       GestureDetector(
         onLongPressStart: onLongPressStartForward,
         onLongPressEnd: (details) => isPressedButton.value = false,
@@ -228,11 +241,12 @@ class ButtonScrollbar extends HookWidget {
     return ConstrainedBox(
       constraints: BoxConstraints.loose(
         horizontal
-            ? const Size(double.infinity, _iconSize)
-            : const Size(_iconSize, double.infinity),
+            ? Size(maxSize ?? double.infinity, _iconSize)
+            : Size(_iconSize, maxSize ?? double.infinity),
       ),
       child: Flex(
         direction: horizontal ? Axis.horizontal : Axis.vertical,
+        mainAxisSize: MainAxisSize.min,
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: children,
       ),
