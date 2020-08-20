@@ -21,7 +21,6 @@ abstract class Layer {
   bool isValidInput(Tensor input);
 }
 
-
 class LayerInputType {}
 
 class Tensor {
@@ -56,7 +55,7 @@ bool deepEqualList<T>(List<T> l1, List<T> l2) {
       );
 }
 
-enum DType { int32, int64, float32, float64, boolean, string } 
+enum DType { int32, int64, float32, float64, boolean, string }
 
 enum Activation { int32, int64, float32, float64, boolean, string }
 

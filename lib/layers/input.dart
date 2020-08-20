@@ -13,7 +13,7 @@ part 'input.g.dart';
 class Input = _Input with _$Input;
 
 abstract class _Input extends Layer with Store {
-  _Input(Node node): super(node);
+  _Input(Node node) : super(node);
 
   static const String _layerId = "Input";
   @override
