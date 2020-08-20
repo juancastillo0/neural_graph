@@ -85,10 +85,11 @@ TableRow tableRow({
         padding: const EdgeInsets.symmetric(horizontal: 20),
         child: Text(name),
       ),
-      Tooltip(
-        message: description,
+      IconButton(
+        onPressed: () {},
+        tooltip: description,
         padding: const EdgeInsets.symmetric(horizontal: 5),
-        child: const Icon(Icons.info_outline),
+        icon: const Icon(Icons.info_outline),
       ),
       Align(
         alignment: Alignment.centerLeft,
