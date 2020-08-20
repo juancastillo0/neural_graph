@@ -50,7 +50,8 @@ abstract class _Node with Store {
     }
   }
 
-  _Node(this.key, this.name, this.top, this.left, this.inputs, Layer Function(Node) dataBuilder){
+  _Node(this.key, this.name, this.top, this.left, this.inputs,
+      Layer Function(Node) dataBuilder) {
     data = dataBuilder(this as Node);
   }
 }

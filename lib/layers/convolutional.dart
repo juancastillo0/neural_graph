@@ -29,8 +29,8 @@ extension on ConvDimensions {
 class Convolutional = _Convolutional with _$Convolutional;
 
 @FormGen(allRequired: true)
-abstract class _Convolutional extends Layer with Store  {
-  _Convolutional(Node node): super(node);
+abstract class _Convolutional extends Layer with Store {
+  _Convolutional(Node node) : super(node);
 
   static const String _layerId = "Convolutional";
   @override
