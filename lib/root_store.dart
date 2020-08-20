@@ -24,10 +24,12 @@ final _charsKey =
 
 abstract class _RootStore with Store {
   _RootStore() {
-    final node1 = Node('1', "conv1", 920, 1420, {}, Convolutional());
+    final node1 = Node(
+        '1', "conv1", 920, 1420, ObservableSet.of({}), (n) => Convolutional(n));
     nodes = ObservableMap.of({
       '1': node1,
-      '2': Node('2', "conv2", 20, 20, {const NodeRef('1')}, Convolutional()),
+      '2': Node('2', "conv2", 20, 20, ObservableSet.of({const NodeRef('1')}),
+          (n) => Convolutional(n)),
     });
     selectedNode = node1;
   }
@@ -80,9 +82,10 @@ abstract class _RootStore with Store {
   GraphCanvasStore graphCanvas = GraphCanvasStore();
 
   @action
-  void createNode(Offset offset, Layer layer) {
+  void createNode(Offset offset, Layer Function(Node) layer) {
     final newKey = _generateKey();
-    final newNode = Node(newKey, "", offset.dy, offset.dx, {}, layer);
+    final newNode =
+        Node(newKey, "", offset.dy, offset.dx, ObservableSet.of({}), layer);
     nodes[newKey] = newNode;
     selectedNode = newNode;
   }

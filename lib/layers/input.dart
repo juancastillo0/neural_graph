@@ -6,12 +6,15 @@ import 'package:neural_graph/fields/button_select_field.dart';
 import 'package:neural_graph/fields/form.dart';
 import 'package:neural_graph/fields/shape_field.dart';
 import 'package:neural_graph/layers/layers.dart';
+import 'package:neural_graph/node.dart';
 
 part 'input.g.dart';
 
 class Input = _Input with _$Input;
 
-abstract class _Input with Store implements Layer {
+abstract class _Input extends Layer with Store {
+  _Input(Node node): super(node);
+
   static const String _layerId = "Input";
   @override
   String get layerId => _layerId;
@@ -22,13 +25,14 @@ abstract class _Input with Store implements Layer {
   @observable
   List<int> shape = [32];
 
-  @override
-  //  TODO: implement inputs
-  Layer get inputs => throw UnimplementedError();
+  @computed
+  Tensor get tensor => Tensor(dtype, shape);
 
   @override
-  // TODO: implement outputs
-  Layer get outputs => throw UnimplementedError();
+  Tensor output(Tensor _input) => tensor;
+
+  @override
+  bool isValidInput(Tensor _input) => true;
 
   @override
   Widget form([Key key]) => DefaultForm(

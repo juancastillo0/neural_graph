@@ -120,7 +120,7 @@ mixin _$RootStore on _RootStore, Store {
   }
 
   @override
-  void createNode(Offset offset, Layer layer) {
+  void createNode(Offset offset, Layer Function(Node) layer) {
     final _$actionInfo =
         _$_RootStoreActionController.startAction(name: '_RootStore.createNode');
     try {

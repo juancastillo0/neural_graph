@@ -8,23 +8,36 @@ import 'package:mobx/mobx.dart';
 import 'package:neural_graph/fields/button_select_field.dart';
 import 'package:neural_graph/fields/form.dart';
 import 'package:neural_graph/fields/shape_field.dart';
+import 'package:neural_graph/layers/codegen_helper.dart';
 import 'package:neural_graph/layers/layers.dart';
+import 'package:neural_graph/node.dart';
 
 part 'convolutional.g.dart';
 
 enum ConvPadding { same, valid, causal }
-enum ConvDimension { one, two, three }
+
+extension on ConvPadding {
+  String toEnumString() => toString().split(".")[1];
+}
+
+enum ConvDimensions { one, two, three }
+
+extension on ConvDimensions {
+  int toInt() => index + 1;
+}
 
 class Convolutional = _Convolutional with _$Convolutional;
 
 @FormGen(allRequired: true)
-abstract class _Convolutional with Store implements Layer {
+abstract class _Convolutional extends Layer with Store  {
+  _Convolutional(Node node): super(node);
+
   static const String _layerId = "Convolutional";
   @override
   String get layerId => _layerId;
 
   @observable
-  ConvDimension dimensions = ConvDimension.two;
+  ConvDimensions dimensions = ConvDimensions.two;
   @observable
   bool useBias = true;
   @observable
@@ -43,13 +56,65 @@ abstract class _Convolutional with Store implements Layer {
   @observable
   bool separable = false;
 
-  @override
-  // TODO: implement inputs
-  Layer get inputs => throw UnimplementedError();
+  int get outputRank => dimensions.index + 1 + 2;
+
+  int strideAt(int index) => strides.length == 1 ? strides[0] : strides[index];
+  int dilationRateAt(int index) =>
+      dilationRate.length == 1 ? dilationRate[0] : dilationRate[index];
 
   @override
-  // TODO: implement outputs
-  Layer get outputs => throw UnimplementedError();
+  bool isValidInput(Tensor input) {
+    return input.dtype.isNumber && outputRank == input.rank;
+  }
+
+  @override
+  Tensor output(Tensor input) {
+    return Tensor(
+      input.dtype,
+      [input.shape[0], ..._innerShape(input.shape), filters],
+    );
+  }
+
+  Iterable<int> _innerShape(List<int> input) {
+    int index = 1;
+    return input.getRange(1, input.length - 1).map(
+          (e) => ((padding == ConvPadding.same ? e : e - 1) /
+                  strideAt(index) *
+                  dilationRateAt(index++))
+              .floor(),
+        );
+  }
+
+  String code(CodeGenHelper helper) {
+    String _layerType = "";
+    if (separable) {
+      _layerType += "separableConv";
+    } else {
+      _layerType += "conv";
+    }
+
+    _layerType += "${dimensions.toInt().toString()}d";
+    _layerType = helper.layerTypeName(_layerType);
+    final sep = helper.sep;
+    final _separableString = separable
+        ? '${helper.argName("depthMultiplier")}$sep $depthMultiplier'
+        : '';
+
+    // ignore: leading_newlines_in_multiline_strings
+    return """$_layerType(
+	  ${helper.layerName(node.name)}
+	  filters$sep $filters,
+    ${helper.argName('kernelSize')}$sep ${helper.firstOrList(kernelSize)},
+    padding$sep ${padding.toEnumString()},
+    strides$sep ${helper.firstOrList(strides)},
+    ${helper.argName('useBias')}$sep ${helper.printBool(useBias)},
+    ${helper.argName('dilationRate')}$sep ${helper.firstOrList(dilationRate)},
+    [%=c.setActivation()%]
+    $_separableString,
+${helper.closeArgs()});
+[%=c.applyOne()%]
+""";
+  }
 
   @override
   Widget form([Key key]) => DefaultForm(
@@ -123,8 +188,8 @@ class ConvolutionalForm extends HookWidget {
             name: "Dimensions",
             description: "Number of dimension in the input tensor",
             field: Observer(builder: (context) {
-              return ButtonSelect<ConvDimension>(
-                options: ConvDimension.values,
+              return ButtonSelect<ConvDimensions>(
+                options: ConvDimensions.values,
                 selected: state.dimensions,
                 asString: enumToString,
                 onChange: (v) => state.dimensions = v,
@@ -153,7 +218,7 @@ class ConvolutionalForm extends HookWidget {
           ),
           tableRow(
             name: "Strides",
-            description: "",
+            description: "List of number of omited rows/cols in each dimension",
             field: ShapeField(
               field: fields.strides,
               dimensions: state.dimensions.index,

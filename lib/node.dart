@@ -22,7 +22,8 @@ abstract class _Node with Store {
   @observable
   double left;
 
-  Set<NodeRef> inputs;
+  @observable
+  ObservableSet<NodeRef> inputs;
   @observable
   double width = 0;
   @observable
@@ -49,7 +50,9 @@ abstract class _Node with Store {
     }
   }
 
-  _Node(this.key, this.name, this.top, this.left, this.inputs, this.data);
+  _Node(this.key, this.name, this.top, this.left, this.inputs, Layer Function(Node) dataBuilder){
+    data = dataBuilder(this as Node);
+  }
 }
 
 class NodeRef {

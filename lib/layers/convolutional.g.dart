@@ -18,13 +18,13 @@ mixin _$Convolutional on _Convolutional, Store {
   final _$dimensionsAtom = Atom(name: '_Convolutional.dimensions');
 
   @override
-  ConvDimension get dimensions {
+  ConvDimensions get dimensions {
     _$dimensionsAtom.reportRead();
     return super.dimensions;
   }
 
   @override
-  set dimensions(ConvDimension value) {
+  set dimensions(ConvDimensions value) {
     _$dimensionsAtom.reportWrite(value, super.dimensions, () {
       super.dimensions = value;
     });
