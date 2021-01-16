@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:neural_graph/node.dart';
+import 'package:neural_graph/diagram/node.dart';
 import 'package:neural_graph/widgets/resizable.dart';
 import 'package:neural_graph/widgets/scrollable.dart';
 
@@ -61,22 +61,28 @@ class LayersMenu extends HookWidget {
           ),
         ),
         Expanded(
-          child: MultiScrollable(
-            builder: (ctx, controller) {
-              final firstSection = _menuMap.keys.first;
-              return ListView(
-                controller: controller.vertical,
-                padding: const EdgeInsets.only(bottom: 15),
-                shrinkWrap: true,
-                children: _menuMap.entries.map((e) {
-                  return _ListSection(
-                    firstSection: firstSection,
-                    textTheme: textTheme,
-                    e: e,
+          child: Scrollbar(
+            thickness: 10,
+            isAlwaysShown: true,
+            child: Padding(
+              padding: const EdgeInsets.only(right: 16.0),
+              child: Builder(
+                builder: (context) {
+                  final firstSection = _menuMap.keys.first;
+                  return ListView(
+                    padding: const EdgeInsets.only(bottom: 15),
+                    shrinkWrap: true,
+                    children: _menuMap.entries.map((e) {
+                      return _ListSection(
+                        firstSection: firstSection,
+                        textTheme: textTheme,
+                        e: e,
+                      );
+                    }).toList(),
                   );
-                }).toList(),
-              );
-            },
+                },
+              ),
+            ),
           ),
         ),
       ],
@@ -100,6 +106,7 @@ class _ListSection extends HookWidget {
   Widget build(BuildContext context) {
     final open = useState(true);
     return Column(
+      mainAxisSize: MainAxisSize.min,
       children: [
         Separator(
           size: 20,

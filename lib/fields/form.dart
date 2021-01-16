@@ -1,11 +1,11 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:neural_graph/widgets/scrollable.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 
 String enumToString(dynamic d) => d.toString().split(".")[1];
 
-class DefaultForm extends StatelessWidget {
+class DefaultForm extends HookWidget {
   const DefaultForm({
     Key key,
     this.child,
@@ -15,32 +15,68 @@ class DefaultForm extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MultiScrollable(
-      builder: (ctx, controller) {
-        final theme = Theme.of(ctx);
-        return SingleChildScrollView(
-          controller: controller.vertical,
-          child: Theme(
-            data: theme.copyWith(
-                inputDecorationTheme: const InputDecorationTheme(
-              isDense: true,
-              // contentPadding: EdgeInsets.only(top: 3, bottom: 3, left: 10),
-              labelStyle: TextStyle(fontSize: 18),
-            )),
-            child: DefaultTextStyle(
-              style: theme.textTheme.bodyText1.copyWith(fontSize: 16),
-              child: Padding(
-                padding: const EdgeInsets.only(bottom: 8.0),
-                child: FocusTraversalGroup(
-                  child: Form(
-                    child: child,
+    final controller = useMemoized(() => ScrollController());
+    return Scrollbar(
+      isAlwaysShown: true,
+      controller: controller,
+      thickness: 10,
+      child: Padding(
+        padding: const EdgeInsets.only(right: 10.0),
+        child: Builder(
+          builder: (context) {
+            final theme = Theme.of(context);
+            return SingleChildScrollView(
+              controller: controller,
+              child: Theme(
+                data: theme.copyWith(
+                    inputDecorationTheme: const InputDecorationTheme(
+                  isDense: true,
+                  // contentPadding: EdgeInsets.only(top: 3, bottom: 3, left: 10),
+                  labelStyle: TextStyle(fontSize: 18),
+                )),
+                child: DefaultTextStyle(
+                  style: theme.textTheme.bodyText1.copyWith(fontSize: 16),
+                  child: Padding(
+                    padding: const EdgeInsets.only(bottom: 8.0),
+                    child: FocusTraversalGroup(
+                      child: Form(
+                        child: child,
+                      ),
+                    ),
                   ),
                 ),
               ),
-            ),
-          ),
-        );
+            );
+          },
+        ),
+      ),
+    );
+  }
+}
+
+class DefaultFormTable extends StatelessWidget {
+  final List<TableRow> children;
+
+  const DefaultFormTable({
+    Key key,
+    @required this.children,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Table(
+      border: TableBorder.symmetric(
+        inside: const BorderSide(
+          width: 10,
+          style: BorderStyle.none,
+        ),
+      ),
+      columnWidths: const {
+        0: IntrinsicColumnWidth(),
+        1: FixedColumnWidth(40),
       },
+      defaultVerticalAlignment: TableCellVerticalAlignment.middle,
+      children: children,
     );
   }
 }
@@ -49,21 +85,19 @@ class FormFieldValue<T> {
   final TextEditingController controller;
   final FocusNode focusNode;
   String error;
-  final T Function() _getValue;
-  final Function(T) _setValue;
+  final T Function() get;
+  final Function(T) set;
 
-  T get value => _getValue();
-  set value(T newValue) => _setValue(newValue);
+  T get value => get();
+  set value(T newValue) => set(newValue);
 
   FormFieldValue({
-    @required T Function() getValue,
-    @required Function(T) setValue,
+    @required this.get,
+    @required this.set,
     FocusNode focusNode,
     TextEditingController controller,
   })  : controller = controller ?? TextEditingController(),
-        focusNode = focusNode ?? FocusNode(),
-        _getValue = getValue,
-        _setValue = setValue;
+        focusNode = focusNode ?? FocusNode();
 
   void dispose() {
     focusNode.dispose();
