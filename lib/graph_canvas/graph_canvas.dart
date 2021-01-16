@@ -1,25 +1,34 @@
 import 'dart:math';
 
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:neural_graph/arrow.dart';
+import 'package:neural_graph/diagram/graph.dart';
 import 'package:neural_graph/graph_canvas/adding_node_state.dart';
-import 'package:neural_graph/graph_canvas/store_graph_canvas.dart';
 import 'package:neural_graph/layers/layers.dart';
-import 'package:neural_graph/node.dart';
+import 'package:neural_graph/diagram/node.dart';
 import 'package:neural_graph/root_store.dart';
+import 'package:neural_graph/widgets/gesture_listener.dart';
 import 'package:neural_graph/widgets/scrollable.dart';
 import 'package:neural_graph/widgets/scrollable_extended.dart';
-import 'package:styled_widget/styled_widget.dart';
+import 'package:touchable/touchable.dart';
 
 class GraphView extends HookWidget {
   @override
-  Widget build(BuildContext ctx) {
+  Widget build(BuildContext context) {
     final root = useRoot();
-    final graphCanvas = root.graphCanvas;
+    final graph = root.selectedGraph;
+    final graphCanvas = graph.graphCanvas;
+
+    useEffect(
+      () => GlobalKeyboardListener.keyboardStream.listen((event) {
+        if (event.isKeyPressed(LogicalKeyboardKey.escape)) {
+          graph.deleteSelected();
+        }
+      }).cancel,
+    );
 
     return Column(
       children: [
@@ -27,26 +36,29 @@ class GraphView extends HookWidget {
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
             Observer(
-              builder: (ctx) {
+              builder: (context) {
                 return Text(graphCanvas.mousePosition.toString());
               },
             ),
             Observer(
-              builder: (ctx) {
-                final isAdding = !root.addingConnection.isNone();
+              builder: (context) {
+                final addingConnection = graph.addingConnection;
+                final isAdding = !addingConnection.isNone();
                 return FlatButton.icon(
                   icon: const Icon(Icons.add_circle_outline),
-                  onPressed: isAdding
-                      ? () => root.addingConnection =
-                          const AddingConnectionState.none()
-                      : root.startAddingConnection,
+                  // onPressed: isAdding
+                  //     ? () {
+                  //         // graph.addingConnection =
+                  //         //     const AddingConnectionState.none();
+                  //       }
+                  //     : graph.startAddingConnection,
                   color: isAdding ? Colors.black12 : null,
                   label: const Text("Connection"),
                 );
               },
             ),
             Observer(
-              builder: (ctx) => Row(
+              builder: (context) => Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   const Text("Scale: "),
@@ -70,8 +82,8 @@ class GraphView extends HookWidget {
             ),
           ],
         ),
-        const Expanded(
-          child: CanvasView(),
+        Expanded(
+          child: CanvasView(graph: graph),
         ),
       ],
     );
@@ -79,80 +91,125 @@ class GraphView extends HookWidget {
 }
 
 class CanvasView extends HookWidget {
-  const CanvasView({Key key}) : super(key: key);
+  const CanvasView({Key key, @required this.graph}) : super(key: key);
+  final Graph graph;
 
   @override
-  Widget build(BuildContext ctx) {
-    final root = useRoot();
-    final graphCanvas = root.graphCanvas;
+  Widget build(BuildContext context) {
+    final graphCanvas = graph.graphCanvas;
 
-    return MultiScrollable(
-        setScale: (s) => root.graphCanvas.scale = s,
-        builder: (ctx, controller) {
-          graphCanvas.controller = controller;
-
-          return MouseScrollListener(
-            controller: controller,
-            child: Observer(builder: (ctx) {
-              return CustomScrollGestures(
-                controller: controller,
-                allowDrag: !root.isDragging,
+    return ScrollableCanvasWrapper(
+      graph: graph,
+      child: DragTarget<String>(
+        onAcceptWithDetails: (details) {
+          final offset = graphCanvas.toCanvasOffset(details.offset);
+          final constructor = Layer.layerConstructors[details.data];
+          if (constructor != null) {
+            graph.createNode(offset, constructor);
+          } else {
+            log.e("Wrong layer name ${details.data}");
+          }
+        },
+        builder: (context, candidateData, rejectedData) {
+          return Observer(
+            builder: (context) {
+              return MouseRegion(
+                onHover: graph.addingConnection.isAddedInput()
+                    ? (hoverEvent) {
+                        graphCanvas.setMousePosition(hoverEvent.position);
+                      }
+                    : null,
+                opaque: false,
                 child: Observer(
-                  builder: (context) => SizedBox(
-                    width: graphCanvas.size.width,
-                    height: graphCanvas.size.height,
-                    child: DragTarget<String>(
-                      onAcceptWithDetails: (details) {
-                        final offset =
-                            graphCanvas.toCanvasOffset(details.offset);
-                        final constructor =
-                            Layer.layerConstructors[details.data];
-                        if (constructor != null) {
-                          root.createNode(offset, constructor);
-                        } else {
-                          log.e("Wrong layer name ${details.data}");
-                        }
-                      },
-                      builder: (context, candidateData, rejectedData) {
-                        return Observer(
-                          builder: (ctx) {
-                            return MouseRegion(
-                              onHover: root.addingConnection.isAddedInput()
-                                  ? (hoverEvent) {
-                                      graphCanvas.mousePosition = graphCanvas
-                                          .toCanvasOffset(hoverEvent.position);
-                                    }
-                                  : null,
-                              child: CustomPaint(
-                                painter: ConnectionsPainter(
-                                  root.nodes,
-                                  root.addingConnection,
-                                  root.graphCanvas.mousePosition,
-                                ),
-                                child: Observer(
-                                  key: const Key("nodes"),
-                                  builder: (ctx) => Stack(
-                                    children: root.nodes.entries.map(
-                                      (e) {
-                                        return NodeView(
-                                          node: e.value,
-                                          key: Key(e.key.toString()),
-                                        );
-                                      },
-                                    ).toList(),
-                                  ),
-                                ),
-                              ),
-                            );
-                          },
-                        );
-                      },
-                    ),
+                  key: const Key("nodes"),
+                  builder: (context) => Stack(
+                    clipBehavior: Clip.none,
+                    children: [
+                      CanvasTouchDetector(
+                        onPanEnd: (details) {
+                          graph.selectConnectionPoint(
+                              graph.selectedConnection, null);
+                        },
+                        onPanUpdate: (details) {
+                          graphCanvas.mousePosition = graphCanvas
+                              .toCanvasOffset(details.globalPosition);
+                        },
+                        builder: (context) => Observer(
+                          builder: (context) => CustomPaint(
+                            size: graph.graphCanvas.size,
+                            willChange: true,
+                            painter: ConnectionsPainter(
+                              context: context,
+                              nodes: graph.nodes,
+                              selectedConnection: graph.selectedConnection,
+                              selectedConnectionPoint:
+                                  graph.selectedConnectionPoint,
+                              graph: graph,
+                            ),
+                          ),
+                        ),
+                      ),
+                      Observer(
+                        builder: (context) => CustomPaint(
+                          willChange: true,
+                          painter: PartialConnectionsPainter(
+                            addingConnectionState: graph.addingConnection,
+                            mousePosition: graphCanvas.mousePosition,
+                          ),
+                        ),
+                      ),
+                      ...graph.nodes.entries.map(
+                        (e) {
+                          return NodeView(
+                            key: Key(e.key.toString()),
+                            node: e.value,
+                          );
+                        },
+                      )
+                    ],
                   ),
                 ),
               );
-            }),
+            },
           );
-        });
+        },
+      ),
+    );
+  }
+}
+
+class ScrollableCanvasWrapper extends StatelessWidget {
+  final Graph graph;
+  final Widget child;
+
+  const ScrollableCanvasWrapper({
+    Key key,
+    @required this.graph,
+    @required this.child,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    final graphCanvas = graph.graphCanvas;
+
+    return MultiScrollable(
+      controller: graphCanvas,
+      builder: (context) => MouseScrollListener(
+        controller: graphCanvas,
+        child: Observer(
+          builder: (context) => CustomScrollGestures(
+            canvas: graphCanvas,
+            allowDrag: !graph.isDragging,
+            child: Observer(
+              builder: (context) => SizedBox(
+                width: graphCanvas.size.width,
+                height: graphCanvas.size.height,
+                child: child,
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
   }
 }
