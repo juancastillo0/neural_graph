@@ -2,18 +2,21 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:mobx/mobx.dart';
 import 'package:flutter_hooks/flutter_hooks.dart' show HookWidget, useMemoized;
+import 'package:neural_graph/diagram/connection.dart';
 import 'package:neural_graph/fields/button_select_field.dart';
 import 'package:neural_graph/fields/form.dart';
 import 'package:neural_graph/fields/shape_field.dart';
 import 'package:neural_graph/layers/layers.dart';
-import 'package:neural_graph/node.dart';
+import 'package:neural_graph/diagram/node.dart';
 
 part 'input.g.dart';
 
 class Input = _Input with _$Input;
 
 abstract class _Input extends Layer with Store {
-  _Input(Node node) : super(node);
+  _Input(Node<Layer> node)
+      : this.outPort = Port(node),
+        super(node);
 
   static const String _layerId = "Input";
   @override
@@ -32,7 +35,12 @@ abstract class _Input extends Layer with Store {
   Tensor output(Tensor _input) => tensor;
 
   @override
-  bool isValidInput(Tensor _input) => true;
+  bool isValidInput(Tensor _input) => false;
+
+  final Port<Layer> outPort;
+
+  @override
+  Iterable<Port<Layer>> get ports => [outPort];
 
   @override
   Widget form([Key key]) => DefaultForm(
@@ -48,48 +56,35 @@ class InputForm extends HookWidget {
   Widget build(BuildContext ctx) {
     final shapeField = useMemoized(
       () => FormFieldValue<List<int>>(
-        getValue: () => state.shape,
-        setValue: (v) => state.shape = v,
+        get: () => state.shape,
+        set: (v) => state.shape = v,
       ),
       [state],
     );
 
-    return Observer(
-      builder: (ctx) => Table(
-        border: TableBorder.symmetric(
-          inside: const BorderSide(
-            width: 10,
-            style: BorderStyle.none,
+    return DefaultFormTable(
+      children: [
+        tableRow(
+          name: "Data Type",
+          description: "The type of data in the tensor",
+          field: Observer(builder: (context) {
+            return ButtonSelect<DType>(
+              options: DType.values,
+              selected: state.dtype,
+              asString: enumToString,
+              onChange: (v) => state.dtype = v,
+            );
+          }),
+        ),
+        tableRow(
+          name: "Shape",
+          description: "Size of the tensor in each dimension",
+          field: ShapeField(
+            field: shapeField,
+            dimensions: null,
           ),
         ),
-        columnWidths: const {
-          0: IntrinsicColumnWidth(),
-          1: IntrinsicColumnWidth(),
-        },
-        defaultVerticalAlignment: TableCellVerticalAlignment.middle,
-        children: [
-          tableRow(
-            name: "Data Type",
-            description: "The type of data in the tensor",
-            field: Observer(builder: (context) {
-              return ButtonSelect<DType>(
-                options: DType.values,
-                selected: state.dtype,
-                asString: enumToString,
-                onChange: (v) => state.dtype = v,
-              );
-            }),
-          ),
-          tableRow(
-            name: "Shape",
-            description: "Size of the tensor in each dimension",
-            field: ShapeField(
-              field: shapeField,
-              dimensions: null,
-            ),
-          ),
-        ],
-      ),
+      ],
     );
   }
 }

@@ -1,22 +1,38 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:mobx/mobx.dart';
+import 'package:neural_graph/diagram/connection.dart';
 import 'package:neural_graph/layers/convolutional.dart';
 import 'package:neural_graph/layers/input.dart';
-import 'package:neural_graph/node.dart';
+import 'package:neural_graph/diagram/node.dart';
 
-abstract class Layer {
-  Layer(this.node);
-  Node node;
+abstract class Layer implements NodeData {
+  Layer(this.node, {String name}) : this._name = Observable(name ?? "");
+  final Node node;
+
+  final Observable<String> _name;
+  String get name => _name.value;
+  void setName(String name) {
+    runInAction(() {
+      _name.value = name;
+    }, name: "setName");
+  }
 
   String get layerId;
 
   Tensor output(Tensor input);
 
   static final Map<String, Layer Function(Node)> layerConstructors = {
-    "Convolutional": (node) => Convolutional(node),
-    "Input": (node) => Input(node),
+    "Convolutional": (node) => Convolutional(node as Node<Layer>),
+    "Input": (node) => Input(node as Node<Layer>),
   };
 
   Widget form([Key key]);
+
+  @override
+  Widget nodeView() {
+    return Observer(builder: (context) => Text(name));
+  }
 
   bool isValidInput(Tensor input);
 }
