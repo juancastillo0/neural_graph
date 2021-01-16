@@ -25,7 +25,7 @@ dependencies:
     sdk: flutter
 
   formgen:
-    path: ./formgen/formgen/
+    path: ./packages/formgen/
 
   # MobX
   mobx: ^1.2.1
@@ -41,7 +41,7 @@ dependencies:
   intl: ^0.16.1
   logger: ^0.9.1
   touchable:
-    path: ./touchable/
+    path: ./packages/touchable/
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
@@ -58,7 +58,7 @@ dev_dependencies:
   integration_test:
 
   formgen_generation:
-    path: ./formgen/formgen_generation/
+    path: ./packages/formgen_generation/
 
 dependency_overrides:
   analyzer: ">=0.41.1"

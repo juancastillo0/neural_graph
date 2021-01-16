@@ -236,14 +236,14 @@ packages:
   formgen:
     dependency: "direct main"
     description:
-      path: "formgen/formgen"
+      path: "packages/formgen"
       relative: true
     source: path
     version: "0.0.1"
   formgen_generation:
     dependency: "direct dev"
     description:
-      path: "formgen/formgen_generation"
+      path: "packages/formgen_generation"
       relative: true
     source: path
     version: "0.0.1"
@@ -631,7 +631,7 @@ packages:
   touchable:
     dependency: "direct main"
     description:
-      path: touchable
+      path: "packages/touchable"
       relative: true
     source: path
     version: "0.2.0"
