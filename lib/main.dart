@@ -5,6 +5,7 @@ import 'package:get_it/get_it.dart';
 import 'package:neural_graph/graph_canvas/graph_canvas.dart';
 import 'package:neural_graph/layers_menu.dart';
 import 'package:neural_graph/root_store.dart';
+import 'package:neural_graph/widgets/gesture_listener.dart';
 import 'package:neural_graph/widgets/resizable.dart';
 
 final RouteObserver<ModalRoute> routeObserver = RouteObserver<ModalRoute>();
@@ -24,7 +25,7 @@ final theme = ThemeData(
 
 void main() {
   GetIt.instance.registerSingleton(RootStore());
-  runApp(MyApp());
+  runApp(GlobalKeyboardListener.wrapper(child: MyApp()));
 }
 
 class MyApp extends StatelessWidget {
@@ -135,60 +136,80 @@ class PropertiesView extends HookWidget {
   const PropertiesView({Key key}) : super(key: key);
   @override
   Widget build(BuildContext ctx) {
-    final root = useRoot();
-    final contoller = useTextEditingController(text: root.selectedNode.name);
+    final selectedGraph = useRoot().selectedGraph;
+    final contoller = useTextEditingController(
+      text: selectedGraph.selectedNode.data.name,
+    );
 
-    return Observer(
-      builder: (context) {
-        if (contoller.text != root.selectedNode.name) {
-          contoller.text = root.selectedNode.name;
-        }
+    return Row(
+      children: [
+        Expanded(
+          child: Observer(
+            builder: (context) {
+              final selectedNode =
+                  selectedGraph.nodes[selectedGraph.selectedNodes.first];
+              if (contoller.text != selectedNode.data.name) {
+                contoller.text = selectedNode.data.name;
+              }
 
-        bool isRepeated(String value) {
-          return root.nodes.values.any((element) =>
-              element.key != root.selectedNode.key && element.name == value);
-        }
+              bool isRepeated(String value) {
+                return selectedGraph.nodes.values.any((element) =>
+                    element.key != selectedNode.key &&
+                    element.data.name == value);
+              }
 
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 18,
-                    vertical: 10,
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 18,
+                          vertical: 10,
+                        ),
+                        child: Text(
+                          selectedNode.data.layerId,
+                          style: Theme.of(context).textTheme.headline6,
+                        ),
+                      ),
+                      SizedBox(
+                        width: 150,
+                        child: TextFormField(
+                          autovalidateMode: AutovalidateMode.onUserInteraction,
+                          controller: contoller,
+                          decoration: const InputDecoration(hintText: "Name"),
+                          onChanged: (value) {
+                            if (!isRepeated(value)) {
+                              selectedNode.data.setName(value);
+                            }
+                          },
+                          validator: (value) =>
+                              selectedNode.data.name != value ? "" : null,
+                        ),
+                      ),
+                      IconButton(
+                        icon: const Icon(Icons.delete),
+                        onPressed: selectedGraph.deleteSelected,
+                      )
+                    ],
                   ),
-                  child: Text(
-                    root.selectedNode.data.layerId,
-                    style: Theme.of(context).textTheme.headline6,
-                  ),
-                ),
-                SizedBox(
-                  width: 150,
-                  child: TextFormField(
-                    autovalidate: true,
-                    controller: contoller,
-                    decoration: const InputDecoration(hintText: "Name"),
-                    onChanged: (value) {
-                      if (!isRepeated(value)) root.selectedNode.name = value;
-                    },
-                    validator: (value) =>
-                        root.selectedNode.name != value ? "" : null,
-                  ),
-                ),
-                IconButton(
-                  icon: const Icon(Icons.delete),
-                  onPressed: root.deleteSelected,
-                )
-              ],
-            ),
-            Expanded(
-              child: root.selectedNode.data.form(),
-            )
-          ],
-        );
-      },
+                  Expanded(
+                    child: selectedNode.data.form(),
+                  )
+                ],
+              );
+            },
+          ),
+        ),
+        Observer(builder: (context) {
+          final conn = selectedGraph.selectedConnection;
+          if (conn == null) {
+            return const Text("No Selected Connection");
+          }
+          return Text("${conn.fromData.name} -> ${conn.toData.name}");
+        })
+      ],
     );
   }
 }
