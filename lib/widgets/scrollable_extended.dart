@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
@@ -10,62 +13,61 @@ class CustomScrollGestures extends HookWidget {
   const CustomScrollGestures({
     Key key,
     @required this.child,
-    @required this.controller,
+    @required this.canvas,
     this.allowDrag = true,
   }) : super(key: key);
   final Widget child;
-  final MultiScrollController controller;
   final bool allowDrag;
+  final GraphCanvasStore canvas;
 
   @override
   Widget build(BuildContext ctx) {
-    final graphCanvas = useRoot().graphCanvas;
     final prevPoint = useState(const Offset(0, 0));
-    final initScale = useState(graphCanvas.scale);
+    final initScale = useState(canvas.scale);
 
     return LayoutBuilder(
       builder: (ctx, box) {
         void onScaleUpdate(ScaleUpdateDetails d) {
           if (d.scale != 1) {
             // print(
-            //     "graphCanvas.toCanvasOffset(d.focalPoint) ${graphCanvas.toCanvasOffset2(d.focalPoint)}");
+            //     "canvas.toCanvasOffset(d.focalPoint) ${canvas.toCanvasOffset2(d.focalPoint)}");
             // print(
-            //     "graphCanvas.toCanvasOffset(prevPoint.value) ${graphCanvas.toCanvasOffset2(prevPoint.value)}");
-            final _p = graphCanvas.toCanvasOffset(prevPoint.value);
-            final _prev = graphCanvas.scale;
-            controller.onScale(d.scale * initScale.value);
-            final _p2 = graphCanvas.toCanvasOffset(prevPoint.value);
+            //     "canvas.toCanvasOffset(prevPoint.value) ${canvas.toCanvasOffset2(prevPoint.value)}");
+            final _p = canvas.toCanvasOffset(prevPoint.value);
+            final _prev = canvas.scale;
+            canvas.onScale(d.scale * initScale.value);
+            final _p2 = canvas.toCanvasOffset(prevPoint.value);
             print("$_p $_p2");
             final center = Offset(box.maxWidth / 2, box.maxHeight / 2);
             final fromCenter =
-                (prevPoint.value - center) * _prev / graphCanvas.scale;
-            controller.onDrag((_p2 - _p) * graphCanvas.scale);
+                (prevPoint.value - center) * _prev / canvas.scale;
+            canvas.onDrag((_p2 - _p) * canvas.scale);
             prevPoint.value = d.localFocalPoint;
           } else {
-            controller.onDrag(d.localFocalPoint - prevPoint.value);
+            canvas.onDrag(d.localFocalPoint - prevPoint.value);
             prevPoint.value = d.localFocalPoint;
           }
         }
 
         return GestureDetector(
           onScaleStart: (details) {
-            initScale.value = graphCanvas.scale;
+            initScale.value = canvas.scale;
             prevPoint.value = details.localFocalPoint;
           },
           dragStartBehavior: DragStartBehavior.down,
           onScaleUpdate: allowDrag ? onScaleUpdate : null,
           child: SingleChildScrollView(
-            controller: controller.horizontal,
+            controller: canvas.horizontal,
             scrollDirection: Axis.horizontal,
             physics: const NeverScrollableScrollPhysics(),
             child: SingleChildScrollView(
-              controller: controller.vertical,
+              controller: canvas.vertical,
               physics: const NeverScrollableScrollPhysics(),
               child: Observer(
                 builder: (ctx) {
-                  final multiplier = graphCanvas.scale;
-                  final _height = graphCanvas.size.height * multiplier;
-                  final _width = graphCanvas.size.width * multiplier;
+                  final multiplier = canvas.scale;
+                  final _height = canvas.size.height * multiplier;
+                  final _width = canvas.size.width * multiplier;
 
                   return SizedBox(
                     height: _height,
@@ -78,9 +80,9 @@ class CustomScrollGestures extends HookWidget {
                         maxWidth: double.infinity,
                         maxHeight: double.infinity,
                         child: Transform.translate(
-                          offset: graphCanvas.translateOffset,
+                          offset: canvas.translateOffset,
                           child: Transform.scale(
-                            scale: graphCanvas.scale,
+                            scale: canvas.scale,
                             child: child,
                           ),
                         ),
@@ -103,18 +105,29 @@ class MouseScrollListener extends StatefulWidget {
     @required this.controller,
     @required this.child,
   }) : super(key: key);
-  final MultiScrollController controller;
+  final GraphCanvasStore controller;
   final Widget child;
 
   @override
   _MouseScrollListenerState createState() => _MouseScrollListenerState();
 }
 
+const _kScrollCoefWindows = 3.5;
+
+double _scrollCoef() {
+  if (kIsWeb) {
+    return 1.0;
+  } else if (Platform.isWindows) {
+    return _kScrollCoefWindows;
+  } else {
+    return 1.0;
+  }
+}
+
 class _MouseScrollListenerState extends State<MouseScrollListener> {
   final _focusNode = FocusNode();
   bool isShiftPressed = false;
   bool isCtrlPressed = false;
-  GraphCanvasStore graphCanvas = RootStore.instance.graphCanvas;
 
   @override
   void dispose() {
@@ -125,12 +138,15 @@ class _MouseScrollListenerState extends State<MouseScrollListener> {
   void _onPointerSignal(PointerSignalEvent pointerSignal) {
     if (pointerSignal is PointerScrollEvent) {
       if (isCtrlPressed) {
-        final newScale = graphCanvas.scale - pointerSignal.scrollDelta.dy / 400;
+        final newScale =
+            widget.controller.scale - pointerSignal.scrollDelta.dy / 400;
         widget.controller.onScale(newScale);
       } else if (isShiftPressed) {
-        widget.controller.onDrag(Offset(-pointerSignal.scrollDelta.dy, 0));
+        widget.controller
+            .onDrag(Offset(-pointerSignal.scrollDelta.dy * _scrollCoef(), 0));
       } else {
-        widget.controller.onDrag(Offset(0, -pointerSignal.scrollDelta.dy));
+        widget.controller
+            .onDrag(Offset(0, -pointerSignal.scrollDelta.dy * _scrollCoef()));
       }
     }
   }

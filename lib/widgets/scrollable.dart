@@ -5,90 +5,31 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:neural_graph/graph_canvas/store_graph_canvas.dart';
 import 'package:neural_graph/main.dart';
 import 'package:styled_widget/styled_widget.dart';
-import 'package:neural_graph/common/extensions.dart';
 
 const _iconSize = 24.0;
 const _scrollIconPadding = EdgeInsets.all(0);
 
-class MultiScrollController {
-  MultiScrollController(
-      {ScrollController vertical,
-      ScrollController horizontal,
-      void Function(double) setScale,
-      @required BuildContext context})
-      : vertical = vertical ?? ScrollController(),
-        horizontal = horizontal ?? ScrollController(),
-        _setScale = setScale,
-        _context = context;
-  final ScrollController vertical;
-  final ScrollController horizontal;
-  final void Function(double) _setScale;
-  final BuildContext _context;
-
-  void onDrag(Offset delta) {
-    if (delta.dx != 0) {
-      final hp = horizontal.position;
-      final dx = (horizontal.offset - delta.dx).clamp(0.0, hp.maxScrollExtent)
-          as double;
-      horizontal.jumpTo(dx);
-    }
-
-    if (delta.dy != 0) {
-      final vp = vertical.position;
-      final dy =
-          (vertical.offset - delta.dy).clamp(0.0, vp.maxScrollExtent) as double;
-      vertical.jumpTo(dy);
-    }
-  }
-
-  Offset get offset => Offset(
-        horizontal.offset,
-        vertical.offset,
-      );
-  Rect get globalPaintBounds => _context.globalPaintBounds;
-
-  void onScale(double scale) {
-    if (_setScale != null) {
-      _setScale(scale.clamp(0.4, 2.5) as double);
-      final multiplerH = horizontal.offset <= 0.01 ? 1 : -1;
-      final multiplerV = vertical.offset <= 0.01 ? 1 : -1;
-      horizontal.jumpTo(horizontal.offset + multiplerH * 0.0001);
-      vertical.jumpTo(vertical.offset + multiplerV * 0.0001);
-    }
-  }
-
-  void dispose() {
-    vertical.dispose();
-    horizontal.dispose();
-  }
-}
-
 class MultiScrollable extends StatefulWidget {
-  const MultiScrollable({this.builder, Key key, this.setScale})
+  const MultiScrollable({this.builder, Key key, this.controller})
       : super(key: key);
-  final Widget Function(
-    BuildContext context,
-    MultiScrollController controller,
-  ) builder;
-  final void Function(double) setScale;
+  final Widget Function(BuildContext context) builder;
+  final GraphCanvasStore controller;
 
   @override
   _MultiScrollableState createState() => _MultiScrollableState();
 }
 
 class _MultiScrollableState extends State<MultiScrollable> with RouteAware {
-  MultiScrollController controller;
+  GraphCanvasStore get controller => widget.controller;
   double innerWidth;
   double innerHeight;
 
   @override
   void initState() {
-    controller = MultiScrollController(
-      setScale: widget.setScale,
-      context: context,
-    );
+    controller.setContext(context);
     SchedulerBinding.instance.addPostFrameCallback((_) => setState(() {}));
     super.initState();
   }
@@ -114,7 +55,7 @@ class _MultiScrollableState extends State<MultiScrollable> with RouteAware {
 
   @override
   Widget build(BuildContext context) {
-    final child = widget.builder(context, controller);
+    final child = widget.builder(context);
 
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -270,10 +211,6 @@ class MultiScrollbar extends HookWidget {
     final offset = controller.offset;
     final scrollExtent = position.maxScrollExtent + position.viewportDimension;
 
-    // TODO: refactor handle's change of color into a separate widget
-    final hovering = useState(false);
-    final dragging = useState(false);
-
     return LayoutBuilder(
       builder: (ctx, box) {
         final maxSize = horizontal ? box.maxWidth : box.maxHeight;
@@ -291,33 +228,62 @@ class MultiScrollbar extends HookWidget {
                 horizontal: horizontal ? 0 : 3,
                 vertical: horizontal ? 3 : 0,
               ),
-              child: MouseRegion(
-                onEnter: (_) => hovering.value = true,
-                onExit: (_) => hovering.value = false,
-                child: SizedBox(
-                  height: horizontal ? double.infinity : handleSize,
-                  width: horizontal ? handleSize : double.infinity,
-                  child: Container(
-                    color: hovering.value || dragging.value
-                        ? Colors.black26
-                        : Colors.black12,
-                  ),
-                ).gestures(
-                  dragStartBehavior: DragStartBehavior.down,
-                  onPanDown: (_) => dragging.value = true,
-                  onPanEnd: (_) => dragging.value = false,
-                  onPanUpdate: (DragUpdateDetails p) {
-                    final _delta = horizontal ? p.delta.dx : p.delta.dy;
-                    final _offset = (controller.offset + _delta / rate)
-                        .clamp(0, position.maxScrollExtent) as double;
-                    controller.jumpTo(_offset);
-                  },
-                ),
+              child: _ScrollHandle(
+                horizontal: horizontal,
+                handleSize: handleSize,
+                controller: controller,
+                rate: rate,
               ),
             ),
           ],
         );
       },
+    );
+  }
+}
+
+class _ScrollHandle extends HookWidget {
+  const _ScrollHandle({
+    Key key,
+    @required this.horizontal,
+    @required this.handleSize,
+    @required this.controller,
+    @required this.rate,
+  }) : super(key: key);
+
+  final bool horizontal;
+  final double handleSize;
+  final ScrollController controller;
+  final double rate;
+
+  @override
+  Widget build(BuildContext context) {
+    final position = controller.position;
+    final hovering = useState(false);
+    final dragging = useState(false);
+
+    return MouseRegion(
+      onEnter: (_) => hovering.value = true,
+      onExit: (_) => hovering.value = false,
+      child: SizedBox(
+        height: horizontal ? double.infinity : handleSize,
+        width: horizontal ? handleSize : double.infinity,
+        child: Container(
+          color: hovering.value || dragging.value
+              ? Colors.black26
+              : Colors.black12,
+        ),
+      ).gestures(
+        dragStartBehavior: DragStartBehavior.down,
+        onPanDown: (_) => dragging.value = true,
+        onPanEnd: (_) => dragging.value = false,
+        onPanUpdate: (DragUpdateDetails p) {
+          final _delta = horizontal ? p.delta.dx : p.delta.dy;
+          final _offset = (controller.offset + _delta / rate)
+              .clamp(0.0, position.maxScrollExtent) as double;
+          controller.jumpTo(_offset);
+        },
+      ),
     );
   }
 }
