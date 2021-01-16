@@ -79,7 +79,7 @@ class PortView<N extends NodeData> extends StatelessWidget {
 
     return Observer(builder: (context) {
       final _canBeEnd = graph.addingConnection.maybeWhen(
-        addedInput: (n) => canBeEnd(n as Port<N>),
+        addedInput: (n) => canBeEnd(n),
         orElse: () => false,
       );
       final isTapable =
