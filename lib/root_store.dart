@@ -4,11 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:logger/logger.dart';
 import 'package:mobx/mobx.dart';
-import 'package:neural_graph/graph_canvas/adding_node_state.dart';
-import 'package:neural_graph/graph_canvas/store_graph_canvas.dart';
+import 'package:neural_graph/diagram/graph.dart';
 import 'package:neural_graph/layers/convolutional.dart';
 import 'package:neural_graph/layers/layers.dart';
-import 'package:neural_graph/node.dart';
+import 'package:neural_graph/diagram/node.dart' show Node;
 
 part 'root_store.g.dart';
 
@@ -18,84 +17,35 @@ class RootStore extends _RootStore with _$RootStore {
 
 final log = Logger();
 
-final _charsKey =
-    'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_-0123456789'
-        .split("");
-
 abstract class _RootStore with Store {
   _RootStore() {
-    final node1 = Node(
-        '1', "conv1", 920, 1420, ObservableSet.of({}), (n) => Convolutional(n));
-    nodes = ObservableMap.of({
-      '1': node1,
-      '2': Node('2', "conv2", 20, 20, ObservableSet.of({const NodeRef('1')}),
-          (n) => Convolutional(n)),
-    });
-    selectedNode = node1;
-  }
+    final graph = Graph<Layer>();
 
-  final random = Random();
-
-  @observable
-  ObservableMap<String, Node> nodes;
-
-  @observable
-  bool isDragging = false;
-
-  @observable
-  AddingConnectionState addingConnection = const AddingConnectionState.none();
-
-  @observable
-  Node selectedNode;
-
-  @action
-  void deleteSelected() {
-    if (selectedNode != null) {
-      final nodeRef = NodeRef(selectedNode.key);
-      nodes.remove(selectedNode.key);
-
-      for (final node in nodes.values) {
-        node.inputs.remove(nodeRef);
-      }
-      selectedNode = nodes.values.first;
-    }
-  }
-
-  @action
-  void startAddingConnection() {
-    addingConnection = const AddingConnectionState.adding();
-  }
-
-  @action
-  void addConnection(Node node) {
-    addingConnection = addingConnection.when(
-      none: () => addingConnection,
-      adding: () => AddingConnectionState.addedInput(node),
-      addedInput: (inputNode) {
-        node.inputs.add(NodeRef(inputNode.key));
-        return const AddingConnectionState.none();
-      },
+    final node1 = graph.createNode(
+      const Offset(1420, 920),
+      (n) => Convolutional(n, name: "conv1"),
     );
+
+    final node2 = graph.createNode(
+      const Offset(20, 20),
+      (n) => Convolutional(n, name: "conv2"),
+    );
+
+    (node2.data as Convolutional)
+        .outPort
+        .addConnection((node1.data as Convolutional).inPort);
+
+    graph.selectedNodes.add(node1.key);
+
+    this.graphs = ObservableMap.of({graph.key: graph});
+    this.selectedGraph = graph;
   }
 
   @observable
-  GraphCanvasStore graphCanvas = GraphCanvasStore();
+  ObservableMap<String, Graph<Layer>> graphs;
 
-  @action
-  void createNode(Offset offset, Layer Function(Node) layer) {
-    final newKey = _generateKey();
-    final newNode =
-        Node(newKey, "", offset.dy, offset.dx, ObservableSet.of({}), layer);
-    nodes[newKey] = newNode;
-    selectedNode = newNode;
-  }
-
-  String _generateKey([int length = 7]) {
-    return Iterable<int>.generate(length).map((_) {
-      final _index = (random.nextDouble() * _charsKey.length).floor();
-      return _charsKey[_index];
-    }).join("");
-  }
+  @observable
+  Graph<Layer> selectedGraph;
 }
 
 RootStore useRoot() {
