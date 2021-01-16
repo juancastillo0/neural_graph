@@ -33,12 +33,15 @@ dependencies:
 
   # Tools
   flutter_hooks: ^0.9.0
-  freezed_annotation: ^0.7.1
+  freezed_annotation:
+  uuid:
   get_it: ^4.0.2
   styled_widget:
   get: ^2.5.9
   intl: ^0.16.1
   logger: ^0.9.1
+  touchable:
+    path: ./touchable/
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
@@ -48,14 +51,16 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   test:
-  build_runner: ^1.10.0
+  build_runner:
   mobx_codegen: ^1.1.0
-  freezed: ^0.10.9
+  freezed:
   lint: ^1.0.0
 
   formgen_generation:
     path: ./formgen/formgen_generation/
 
+dependency_overrides:
+  analyzer: ">=0.41.1"
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
 
