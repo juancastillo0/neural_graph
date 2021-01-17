@@ -1,14 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:mobx/mobx.dart';
-import 'package:neural_graph/diagram/connection.dart';
+import 'package:neural_graph/common/extensions.dart';
+import 'package:neural_graph/layers/codegen_helper.dart';
 import 'package:neural_graph/layers/convolutional.dart';
+import 'package:neural_graph/layers/dense_layer.dart';
 import 'package:neural_graph/layers/input.dart';
 import 'package:neural_graph/diagram/node.dart';
+import 'package:neural_graph/layers/output_layer.dart';
 
 abstract class Layer implements NodeData {
   Layer(this.node, {String name}) : this._name = Observable(name ?? "");
-  final Node node;
+  final Node<Layer> node;
 
   final Observable<String> _name;
   String get name => _name.value;
@@ -22,9 +25,13 @@ abstract class Layer implements NodeData {
 
   Tensor output(Tensor input);
 
+  String code(CodeGenHelper h);
+
   static final Map<String, Layer Function(Node)> layerConstructors = {
     "Convolutional": (node) => Convolutional(node as Node<Layer>),
     "Input": (node) => Input(node as Node<Layer>),
+    "Output": (node) => OutputLayer(node as Node<Layer>),
+    "Dense": (node) => DenseLayer(node as Node<Layer>),
   };
 
   Widget form([Key key]);
@@ -60,7 +67,7 @@ class Tensor {
 
   @override
   String toString() {
-    return "Tensor: ${dtype.toEnumString()} [${shape.join(',')}]";
+    return "Tensor: ${toEnumString(dtype)} [${shape.join(',')}]";
   }
 }
 
@@ -73,11 +80,72 @@ bool deepEqualList<T>(List<T> l1, List<T> l2) {
 
 enum DType { int32, int64, float32, float64, boolean, string }
 
-enum Activation { int32, int64, float32, float64, boolean, string }
+enum Reduction {
+  all,
+  any,
+  max,
+  min,
+  mean,
+  sum,
+  prod,
+  logSumExp,
+}
+
+enum Activation {
+  relu,
+  elu,
+  hardSigmoid,
+  linear,
+  relu6,
+  selu,
+  sigmoid,
+  softmax,
+  softplus,
+  tanh,
+  softsign,
+}
+
+enum Normalization {
+  batch,
+  layer,
+  group,
+}
+
+enum BinaryOperator {
+  sub,
+  pow,
+  div,
+  mod,
+}
+
+enum Aggregation {
+  add,
+  average,
+  maximum,
+  minimum,
+  multiply,
+}
+
+enum BinaryLogicalOperator {
+  equal,
+  greater,
+  greaterEqual,
+  less,
+  lessEqual,
+  notEqual,
+}
+
+enum Optimizer {
+  sdg,
+  momentum,
+  adagrad,
+  adadelta,
+  adam,
+  adamMax,
+  rmsprop,
+}
 
 extension DTypeHelpers on DType {
-  String toEnumString() => toString().split(".")[1];
-
   bool get isNumber {
     switch (this) {
       case DType.float32:

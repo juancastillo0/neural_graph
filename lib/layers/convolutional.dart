@@ -5,20 +5,18 @@ import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:formgen/formgen.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:mobx/mobx.dart';
+import 'package:neural_graph/common/extensions.dart';
 import 'package:neural_graph/fields/button_select_field.dart';
 import 'package:neural_graph/fields/form.dart';
 import 'package:neural_graph/fields/shape_field.dart';
 import 'package:neural_graph/layers/codegen_helper.dart';
 import 'package:neural_graph/layers/layers.dart';
 import 'package:neural_graph/diagram/node.dart';
+import 'package:neural_graph/layers/node_layer_view.dart';
 
 part 'convolutional.g.dart';
 
 enum ConvPadding { same, valid, causal }
-
-extension on ConvPadding {
-  String toEnumString() => toString().split(".")[1];
-}
 
 enum ConvDimensions { one, two, three }
 
@@ -59,6 +57,8 @@ abstract class _Convolutional extends Layer with Store {
   int filters = 32;
   @observable
   bool separable = false;
+  @observable
+  Activation activation = Activation.relu;
 
   int get outputRank => dimensions.index + 1 + 2;
 
@@ -107,22 +107,22 @@ abstract class _Convolutional extends Layer with Store {
     _layerType = helper.layerTypeName(_layerType);
     final sep = helper.sep;
     final _separableString = separable
-        ? '${helper.argName("depthMultiplier")}$sep $depthMultiplier'
+        ? '\n  ${helper.argName("depthMultiplier")}$sep $depthMultiplier,'
         : '';
 
     // ignore: leading_newlines_in_multiline_strings
-    return """$_layerType(
-	  ${helper.layerName(this.name)}
-	  filters$sep $filters,
+    return """
+$_layerType(${helper.openArgs()}
+    ${helper.setName(this.name)},
+    filters$sep $filters,
     ${helper.argName('kernelSize')}$sep ${helper.firstOrList(kernelSize)},
-    padding$sep ${padding.toEnumString()},
+    padding$sep ${toEnumString(padding)},
     strides$sep ${helper.firstOrList(strides)},
     ${helper.argName('useBias')}$sep ${helper.printBool(useBias)},
     ${helper.argName('dilationRate')}$sep ${helper.firstOrList(dilationRate)},
-    [%=c.setActivation()%]
-    $_separableString,
+    ${helper.setActivation(activation)},$_separableString
 ${helper.closeArgs()});
-[%=c.applyOne()%]
+${helper.applyOne(name, this.inPort.node.data.name)}
 """;
   }
 
@@ -133,53 +133,10 @@ ${helper.closeArgs()});
       );
 
   @override
-  Widget nodeView() => Observer(
-        builder: (context) => Stack(
-          // overflow: Overflow.visible,
-          clipBehavior: Clip.none,
-          alignment: Alignment.center,
-          children: [
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 10.0),
-              child: NodeContainer(
-                isSelected: node.graph.selectedNodes.contains(node.key),
-                child: Text(name),
-              ),
-            ),
-            Positioned(
-              right: 0,
-              width: 10,
-              height: 10,
-              child: PortView(
-                port: outPort,
-                canBeStart: true,
-                child: const DecoratedBox(
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: Colors.red,
-                  ),
-                ),
-              ),
-            ),
-            Positioned(
-              left: 0,
-              width: 10,
-              height: 10,
-              child: PortView<Layer>(
-                port: inPort,
-                canBeEnd: (inputPort) {
-                  return inputPort.node.data != this;
-                },
-                child: const DecoratedBox(
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: Colors.blue,
-                  ),
-                ),
-              ),
-            ),
-          ],
-        ),
+  Widget nodeView() => SimpleLayerView(
+        layer: this,
+        outPort: outPort,
+        inPort: inPort,
       );
 }
 
@@ -239,7 +196,7 @@ class ConvolutionalForm extends HookWidget {
             return ButtonSelect<ConvDimensions>(
               options: ConvDimensions.values,
               selected: state.dimensions,
-              asString: enumToString,
+              asString: toEnumString,
               onChange: (v) => state.dimensions = v,
             );
           }),
@@ -260,7 +217,7 @@ class ConvolutionalForm extends HookWidget {
               options: ConvPadding.values,
               selected: state.padding,
               onChange: (v) => state.padding = v,
-              asString: enumToString,
+              asString: toEnumString,
             ),
           ),
         ),
@@ -311,8 +268,8 @@ class ConvolutionalForm extends HookWidget {
             description: "Expansion rate in a separable convolution",
             field: TextFormField(
               inputFormatters: [
-                WhitelistingTextInputFormatter.digitsOnly,
-                BlacklistingTextInputFormatter.singleLineFormatter,
+                FilteringTextInputFormatter.digitsOnly,
+                FilteringTextInputFormatter.singleLineFormatter,
               ],
               controller: fields.depthMultiplier.controller,
               keyboardType: const TextInputType.numberWithOptions(

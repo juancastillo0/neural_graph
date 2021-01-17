@@ -1,3 +1,7 @@
+import 'package:flutter/foundation.dart';
+import 'package:neural_graph/common/extensions.dart';
+import 'package:neural_graph/layers/layers.dart';
+
 enum ProgrammingLanguage { javascript, python, rust }
 
 extension ProgrammingLanguageExt on ProgrammingLanguage {
@@ -12,7 +16,7 @@ extension StringExtension on String {
 }
 
 class CodeGenHelper {
-  const CodeGenHelper({this.language});
+  const CodeGenHelper({@required this.language});
 
   final ProgrammingLanguage language;
 
@@ -36,13 +40,6 @@ class CodeGenHelper {
     }
   }
 
-  String get sep => language.isJs ? ":" : "=";
-
-  String layerName(String name) {
-    final _initial = language.isJs ? "{" : "";
-    return "$_initial name $sep $name";
-  }
-
   String argName(String name) {
     if (language.isJs) {
       return name;
@@ -64,24 +61,51 @@ class CodeGenHelper {
       ? boolean.toString().firstToUpperCase()
       : boolean.toString();
 
+  String openArgs() => language.isJs ? "{" : "";
+
   String closeArgs() => language.isJs ? "}" : "";
 
   String firstOrList<T>(List<T> items) =>
       items.length == 1 ? items[0].toString() : items.toString();
 
-  String get _defineKeyword => language.isJs ? "const " : "";
-  String get _outputSuffix => language.isJs ? 'Output' : '_output';
-  String get _typeCastTensor => language.isJs ? " as SymbolicTensor " : "";
+  String get defineKeyword => language.isJs ? "const " : "";
+  String get outputSuffix => language.isJs ? 'Output' : '_output';
 
-  String _defineOutput(String name) {
-    return "$_defineKeyword $name$_outputSuffix";
+  String defineOutput(String name) {
+    return "$defineKeyword$name$outputSuffix =";
   }
 
-  String applyOne(String name) {
+  String defineName(String name) {
+    return "$defineKeyword$name =";
+  }
+
+  String get sep => language.isJs ? ":" : "=";
+
+  String setName(String name) {
+    return 'name$sep "$name"'; 
+  }
+
+  String setActivation(Activation activation) {
+    return (activation != null)
+        ? 'activation$sep "${argName(toEnumString(activation))}"'
+        : "";
+  }
+
+  String get typeCastTensor => language.isJs ? " as SymbolicTensor" : "";
+
+  String applyOne(String name, String inputName) {
     if (language.isJs) {
-      return "${_defineOutput(name)} $name.apply([%=self.firstInput()%]) $_typeCastTensor";
+      return "${defineOutput(name)} $name.apply($inputName$outputSuffix)$typeCastTensor;";
     } else {
-      return "${_defineOutput(name)} $name([%=self.firstInput())";
+      return "${defineOutput(name)} $name($inputName$outputSuffix);";
+    }
+  }
+
+  String applyMany(String name, List<String> inputNames) {
+    if (language.isJs) {
+      return "${defineOutput(name)} $name.apply(${inputNames.map((ii) => '$ii$outputSuffix').join(',')}) $typeCastTensor";
+    } else {
+      return "${defineOutput(name)} $name(${inputNames.map((ii) => '$ii$outputSuffix').join(',')})";
     }
   }
 }

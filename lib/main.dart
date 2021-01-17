@@ -2,11 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:get_it/get_it.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:mobx/mobx.dart';
+import 'package:neural_graph/diagram/operations.dart';
 import 'package:neural_graph/graph_canvas/graph_canvas.dart';
+import 'package:neural_graph/layers/codegen_helper.dart';
+import 'package:neural_graph/layers/generator.dart';
 import 'package:neural_graph/layers_menu.dart';
 import 'package:neural_graph/root_store.dart';
 import 'package:neural_graph/widgets/gesture_listener.dart';
 import 'package:neural_graph/widgets/resizable.dart';
+import 'package:neural_graph/widgets/scrollable.dart';
 
 final RouteObserver<ModalRoute> routeObserver = RouteObserver<ModalRoute>();
 
@@ -25,6 +31,9 @@ final theme = ThemeData(
 
 void main() {
   GetIt.instance.registerSingleton(RootStore());
+  mainContext.config = mainContext.config.clone(
+    writePolicy: ReactiveWritePolicy.never,
+  );
   runApp(GlobalKeyboardListener.wrapper(child: MyApp()));
 }
 
@@ -100,20 +109,14 @@ class _MyHomePageState extends State<MyHomePage> {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Expanded(
-                        child: GraphView(),
+                        child: Observer(builder: (context) {
+                          return GraphView(graph: root.selectedNetwork.graph);
+                        }),
                       ),
                       const Resizable(
                         defaultWidth: 200,
                         horizontal: ResizeHorizontal.left,
-                        child: Text("ddw"),
-                        // InteractiveViewer(
-                        //   constrained: false,
-                        //   child: Center(
-                        //     child: Image.network(
-                        //       "https://www.woodlandtrust.org.uk/media/3817/ash-tree-overall-tree-blue-skies-alamy-bj7mxm-jeremy-inglis.jpg",
-                        //     ),
-                        //   ),
-                        // )
+                        child: CodeGenerated(),
                       ),
                     ],
                   ),
@@ -132,11 +135,53 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 }
 
+class CodeGenerated extends HookWidget {
+  const CodeGenerated({
+    Key key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    final root = useRoot();
+    final controller = useMemoized(() => ScrollController());
+    useEffect(() => controller.dispose, []);
+
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.only(
+          top: 12.0,
+          bottom: 12.0,
+          left: 12.0,
+        ),
+        child: MultiScrollable(
+          vertical: controller,
+          child: SingleChildScrollView(
+            controller: controller,
+            child: Observer(builder: (context) {
+              final sourceCode = generateNeuralNetworkCode(
+                root.selectedNetwork,
+                const CodeGenHelper(
+                  language: ProgrammingLanguage.javascript,
+                ),
+              );
+
+              return SelectableText(
+                sourceCode,
+                style: GoogleFonts.cousine(),
+              );
+            }),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
 class PropertiesView extends HookWidget {
   const PropertiesView({Key key}) : super(key: key);
   @override
   Widget build(BuildContext ctx) {
-    final selectedGraph = useRoot().selectedGraph;
+    final selectedGraph = useRoot().selectedNetwork.graph;
     final contoller = useTextEditingController(
       text: selectedGraph.selectedNode.data.name,
     );

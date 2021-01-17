@@ -1,0 +1,16 @@
+enum Loss {
+  hinge,
+  meanAbsolutePercentageError,
+  meanSquaredError,
+  categoricalCrossentropy,
+  sparseCategoricalCrossentropy,
+  meanAbsoluteError,
+  meanSquaredLogarithmicError,
+  squaredHinge,
+  categoricalHinge,
+  logcosh,
+  binaryCrossentropy,
+  kullbackLeiblerDivergence,
+  poisson,
+  cosineProximity,
+}

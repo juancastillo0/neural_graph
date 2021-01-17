@@ -13,23 +13,26 @@ const _iconSize = 24.0;
 const _scrollIconPadding = EdgeInsets.all(0);
 
 class MultiScrollable extends StatefulWidget {
-  const MultiScrollable({this.builder, Key key, this.controller})
-      : super(key: key);
-  final Widget Function(BuildContext context) builder;
-  final GraphCanvasStore controller;
+  const MultiScrollable({
+    this.child,
+    Key key,
+    this.vertical,
+    this.horizontal,
+  }) : super(key: key);
+  final Widget child;
+  final ScrollController vertical;
+  final ScrollController horizontal;
 
   @override
   _MultiScrollableState createState() => _MultiScrollableState();
 }
 
 class _MultiScrollableState extends State<MultiScrollable> with RouteAware {
-  GraphCanvasStore get controller => widget.controller;
   double innerWidth;
   double innerHeight;
 
   @override
   void initState() {
-    controller.setContext(context);
     SchedulerBinding.instance.addPostFrameCallback((_) => setState(() {}));
     super.initState();
   }
@@ -42,7 +45,6 @@ class _MultiScrollableState extends State<MultiScrollable> with RouteAware {
 
   @override
   void dispose() {
-    controller.dispose();
     routeObserver.unsubscribe(this);
     super.dispose();
   }
@@ -55,8 +57,6 @@ class _MultiScrollableState extends State<MultiScrollable> with RouteAware {
 
   @override
   Widget build(BuildContext context) {
-    final child = widget.builder(context);
-
     return Column(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -77,19 +77,19 @@ class _MultiScrollableState extends State<MultiScrollable> with RouteAware {
                         });
                       }
                     });
-                    return child;
+                    return widget.child;
                   },
                 ),
               ),
               ButtonScrollbar(
-                controller: controller.vertical,
+                controller: widget.vertical,
                 maxSize: innerHeight,
               ),
             ],
           ),
         ),
         ButtonScrollbar(
-          controller: controller.horizontal,
+          controller: widget.horizontal,
           horizontal: true,
           maxSize: innerWidth,
         ),
@@ -123,7 +123,8 @@ class ButtonScrollbar extends HookWidget {
   @override
   Widget build(BuildContext context) {
     final isPressedButton = useState(false);
-    if (!controller.hasClients ||
+    if (controller == null ||
+        !controller.hasClients ||
         controller.position?.viewportDimension == null ||
         controller.position.viewportDimension < maxSize) {
       return const SizedBox(width: 0, height: 0);

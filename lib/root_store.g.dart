@@ -9,41 +9,41 @@ part of 'root_store.dart';
 // ignore_for_file: non_constant_identifier_names, unnecessary_brace_in_string_interps, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic
 
 mixin _$RootStore on _RootStore, Store {
-  final _$graphsAtom = Atom(name: '_RootStore.graphs');
+  final _$networksAtom = Atom(name: '_RootStore.networks');
 
   @override
-  ObservableMap<String, Graph<Layer>> get graphs {
-    _$graphsAtom.reportRead();
-    return super.graphs;
+  ObservableMap<String, NeuralNetwork> get networks {
+    _$networksAtom.reportRead();
+    return super.networks;
   }
 
   @override
-  set graphs(ObservableMap<String, Graph<Layer>> value) {
-    _$graphsAtom.reportWrite(value, super.graphs, () {
-      super.graphs = value;
+  set networks(ObservableMap<String, NeuralNetwork> value) {
+    _$networksAtom.reportWrite(value, super.networks, () {
+      super.networks = value;
     });
   }
 
-  final _$selectedGraphAtom = Atom(name: '_RootStore.selectedGraph');
+  final _$selectedNetworkAtom = Atom(name: '_RootStore.selectedNetwork');
 
   @override
-  Graph<Layer> get selectedGraph {
-    _$selectedGraphAtom.reportRead();
-    return super.selectedGraph;
+  NeuralNetwork get selectedNetwork {
+    _$selectedNetworkAtom.reportRead();
+    return super.selectedNetwork;
   }
 
   @override
-  set selectedGraph(Graph<Layer> value) {
-    _$selectedGraphAtom.reportWrite(value, super.selectedGraph, () {
-      super.selectedGraph = value;
+  set selectedNetwork(NeuralNetwork value) {
+    _$selectedNetworkAtom.reportWrite(value, super.selectedNetwork, () {
+      super.selectedNetwork = value;
     });
   }
 
   @override
   String toString() {
     return '''
-graphs: ${graphs},
-selectedGraph: ${selectedGraph}
+networks: ${networks},
+selectedNetwork: ${selectedNetwork}
     ''';
   }
 }

@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:logger/logger.dart';
@@ -7,7 +5,7 @@ import 'package:mobx/mobx.dart';
 import 'package:neural_graph/diagram/graph.dart';
 import 'package:neural_graph/layers/convolutional.dart';
 import 'package:neural_graph/layers/layers.dart';
-import 'package:neural_graph/diagram/node.dart' show Node;
+import 'package:neural_graph/layers/neural_network.dart';
 
 part 'root_store.g.dart';
 
@@ -37,15 +35,17 @@ abstract class _RootStore with Store {
 
     graph.selectedNodes.add(node1.key);
 
-    this.graphs = ObservableMap.of({graph.key: graph});
-    this.selectedGraph = graph;
+    final nn = NeuralNetwork(graph: graph);
+
+    this.networks = ObservableMap.of({graph.key: nn});
+    this.selectedNetwork = nn;
   }
 
   @observable
-  ObservableMap<String, Graph<Layer>> graphs;
+  ObservableMap<String, NeuralNetwork> networks;
 
   @observable
-  Graph<Layer> selectedGraph;
+  NeuralNetwork selectedNetwork;
 }
 
 RootStore useRoot() {

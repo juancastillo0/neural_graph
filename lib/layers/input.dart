@@ -2,12 +2,15 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:mobx/mobx.dart';
 import 'package:flutter_hooks/flutter_hooks.dart' show HookWidget, useMemoized;
+import 'package:neural_graph/common/extensions.dart';
 import 'package:neural_graph/diagram/connection.dart';
 import 'package:neural_graph/fields/button_select_field.dart';
 import 'package:neural_graph/fields/form.dart';
 import 'package:neural_graph/fields/shape_field.dart';
+import 'package:neural_graph/layers/codegen_helper.dart';
 import 'package:neural_graph/layers/layers.dart';
 import 'package:neural_graph/diagram/node.dart';
+import 'package:neural_graph/layers/node_layer_view.dart';
 
 part 'input.g.dart';
 
@@ -43,10 +46,24 @@ abstract class _Input extends Layer with Store {
   Iterable<Port<Layer>> get ports => [outPort];
 
   @override
+  String code(CodeGenHelper h) {
+    return """
+""";
+  }
+
+  @override
   Widget form([Key key]) => DefaultForm(
         key: key,
         child: InputForm(state: this as Input),
       );
+
+ @override
+  Widget nodeView() => SimpleLayerView(
+        layer: this,
+        outPort: outPort,
+        inPort: null,
+      );
+
 }
 
 class InputForm extends HookWidget {
@@ -71,7 +88,7 @@ class InputForm extends HookWidget {
             return ButtonSelect<DType>(
               options: DType.values,
               selected: state.dtype,
-              asString: enumToString,
+              asString: toEnumString,
               onChange: (v) => state.dtype = v,
             );
           }),

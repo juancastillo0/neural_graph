@@ -3,8 +3,6 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 
-String enumToString(dynamic d) => d.toString().split(".")[1];
-
 class DefaultForm extends HookWidget {
   const DefaultForm({
     Key key,

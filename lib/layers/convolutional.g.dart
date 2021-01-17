@@ -144,6 +144,21 @@ mixin _$Convolutional on _Convolutional, Store {
     });
   }
 
+  final _$activationAtom = Atom(name: '_Convolutional.activation');
+
+  @override
+  Activation get activation {
+    _$activationAtom.reportRead();
+    return super.activation;
+  }
+
+  @override
+  set activation(Activation value) {
+    _$activationAtom.reportWrite(value, super.activation, () {
+      super.activation = value;
+    });
+  }
+
   @override
   String toString() {
     return '''
@@ -155,7 +170,8 @@ strides: ${strides},
 padding: ${padding},
 kernelSize: ${kernelSize},
 filters: ${filters},
-separable: ${separable}
+separable: ${separable},
+activation: ${activation}
     ''';
   }
 }

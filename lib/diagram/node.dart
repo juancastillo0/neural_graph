@@ -40,6 +40,22 @@ class Node<T extends NodeData> {
 
   Offset get center => Offset(left + width / 2, top + height / 2);
 
+  Iterable<Connection<T, T>> inputs() {
+    return this
+        .data
+        .ports
+        .expand((port) => port.connections.cast<Connection<T, T>>())
+        .where((conn) => conn.from.node == this);
+  }
+
+  Iterable<Connection<T, T>> outputs() {
+    return this
+        .data
+        .ports
+        .expand((port) => port.connections.cast<Connection<T, T>>())
+        .where((conn) => conn.to.node == this);
+  }
+
   T data;
 
   void move(Offset delta) {

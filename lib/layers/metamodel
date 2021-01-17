@@ -1,0 +1,166 @@
+ <genPackages prefix="NeuralNetwork" disposableProviderFactory="true" ecorePackage="neuralNetwork.ecore#/">
+    <genEnums typeSafeEnumCompatible="false" ecoreEnum="neuralNetwork.ecore#//DType">
+      <genEnumLiterals ecoreEnumLiteral="neuralNetwork.ecore#//DType/float32"/>
+      <genEnumLiterals ecoreEnumLiteral="neuralNetwork.ecore#//DType/int32"/>
+      <genEnumLiterals ecoreEnumLiteral="neuralNetwork.ecore#//DType/bool"/>
+      <genEnumLiterals ecoreEnumLiteral="neuralNetwork.ecore#//DType/complex64"/>
+      <genEnumLiterals ecoreEnumLiteral="neuralNetwork.ecore#//DType/string"/>
+    </genEnums>
+    <genEnums typeSafeEnumCompatible="false" ecoreEnum="neuralNetwork.ecore#//Padding">
+      <genEnumLiterals ecoreEnumLiteral="neuralNetwork.ecore#//Padding/SAME"/>
+      <genEnumLiterals ecoreEnumLiteral="neuralNetwork.ecore#//Padding/VALID"/>
+      <genEnumLiterals ecoreEnumLiteral="neuralNetwork.ecore#//Padding/CAUSAL"/>
+    </genEnums>
+    <genEnums typeSafeEnumCompatible="false" ecoreEnum="neuralNetwork.ecore#//Reductions">
+      <genEnumLiterals ecoreEnumLiteral="neuralNetwork.ecore#//Reductions/all"/>
+      <genEnumLiterals ecoreEnumLiteral="neuralNetwork.ecore#//Reductions/any"/>
+      <genEnumLiterals ecoreEnumLiteral="neuralNetwork.ecore#//Reductions/max"/>
+      <genEnumLiterals ecoreEnumLiteral="neuralNetwork.ecore#//Reductions/min"/>
+      <genEnumLiterals ecoreEnumLiteral="neuralNetwork.ecore#//Reductions/mean"/>
+      <genEnumLiterals ecoreEnumLiteral="neuralNetwork.ecore#//Reductions/sum"/>
+      <genEnumLiterals ecoreEnumLiteral="neuralNetwork.ecore#//Reductions/prod"/>
+      <genEnumLiterals ecoreEnumLiteral="neuralNetwork.ecore#//Reductions/logSumExp"/>
+    </genEnums>
+    <genEnums typeSafeEnumCompatible="false" ecoreEnum="neuralNetwork.ecore#//ActivationType">
+      <genEnumLiterals ecoreEnumLiteral="neuralNetwork.ecore#//ActivationType/relu"/>
+      <genEnumLiterals ecoreEnumLiteral="neuralNetwork.ecore#//ActivationType/elu"/>
+      <genEnumLiterals ecoreEnumLiteral="neuralNetwork.ecore#//ActivationType/hardSigmoid"/>
+      <genEnumLiterals ecoreEnumLiteral="neuralNetwork.ecore#//ActivationType/linear"/>
+      <genEnumLiterals ecoreEnumLiteral="neuralNetwork.ecore#//ActivationType/relu6"/>
+      <genEnumLiterals ecoreEnumLiteral="neuralNetwork.ecore#//ActivationType/selu"/>
+      <genEnumLiterals ecoreEnumLiteral="neuralNetwork.ecore#//ActivationType/sigmoid"/>
+      <genEnumLiterals ecoreEnumLiteral="neuralNetwork.ecore#//ActivationType/softmax"/>
+      <genEnumLiterals ecoreEnumLiteral="neuralNetwork.ecore#//ActivationType/softplus"/>
+      <genEnumLiterals ecoreEnumLiteral="neuralNetwork.ecore#//ActivationType/tanh"/>
+      <genEnumLiterals ecoreEnumLiteral="neuralNetwork.ecore#//ActivationType/softsign"/>
+    </genEnums>
+    <genEnums typeSafeEnumCompatible="false" ecoreEnum="neuralNetwork.ecore#//NormalizationType">
+      <genEnumLiterals ecoreEnumLiteral="neuralNetwork.ecore#//NormalizationType/batch"/>
+      <genEnumLiterals ecoreEnumLiteral="neuralNetwork.ecore#//NormalizationType/layer"/>
+      <genEnumLiterals ecoreEnumLiteral="neuralNetwork.ecore#//NormalizationType/group"/>
+    </genEnums>
+    <genEnums typeSafeEnumCompatible="false" ecoreEnum="neuralNetwork.ecore#//BinaryOperand">
+      <genEnumLiterals ecoreEnumLiteral="neuralNetwork.ecore#//BinaryOperand/sub"/>
+      <genEnumLiterals ecoreEnumLiteral="neuralNetwork.ecore#//BinaryOperand/pow"/>
+      <genEnumLiterals ecoreEnumLiteral="neuralNetwork.ecore#//BinaryOperand/div"/>
+      <genEnumLiterals ecoreEnumLiteral="neuralNetwork.ecore#//BinaryOperand/mod"/>
+    </genEnums>
+    <genEnums typeSafeEnumCompatible="false" ecoreEnum="neuralNetwork.ecore#//MergeType">
+      <genEnumLiterals ecoreEnumLiteral="neuralNetwork.ecore#//MergeType/ADD"/>
+      <genEnumLiterals ecoreEnumLiteral="neuralNetwork.ecore#//MergeType/AVERAGE"/>
+      <genEnumLiterals ecoreEnumLiteral="neuralNetwork.ecore#//MergeType/MAXIMUM"/>
+      <genEnumLiterals ecoreEnumLiteral="neuralNetwork.ecore#//MergeType/MINIMUM"/>
+      <genEnumLiterals ecoreEnumLiteral="neuralNetwork.ecore#//MergeType/MULTIPLY"/>
+    </genEnums>
+    <genEnums typeSafeEnumCompatible="false" ecoreEnum="neuralNetwork.ecore#//BinaryLogicalOperand">
+      <genEnumLiterals ecoreEnumLiteral="neuralNetwork.ecore#//BinaryLogicalOperand/equal"/>
+      <genEnumLiterals ecoreEnumLiteral="neuralNetwork.ecore#//BinaryLogicalOperand/greater"/>
+      <genEnumLiterals ecoreEnumLiteral="neuralNetwork.ecore#//BinaryLogicalOperand/greaterEqual"/>
+      <genEnumLiterals ecoreEnumLiteral="neuralNetwork.ecore#//BinaryLogicalOperand/less"/>
+      <genEnumLiterals ecoreEnumLiteral="neuralNetwork.ecore#//BinaryLogicalOperand/lessEqual"/>
+      <genEnumLiterals ecoreEnumLiteral="neuralNetwork.ecore#//BinaryLogicalOperand/notEqual"/>
+    </genEnums>
+    <genEnums typeSafeEnumCompatible="false" ecoreEnum="neuralNetwork.ecore#//Optimizer">
+      <genEnumLiterals ecoreEnumLiteral="neuralNetwork.ecore#//Optimizer/sdg"/>
+      <genEnumLiterals ecoreEnumLiteral="neuralNetwork.ecore#//Optimizer/momentum"/>
+      <genEnumLiterals ecoreEnumLiteral="neuralNetwork.ecore#//Optimizer/adagrad"/>
+      <genEnumLiterals ecoreEnumLiteral="neuralNetwork.ecore#//Optimizer/adadelta"/>
+      <genEnumLiterals ecoreEnumLiteral="neuralNetwork.ecore#//Optimizer/adam"/>
+      <genEnumLiterals ecoreEnumLiteral="neuralNetwork.ecore#//Optimizer/adamMax"/>
+      <genEnumLiterals ecoreEnumLiteral="neuralNetwork.ecore#//Optimizer/rmsprop"/>
+    </genEnums>
+    <genEnums typeSafeEnumCompatible="false" ecoreEnum="neuralNetwork.ecore#//Loss">
+      <genEnumLiterals ecoreEnumLiteral="neuralNetwork.ecore#//Loss/hinge"/>
+      <genEnumLiterals ecoreEnumLiteral="neuralNetwork.ecore#//Loss/meanAbsolutePercentageError"/>
+      <genEnumLiterals ecoreEnumLiteral="neuralNetwork.ecore#//Loss/meanSquaredError"/>
+      <genEnumLiterals ecoreEnumLiteral="neuralNetwork.ecore#//Loss/categoricalCrossentropy"/>
+      <genEnumLiterals ecoreEnumLiteral="neuralNetwork.ecore#//Loss/sparseCategoricalCrossentropy"/>
+      <genEnumLiterals ecoreEnumLiteral="neuralNetwork.ecore#//Loss/meanAbsoluteError"/>
+      <genEnumLiterals ecoreEnumLiteral="neuralNetwork.ecore#//Loss/meanSquaredLogarithmicError"/>
+      <genEnumLiterals ecoreEnumLiteral="neuralNetwork.ecore#//Loss/squaredHinge"/>
+      <genEnumLiterals ecoreEnumLiteral="neuralNetwork.ecore#//Loss/categoricalHinge"/>
+      <genEnumLiterals ecoreEnumLiteral="neuralNetwork.ecore#//Loss/logcosh"/>
+      <genEnumLiterals ecoreEnumLiteral="neuralNetwork.ecore#//Loss/binaryCrossentropy"/>
+      <genEnumLiterals ecoreEnumLiteral="neuralNetwork.ecore#//Loss/kullbackLeiblerDivergence"/>
+      <genEnumLiterals ecoreEnumLiteral="neuralNetwork.ecore#//Loss/poisson"/>
+      <genEnumLiterals ecoreEnumLiteral="neuralNetwork.ecore#//Loss/cosineProximity"/>
+    </genEnums>
+    <genClasses image="false" ecoreClass="neuralNetwork.ecore#//Layer">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute neuralNetwork.ecore#//Layer/activation"/>
+      <genOperations ecoreOperation="neuralNetwork.ecore#//Layer/numParameters"/>
+    </genClasses>
+    <genClasses ecoreClass="neuralNetwork.ecore#//Dense">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute neuralNetwork.ecore#//Dense/units"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute neuralNetwork.ecore#//Dense/useBias"/>
+    </genClasses>
+    <genClasses image="false" ecoreClass="neuralNetwork.ecore#//Operation"/>
+    <genClasses image="false" ecoreClass="neuralNetwork.ecore#//Node">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute neuralNetwork.ecore#//Node/name"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference neuralNetwork.ecore#//Node/inputs"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference neuralNetwork.ecore#//Node/outputs"/>
+      <genFeatures property="None" notify="false" createChild="false" ecoreFeature="ecore:EReference neuralNetwork.ecore#//Node/parent"/>
+      <genOperations ecoreOperation="neuralNetwork.ecore#//Node/outputShape"/>
+    </genClasses>
+    <genClasses ecoreClass="neuralNetwork.ecore#//Merge">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute neuralNetwork.ecore#//Merge/mergeType"/>
+    </genClasses>
+    <genClasses ecoreClass="neuralNetwork.ecore#//NeuralNetwork">
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference neuralNetwork.ecore#//NeuralNetwork/outputs"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute neuralNetwork.ecore#//NeuralNetwork/name"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference neuralNetwork.ecore#//NeuralNetwork/nodes"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute neuralNetwork.ecore#//NeuralNetwork/optimizer"/>
+    </genClasses>
+    <genClasses ecoreClass="neuralNetwork.ecore#//Input">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute neuralNetwork.ecore#//Input/shape"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute neuralNetwork.ecore#//Input/dtype"/>
+    </genClasses>
+    <genClasses ecoreClass="neuralNetwork.ecore#//Connection">
+      <genFeatures property="None" notify="false" createChild="false" ecoreFeature="ecore:EReference neuralNetwork.ecore#//Connection/to"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference neuralNetwork.ecore#//Connection/from"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute neuralNetwork.ecore#//Connection/name"/>
+    </genClasses>
+    <genClasses ecoreClass="neuralNetwork.ecore#//Block">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference neuralNetwork.ecore#//Block/children"/>
+      <genOperations ecoreOperation="neuralNetwork.ecore#//Block/numParameters"/>
+    </genClasses>
+    <genClasses ecoreClass="neuralNetwork.ecore#//Concat">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute neuralNetwork.ecore#//Concat/axis"/>
+    </genClasses>
+    <genClasses ecoreClass="neuralNetwork.ecore#//Convolution">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute neuralNetwork.ecore#//Convolution/filters"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute neuralNetwork.ecore#//Convolution/useBias"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute neuralNetwork.ecore#//Convolution/dimensions"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute neuralNetwork.ecore#//Convolution/padding"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute neuralNetwork.ecore#//Convolution/depthMultiplier"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute neuralNetwork.ecore#//Convolution/separable"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute neuralNetwork.ecore#//Convolution/dilationRate"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute neuralNetwork.ecore#//Convolution/strides"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute neuralNetwork.ecore#//Convolution/kernelSize"/>
+    </genClasses>
+    <genClasses ecoreClass="neuralNetwork.ecore#//BinaryOperation">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute neuralNetwork.ecore#//BinaryOperation/operand"/>
+    </genClasses>
+    <genClasses ecoreClass="neuralNetwork.ecore#//Reduce">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute neuralNetwork.ecore#//Reduce/reducer"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute neuralNetwork.ecore#//Reduce/axis"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute neuralNetwork.ecore#//Reduce/keepDims"/>
+    </genClasses>
+    <genClasses ecoreClass="neuralNetwork.ecore#//Activation">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute neuralNetwork.ecore#//Activation/type"/>
+    </genClasses>
+    <genClasses ecoreClass="neuralNetwork.ecore#//Reshape">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute neuralNetwork.ecore#//Reshape/shape"/>
+    </genClasses>
+    <genClasses image="false" ecoreClass="neuralNetwork.ecore#//UnaryOperation"/>
+    <genClasses ecoreClass="neuralNetwork.ecore#//Cast">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute neuralNetwork.ecore#//Cast/dtype"/>
+    </genClasses>
+    <genClasses ecoreClass="neuralNetwork.ecore#//Normalization">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute neuralNetwork.ecore#//Normalization/type"/>
+    </genClasses>
+    <genClasses ecoreClass="neuralNetwork.ecore#//BinaryLogicalOperation">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute neuralNetwork.ecore#//BinaryLogicalOperation/operand"/>
+    </genClasses>
+    <genClasses ecoreClass="neuralNetwork.ecore#//Output">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute neuralNetwork.ecore#//Output/loss"/>
+    </genClasses>

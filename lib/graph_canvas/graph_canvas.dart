@@ -16,10 +16,12 @@ import 'package:neural_graph/widgets/scrollable_extended.dart';
 import 'package:touchable/touchable.dart';
 
 class GraphView extends HookWidget {
+  final Graph graph;
+
+  const GraphView({@required this.graph});
+
   @override
   Widget build(BuildContext context) {
-    final root = useRoot();
-    final graph = root.selectedGraph;
     final graphCanvas = graph.graphCanvas;
 
     useEffect(
@@ -193,23 +195,27 @@ class ScrollableCanvasWrapper extends StatelessWidget {
     final graphCanvas = graph.graphCanvas;
 
     return MultiScrollable(
-      controller: graphCanvas,
-      builder: (context) => MouseScrollListener(
-        controller: graphCanvas,
-        child: Observer(
-          builder: (context) => CustomScrollGestures(
-            canvas: graphCanvas,
-            allowDrag: !graph.isDragging,
-            child: Observer(
-              builder: (context) => SizedBox(
-                width: graphCanvas.size.width,
-                height: graphCanvas.size.height,
-                child: child,
+      horizontal: graphCanvas.horizontal,
+      vertical: graphCanvas.vertical,
+      child: Builder(builder: (context) {
+        graphCanvas.setContext(context);
+        return MouseScrollListener(
+          controller: graphCanvas,
+          child: Observer(
+            builder: (context) => CustomScrollGestures(
+              canvas: graphCanvas,
+              allowDrag: !graph.isDragging,
+              child: Observer(
+                builder: (context) => SizedBox(
+                  width: graphCanvas.size.width,
+                  height: graphCanvas.size.height,
+                  child: child,
+                ),
               ),
             ),
           ),
-        ),
-      ),
+        );
+      }),
     );
   }
 }
