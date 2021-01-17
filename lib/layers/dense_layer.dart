@@ -20,7 +20,23 @@ class DenseLayer extends Layer {
 
   @override
   String code(CodeGenHelper h) {
-    return "${inPort.node.data.name}${h.outputSuffix}";
+    return """
+${h.defineName(name)} layers.${h.layerTypeName("dense")}(${h.openArgs()}
+  ${h.setName(name)}
+  units${h.sep} $units,
+  ${h.setActivation(activation)}
+  ${h.argName("useBias")}${h.sep} ${h.printBool(useBias)},
+${h.closeArgs()});
+${applyCode(h)}    
+""";
+  }
+
+  String applyCode(CodeGenHelper h) {
+    final _in = inPort.firstFromData;
+    if (_in == null) {
+      return "";
+    }
+    return "${h.applyOne(name, _in.name)}\n";
   }
 
   @override

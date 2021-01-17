@@ -95,7 +95,8 @@ abstract class _Convolutional extends Layer with Store {
         );
   }
 
-  String code(CodeGenHelper helper) {
+  @override
+  String code(CodeGenHelper h) {
     String _layerType = "";
     if (separable) {
       _layerType += "separableConv";
@@ -104,26 +105,34 @@ abstract class _Convolutional extends Layer with Store {
     }
 
     _layerType += "${dimensions.toInt().toString()}d";
-    _layerType = helper.layerTypeName(_layerType);
-    final sep = helper.sep;
+    _layerType = h.layerTypeName(_layerType);
+    final sep = h.sep;
     final _separableString = separable
-        ? '\n  ${helper.argName("depthMultiplier")}$sep $depthMultiplier,'
+        ? '\n    ${h.argName("depthMultiplier")}$sep $depthMultiplier,'
         : '';
 
     // ignore: leading_newlines_in_multiline_strings
     return """
-$_layerType(${helper.openArgs()}
-    ${helper.setName(this.name)},
+${h.defineName(name)} $_layerType(${h.openArgs()}
+    ${h.setName(this.name)},
     filters$sep $filters,
-    ${helper.argName('kernelSize')}$sep ${helper.firstOrList(kernelSize)},
-    padding$sep ${toEnumString(padding)},
-    strides$sep ${helper.firstOrList(strides)},
-    ${helper.argName('useBias')}$sep ${helper.printBool(useBias)},
-    ${helper.argName('dilationRate')}$sep ${helper.firstOrList(dilationRate)},
-    ${helper.setActivation(activation)},$_separableString
-${helper.closeArgs()});
-${helper.applyOne(name, this.inPort.node.data.name)}
+    ${h.argName('kernelSize')}$sep ${h.firstOrList(kernelSize)},
+    padding$sep "${toEnumString(padding)}",
+    strides$sep ${h.firstOrList(strides)},
+    ${h.argName('useBias')}$sep ${h.printBool(useBias)},
+    ${h.argName('dilationRate')}$sep ${h.firstOrList(dilationRate)},
+    ${h.setActivation(activation)},$_separableString
+${h.closeArgs()});
+${applyCode(h)}
 """;
+  }
+
+  String applyCode(CodeGenHelper h) {
+    final _in = inPort.firstFromData;
+    if (_in == null) {
+      return "";
+    }
+    return "${h.applyOne(name, _in.name)}\n";
   }
 
   @override

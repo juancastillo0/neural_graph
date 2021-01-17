@@ -19,7 +19,15 @@ class OutputLayer extends Layer {
 
   @override
   String code(CodeGenHelper h) {
-    return "${inPort.node.data.name}${h.outputSuffix}";
+    return applyCode(h);
+  }
+
+  String applyCode(CodeGenHelper h) {
+    final _in = inPort.firstFromData;
+    if (_in == null) {
+      return "";
+    }
+    return "${h.defineName(name)} ${_in.name}${h.outputSuffix};\n";
   }
 
   @override
