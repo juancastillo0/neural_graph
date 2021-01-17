@@ -57,13 +57,12 @@ abstract class _Input extends Layer with Store {
         child: InputForm(state: this as Input),
       );
 
- @override
+  @override
   Widget nodeView() => SimpleLayerView(
         layer: this,
         outPort: outPort,
         inPort: null,
       );
-
 }
 
 class InputForm extends HookWidget {

@@ -82,7 +82,7 @@ class CodeGenHelper {
   String get sep => language.isJs ? ":" : "=";
 
   String setName(String name) {
-    return 'name$sep "$name"'; 
+    return 'name$sep "$name"';
   }
 
   String setActivation(Activation activation) {
