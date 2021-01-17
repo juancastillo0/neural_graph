@@ -14,7 +14,7 @@ import 'package:neural_graph/layers/layers.dart';
 import 'package:neural_graph/diagram/node.dart';
 import 'package:neural_graph/layers/node_layer_view.dart';
 
-part 'convolutional.g.dart';
+part 'convolutional_layer.g.dart';
 
 enum ConvPadding { same, valid, causal }
 

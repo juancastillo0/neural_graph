@@ -3,7 +3,7 @@ import 'package:get_it/get_it.dart';
 import 'package:logger/logger.dart';
 import 'package:mobx/mobx.dart';
 import 'package:neural_graph/diagram/graph.dart';
-import 'package:neural_graph/layers/convolutional.dart';
+import 'package:neural_graph/layers/convolutional_layer.dart';
 import 'package:neural_graph/layers/layers.dart';
 import 'package:neural_graph/layers/neural_network.dart';
 

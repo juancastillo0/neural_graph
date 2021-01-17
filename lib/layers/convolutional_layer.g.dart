@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'convolutional.dart';
+part of 'convolutional_layer.dart';
 
 // **************************************************************************
 // StoreGenerator

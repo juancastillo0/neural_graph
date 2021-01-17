@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:neural_graph/diagram/node.dart';
 import 'package:test/test.dart';
-import 'package:neural_graph/layers/convolutional.dart';
+import 'package:neural_graph/layers/convolutional_layer.dart';
 import 'package:neural_graph/layers/layers.dart';
 
 void main() {

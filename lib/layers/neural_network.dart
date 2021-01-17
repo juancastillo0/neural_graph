@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:neural_graph/diagram/graph.dart';
-import 'package:neural_graph/layers/input.dart';
+import 'package:neural_graph/layers/input_layer.dart';
 import 'package:neural_graph/layers/layers.dart';
 import 'package:neural_graph/layers/output_layer.dart';
 import 'package:uuid/uuid.dart';

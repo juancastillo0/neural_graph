@@ -3,9 +3,9 @@ import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:mobx/mobx.dart';
 import 'package:neural_graph/common/extensions.dart';
 import 'package:neural_graph/layers/codegen_helper.dart';
-import 'package:neural_graph/layers/convolutional.dart';
+import 'package:neural_graph/layers/convolutional_layer.dart';
 import 'package:neural_graph/layers/dense_layer.dart';
-import 'package:neural_graph/layers/input.dart';
+import 'package:neural_graph/layers/input_layer.dart';
 import 'package:neural_graph/diagram/node.dart';
 import 'package:neural_graph/layers/output_layer.dart';
 

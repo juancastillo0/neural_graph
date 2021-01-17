@@ -12,7 +12,7 @@ import 'package:neural_graph/layers/layers.dart';
 import 'package:neural_graph/diagram/node.dart';
 import 'package:neural_graph/layers/node_layer_view.dart';
 
-part 'input.g.dart';
+part 'input_layer.g.dart';
 
 class Input = _Input with _$Input;
 
