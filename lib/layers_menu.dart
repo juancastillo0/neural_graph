@@ -9,6 +9,7 @@ import 'package:neural_graph/widgets/scrollable.dart';
 const _menuMap = {
   'Model': [
     "Input",
+    "Output",
     "Loss",
     "Metric",
     "Optimizer",
