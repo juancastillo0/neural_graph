@@ -33,7 +33,10 @@ class Connection<NF extends NodeData, NT extends NodeData> {
 
 class Port<N extends NodeData> {
   final Node<N> node;
-  final connections = ObservableList<Connection>();
+  final connections = ObservableList<Connection<N, N>>();
+
+  N get firstFromData =>
+      connections.isEmpty ? null : connections.first.from.node.data;
 
   final localOffset = ValueNotifier(const Offset(0, 0));
   Offset get offset => node.offset + localOffset.value;
