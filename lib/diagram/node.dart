@@ -45,7 +45,7 @@ class Node<T extends NodeData> {
         .data
         .ports
         .expand((port) => port.connections.cast<Connection<T, T>>())
-        .where((conn) => conn.from.node == this);
+        .where((conn) => conn.to.node == this);
   }
 
   Iterable<Connection<T, T>> outputs() {
@@ -53,7 +53,7 @@ class Node<T extends NodeData> {
         .data
         .ports
         .expand((port) => port.connections.cast<Connection<T, T>>())
-        .where((conn) => conn.to.node == this);
+        .where((conn) => conn.from.node == this);
   }
 
   T data;

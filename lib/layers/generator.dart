@@ -28,14 +28,14 @@ def make_model():
     b.write("""
 ${h.defineOutput(c.name)} layers.${h.layerTypeName("input")}(${h.openArgs()}
   ${h.setName(c.name)}
-  dtype ${h.sep} "${c.dtype}",
-  shape ${h.sep} ${c.shape},
+  dtype${h.sep} "${toEnumString(c.dtype)}",
+  shape${h.sep} ${c.shape},
 ${h.closeArgs()});
 """);
   }
   b.write("""
 ${h.defineKeyword}inputs = [
-${network.inputs.map((c) => c.name + h.outputSuffix).join(',')}
+  ${network.inputs.map((c) => c.name + h.outputSuffix).join(',')}
 ];
 """);
 
@@ -92,7 +92,7 @@ ${network.inputs.map((c) => c.name + h.outputSuffix).join(',')}
   final sep = h.sep;
   b.write("""
 ${h.defineKeyword}outputs = [
-${network.outputs.map((e) => e.code(h)).join(',')}
+  ${network.outputs.map((e) => e.name).join(',')}
 ]${h.typeCastTensor};
 
 ${h.defineKeyword}model = tf${h.language.isJs ? '.keras' : ''}.${h.layerTypeName("model")}(${h.openArgs()}

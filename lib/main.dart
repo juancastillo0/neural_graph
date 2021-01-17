@@ -191,8 +191,10 @@ class PropertiesView extends HookWidget {
         Expanded(
           child: Observer(
             builder: (context) {
-              final selectedNode =
-                  selectedGraph.nodes[selectedGraph.selectedNodes.first];
+              final selectedNode = selectedGraph.selectedNode;
+              if (selectedNode == null) {
+                return const Center(child: Text("No selected node"));
+              }
               if (contoller.text != selectedNode.data.name) {
                 contoller.text = selectedNode.data.name;
               }
@@ -250,7 +252,7 @@ class PropertiesView extends HookWidget {
         Observer(builder: (context) {
           final conn = selectedGraph.selectedConnection;
           if (conn == null) {
-            return const Text("No Selected Connection");
+            return const Text("No selected connection");
           }
           return Text("${conn.fromData.name} -> ${conn.toData.name}");
         })
