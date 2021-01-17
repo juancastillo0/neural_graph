@@ -80,7 +80,10 @@ class ButtonSelect<T> extends HookWidget {
                   checkedShouldBeDropdown.value = true;
                 }
               });
-              return Text(s);
+              return Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 6.0),
+                child: Text(s),
+              );
             }),
           );
         }).toList(),

@@ -113,7 +113,7 @@ abstract class _Convolutional extends Layer with Store {
 
     // ignore: leading_newlines_in_multiline_strings
     return """
-${h.defineName(name)} $_layerType(${h.openArgs()}
+${h.defineName(name)} layers.$_layerType(${h.openArgs()}
     ${h.setName(this.name)},
     filters$sep $filters,
     ${h.argName('kernelSize')}$sep ${h.firstOrList(kernelSize)},

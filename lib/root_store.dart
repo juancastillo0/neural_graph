@@ -3,7 +3,9 @@ import 'package:get_it/get_it.dart';
 import 'package:logger/logger.dart';
 import 'package:mobx/mobx.dart';
 import 'package:neural_graph/diagram/graph.dart';
+import 'package:neural_graph/layers/codegen_helper.dart';
 import 'package:neural_graph/layers/convolutional_layer.dart';
+import 'package:neural_graph/layers/generator.dart';
 import 'package:neural_graph/layers/layers.dart';
 import 'package:neural_graph/layers/neural_network.dart';
 
@@ -46,6 +48,17 @@ abstract class _RootStore with Store {
 
   @observable
   NeuralNetwork selectedNetwork;
+
+  @observable
+  ProgrammingLanguage language = ProgrammingLanguage.python;
+
+  @computed
+  String get generatedSourceCode {
+    return generateNeuralNetworkCode(
+      this.selectedNetwork,
+      this.language,
+    );
+  }
 }
 
 RootStore useRoot() {

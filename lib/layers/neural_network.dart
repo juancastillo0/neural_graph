@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mobx/mobx.dart';
 import 'package:neural_graph/diagram/graph.dart';
 import 'package:neural_graph/layers/input_layer.dart';
 import 'package:neural_graph/layers/layers.dart';
@@ -17,7 +18,8 @@ class NeuralNetwork {
   final Graph<Layer> graph;
 
   String name;
-  String optimizer;
+  final optimizerObs = Observable(Optimizer.momentum);
+  Optimizer get optimizer => optimizerObs.value;
 
   Iterable<Input> get inputs =>
       graph.nodes.values.map((node) => node.data).whereType<Input>();

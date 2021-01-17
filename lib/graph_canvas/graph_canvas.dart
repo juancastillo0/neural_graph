@@ -6,7 +6,6 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:neural_graph/arrow.dart';
 import 'package:neural_graph/diagram/graph.dart';
-import 'package:neural_graph/graph_canvas/adding_node_state.dart';
 import 'package:neural_graph/layers/layers.dart';
 import 'package:neural_graph/diagram/node.dart';
 import 'package:neural_graph/root_store.dart';

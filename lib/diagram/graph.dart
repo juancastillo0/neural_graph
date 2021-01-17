@@ -163,7 +163,10 @@ class Graph<N extends NodeData> {
   void addConnection(Port<N> port) {
     runInAction(() {
       _addingConnection.value = addingConnection.when(
-        none: () => AddingConnectionState.addedInput(port),
+        none: () {
+          this.graphCanvas.mousePosition = port.offset;
+          return AddingConnectionState.addedInput(port);
+        },
         addedInput: (inputPort) {
           inputPort.addConnection(port);
           return const AddingConnectionState.none();

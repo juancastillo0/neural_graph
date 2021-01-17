@@ -9,6 +9,14 @@ part of 'root_store.dart';
 // ignore_for_file: non_constant_identifier_names, unnecessary_brace_in_string_interps, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic
 
 mixin _$RootStore on _RootStore, Store {
+  Computed<String> _$generatedSourceCodeComputed;
+
+  @override
+  String get generatedSourceCode => (_$generatedSourceCodeComputed ??=
+          Computed<String>(() => super.generatedSourceCode,
+              name: '_RootStore.generatedSourceCode'))
+      .value;
+
   final _$networksAtom = Atom(name: '_RootStore.networks');
 
   @override
@@ -39,11 +47,28 @@ mixin _$RootStore on _RootStore, Store {
     });
   }
 
+  final _$languageAtom = Atom(name: '_RootStore.language');
+
+  @override
+  ProgrammingLanguage get language {
+    _$languageAtom.reportRead();
+    return super.language;
+  }
+
+  @override
+  set language(ProgrammingLanguage value) {
+    _$languageAtom.reportWrite(value, super.language, () {
+      super.language = value;
+    });
+  }
+
   @override
   String toString() {
     return '''
 networks: ${networks},
-selectedNetwork: ${selectedNetwork}
+selectedNetwork: ${selectedNetwork},
+language: ${language},
+generatedSourceCode: ${generatedSourceCode}
     ''';
   }
 }

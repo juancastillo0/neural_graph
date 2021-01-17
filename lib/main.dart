@@ -4,7 +4,9 @@ import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:get_it/get_it.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mobx/mobx.dart';
+import 'package:neural_graph/common/extensions.dart';
 import 'package:neural_graph/diagram/operations.dart';
+import 'package:neural_graph/fields/button_select_field.dart';
 import 'package:neural_graph/graph_canvas/graph_canvas.dart';
 import 'package:neural_graph/layers/codegen_helper.dart';
 import 'package:neural_graph/layers/generator.dart';
@@ -114,7 +116,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         }),
                       ),
                       const Resizable(
-                        defaultWidth: 200,
+                        defaultWidth: 400,
                         horizontal: ResizeHorizontal.left,
                         child: CodeGenerated(),
                       ),
@@ -147,31 +149,45 @@ class CodeGenerated extends HookWidget {
     useEffect(() => controller.dispose, []);
 
     return Card(
-      child: Padding(
-        padding: const EdgeInsets.only(
-          top: 12.0,
-          bottom: 12.0,
-          left: 12.0,
-        ),
-        child: MultiScrollable(
-          vertical: controller,
-          child: SingleChildScrollView(
-            controller: controller,
-            child: Observer(builder: (context) {
-              final sourceCode = generateNeuralNetworkCode(
-                root.selectedNetwork,
-                const CodeGenHelper(
-                  language: ProgrammingLanguage.javascript,
-                ),
-              );
-
-              return SelectableText(
-                sourceCode,
-                style: GoogleFonts.cousine(),
-              );
-            }),
+      child: Column(
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Observer(builder: (context) {
+                return ButtonSelect<ProgrammingLanguage>(
+                  options: ProgrammingLanguage.values,
+                  selected: root.language,
+                  asString: toEnumString,
+                  onChange: (v) => root.language = v,
+                );
+              }),
+            ],
           ),
-        ),
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.only(
+                top: 12.0,
+                bottom: 12.0,
+                left: 12.0,
+              ),
+              child: MultiScrollable(
+                vertical: controller,
+                child: SingleChildScrollView(
+                  controller: controller,
+                  child: Observer(builder: (context) {
+                    final sourceCode = root.generatedSourceCode;
+
+                    return SelectableText(
+                      sourceCode,
+                      style: GoogleFonts.cousine(),
+                    );
+                  }),
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

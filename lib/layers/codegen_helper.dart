@@ -16,9 +16,28 @@ extension StringExtension on String {
 }
 
 class CodeGenHelper {
-  const CodeGenHelper({@required this.language});
+  CodeGenHelper({@required this.language});
 
   final ProgrammingLanguage language;
+
+  final buffer = StringBuffer();
+
+  int _spaces = 0;
+
+  void withTab(void Function() fn) {
+    _spaces += 2;
+    buffer.write(" " * _spaces); 
+    fn();
+    _spaces -= 2;
+  }
+
+  void write(Object object) {
+    if (_spaces != 0) {
+      buffer.write(object.toString().replaceAll("\n", "\n${" " * _spaces}"));
+    } else {
+      buffer.write(object);
+    }
+  }
 
   String layerTypeName(String name) {
     if (language.isJs) {

@@ -3,12 +3,12 @@ import 'package:neural_graph/diagram/operations.dart';
 import 'package:neural_graph/layers/codegen_helper.dart';
 import 'package:neural_graph/layers/neural_network.dart';
 
-String generateNeuralNetworkCode(NeuralNetwork network, CodeGenHelper h) {
+String generateNeuralNetworkCode(
+    NeuralNetwork network, ProgrammingLanguage lang) {
   final graph = network.graph;
-  final lang = h.language;
-  final b = StringBuffer();
+  final h = CodeGenHelper(language: lang);
 
-  b.write(lang.isJs
+  h.write(lang.isJs
       ? """
 import * as tf from "@tensorflow/tfjs-node";
 import { SymbolicTensor, layers } from "@tensorflow/tfjs-node";
@@ -23,17 +23,19 @@ from tensorflow.keras import layers
 def make_model():
 """);
 
+  h.withTab(() {
 // ================    INPUTS
-  for (final c in network.inputs) {
-    b.write("""
+    for (final c in network.inputs) {
+      h.write("""
 ${h.defineOutput(c.name)} layers.${h.layerTypeName("input")}(${h.openArgs()}
   ${h.setName(c.name)}
   dtype${h.sep} "${toEnumString(c.dtype)}",
   shape${h.sep} ${c.shape},
 ${h.closeArgs()});
 """);
-  }
-  b.write("""
+    }
+
+    h.write("""
 ${h.defineKeyword}inputs = [
   ${network.inputs.map((c) => c.name + h.outputSuffix).join(',')}
 ];
@@ -43,11 +45,11 @@ ${h.defineKeyword}inputs = [
 
 // var sorted = topologicalSort(Input.all);
 // TODO:
-  final orderedNodes = orderedGraph(graph.nodes.values);
+    final orderedNodes = orderedGraph(graph.nodes.values);
 
-  for (final c in orderedNodes) {
+    for (final c in orderedNodes) {
 // ================    LAYERS
-    b.write(c.data.code(h));
+      h.write(c.data.code(h));
 
 //   LAYERS ================
 
@@ -88,36 +90,36 @@ ${h.defineKeyword}inputs = [
 
 //  UNARY ================
 
-  }
-  final sep = h.sep;
-  b.write("""
+    }
+
+    final sep = h.sep;
+    h.write("""
 ${h.defineKeyword}outputs = [
   ${network.outputs.map((e) => e.name).join(',')}
 ]${h.typeCastTensor};
 
 ${h.defineKeyword}model = tf${h.language.isJs ? '.keras' : ''}.${h.layerTypeName("model")}(${h.openArgs()}
-    inputs$sep inputs,
-    outputs$sep outputs,
-    name$sep "${network.name}",
+  inputs$sep inputs,
+  outputs$sep outputs,
+  name$sep "${network.name}",
 ${h.closeArgs()});
 """);
 
-  if (network.optimizer != null) {
-    b.write("""
-    model.compile(${h.openArgs()}
-    optimizer$sep "${network.optimizer}",
-	loss$sep [
-	${network.outputs.map((c) => c.loss != null ? h.argName(toEnumString(c.loss)) : "(_yTrue, _yPred) => tf.tensor(0)").join(',')}
-	],
+    h.write("""
+model.compile(${h.openArgs()}
+  optimizer$sep "${toEnumString(network.optimizer)}",
+  loss$sep [
+    ${network.outputs.map((c) => c.loss != null ? h.argName(toEnumString(c.loss)) : "(_yTrue, _yPred) => tf.tensor(0)").join(',')}
+  ],
 ${h.closeArgs()});
-[%}}
+ 
+return model;
 """);
-  }
+  });
 
-  b.write("""
-  return model;
+  h.write("""
 ${h.language.isJs ? "};" : ""}
 """);
 
-  return b.toString();
+  return h.buffer.toString();
 }
