@@ -1,3 +1,1 @@
-class CommunicationStore {
-  
-}
+class CommunicationStore {}
