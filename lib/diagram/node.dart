@@ -101,8 +101,8 @@ class Node<T extends NodeData> {
 //   int get hashCode => key.hashCode;
 // }
 
-const _nodePadding = 18.0;
-const _nodeBorderRadius = BorderRadius.all(Radius.circular(6.0));
+const _nodePadding = 2.0;
+const _nodeBorderRadius = BorderRadius.all(Radius.circular(4.0));
 const _nodeEdgeInsets = EdgeInsets.all(_nodePadding);
 
 class NodeView extends hooks.HookWidget {

@@ -26,7 +26,7 @@ class CodeGenHelper {
 
   void withTab(void Function() fn) {
     _spaces += 2;
-    buffer.write(" " * _spaces); 
+    buffer.write(" " * _spaces);
     fn();
     _spaces -= 2;
   }

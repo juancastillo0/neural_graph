@@ -1,0 +1,17 @@
+
+mutation Signal($peerId: String!, $signal: String!, $userId: String!) { 
+  signal(peerId: $peerId, signal: $signal, userId: $userId) 
+} 
+
+subscription LogIn($userId: String!) {
+  logIn(userId: $userId) {
+    payload
+    peerId
+  }
+}
+
+subscription Room($roomId: String!, $userId: String!) {
+  room(userId: $userId, roomId: $roomId) {
+    users
+  }
+}

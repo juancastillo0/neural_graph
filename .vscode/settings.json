@@ -2,5 +2,5 @@
   "files.exclude": {
     // "**/*.g.dart": true
   },
-  "dart.flutterSdkPath": "C:\\Users\\jmanu\\fvm\\versions\\master"
+  "dart.flutterSdkPath": "C:\\Users\\jmanu\\fvm\\versions\\dev"
 }

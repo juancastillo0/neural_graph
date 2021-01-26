@@ -1,0 +1,52 @@
+schema {
+  query: QueryRoot
+  mutation: MutationRoot
+  subscription: SubscriptionRoot
+}
+
+# Directs the executor to query only when the field exists.
+directive @ifdef on FIELD
+
+type Book {
+  id: String!
+  name: String!
+  author: String!
+}
+
+type BookChanged {
+  mutationType: MutationType!
+  id: ID!
+  book: Book
+}
+
+type MutationRoot {
+  createBook(name: String!, author: String!): ID!
+  deleteBook(id: ID!): Boolean!
+  signal(userId: String!, peerId: String!, signal: String!): Boolean!
+}
+
+enum MutationType {
+  CREATED
+  DELETED
+}
+
+type QueryRoot {
+  books: [Book!]!
+  token: String
+}
+
+type RoomObj {
+  users: [String!]!
+}
+
+type Signal {
+  payload: String!
+  peerId: String!
+}
+
+type SubscriptionRoot {
+  interval(n: Int! = 1): Int!
+  books(mutationType: MutationType): BookChanged!
+  room(roomId: String!, userId: String!): RoomObj!
+  logIn(userId: String!): Signal!
+}

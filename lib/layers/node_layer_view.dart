@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:neural_graph/common/extensions.dart';
 import 'package:neural_graph/diagram/node.dart';
 import 'package:neural_graph/layers/layers.dart';
 
@@ -28,7 +29,19 @@ class SimpleLayerView extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 10.0),
             child: NodeContainer(
               isSelected: node.graph.selectedNodes.contains(node.key),
-              child: Observer(builder: (context) => Text(layer.name)),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    layer.layerId,
+                    style: context.textTheme.subtitle2.copyWith(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 11,
+                    ),
+                  ),
+                  Observer(builder: (context) => Text(layer.name)),
+                ],
+              ),
             ),
           ),
           if (outPort != null)

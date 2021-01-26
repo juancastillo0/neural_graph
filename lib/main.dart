@@ -1,15 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:get_it/get_it.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mobx/mobx.dart';
 import 'package:neural_graph/common/extensions.dart';
+import 'package:neural_graph/diagram/graph.dart';
 import 'package:neural_graph/diagram/operations.dart';
 import 'package:neural_graph/fields/button_select_field.dart';
+import 'package:neural_graph/file_system_access_chrome/file_system_access.dart';
 import 'package:neural_graph/graph_canvas/graph_canvas.dart';
 import 'package:neural_graph/layers/codegen_helper.dart';
 import 'package:neural_graph/layers/generator.dart';
+import 'package:neural_graph/layers/layers.dart';
 import 'package:neural_graph/layers_menu.dart';
 import 'package:neural_graph/root_store.dart';
 import 'package:neural_graph/widgets/gesture_listener.dart';
@@ -154,6 +158,47 @@ class CodeGenerated extends HookWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
+              TextButton.icon(
+                icon: const Icon(Icons.file_present),
+                label: const Text("File"),
+                onPressed: () async {
+                  final handles = await showOpenFilePicker();
+                  final handle = handles[0];
+
+                  // final file = await handle.getFile();
+                  // final contents = await readFileAsText(file);
+
+                  final v = await verifyPermission(handle, readWrite: true);
+                  print(v);
+
+                  // final writable = await handle.createWritable(
+                  //     FileSystemCreateWritableOptions(keepExistingData: true));
+
+                  // await writable.write(
+                  //     FileSystemWriteChunkType.string("value" + contents));
+                  // // Close the file and write the contents to disk.
+                  // await writable.close();
+                },
+              ),
+              Observer(builder: (context) {
+                final sourceCode = root.generatedSourceCode;
+                return TextButton.icon(
+                  style:
+                      TextButton.styleFrom(padding: const EdgeInsets.all(14)),
+                  onPressed: () {
+                    Clipboard.setData(ClipboardData(text: sourceCode));
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: const Text("Source code copied"),
+                        behavior: SnackBarBehavior.floating,
+                        width: 300,
+                      ),
+                    );
+                  },
+                  icon: const Icon(Icons.file_copy),
+                  label: const Text("Copy"),
+                );
+              }),
               Observer(builder: (context) {
                 return ButtonSelect<ProgrammingLanguage>(
                   options: ProgrammingLanguage.values,
@@ -167,7 +212,6 @@ class CodeGenerated extends HookWidget {
           Expanded(
             child: Padding(
               padding: const EdgeInsets.only(
-                top: 12.0,
                 bottom: 12.0,
                 left: 12.0,
               ),
@@ -198,81 +242,101 @@ class PropertiesView extends HookWidget {
   @override
   Widget build(BuildContext ctx) {
     final selectedGraph = useRoot().selectedNetwork.graph;
-    final contoller = useTextEditingController(
-      text: selectedGraph.selectedNode.data.name,
-    );
 
     return Row(
       children: [
         Expanded(
-          child: Observer(
-            builder: (context) {
-              final selectedNode = selectedGraph.selectedNode;
-              if (selectedNode == null) {
-                return const Center(child: Text("No selected node"));
-              }
-              if (contoller.text != selectedNode.data.name) {
-                contoller.text = selectedNode.data.name;
-              }
-
-              bool isRepeated(String value) {
-                return selectedGraph.nodes.values.any((element) =>
-                    element.key != selectedNode.key &&
-                    element.data.name == value);
-              }
-
-              return Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 18,
-                          vertical: 10,
-                        ),
-                        child: Text(
-                          selectedNode.data.layerId,
-                          style: Theme.of(context).textTheme.headline6,
-                        ),
-                      ),
-                      SizedBox(
-                        width: 150,
-                        child: TextFormField(
-                          autovalidateMode: AutovalidateMode.onUserInteraction,
-                          controller: contoller,
-                          decoration: const InputDecoration(hintText: "Name"),
-                          onChanged: (value) {
-                            if (!isRepeated(value)) {
-                              selectedNode.data.setName(value);
-                            }
-                          },
-                          validator: (value) =>
-                              selectedNode.data.name != value ? "" : null,
-                        ),
-                      ),
-                      IconButton(
-                        icon: const Icon(Icons.delete),
-                        onPressed: selectedGraph.deleteSelected,
-                      )
-                    ],
-                  ),
-                  Expanded(
-                    child: selectedNode.data.form(),
-                  )
-                ],
-              );
-            },
+          child: NodePropertiesView(
+            selectedGraph: selectedGraph,
           ),
         ),
-        Observer(builder: (context) {
-          final conn = selectedGraph.selectedConnection;
-          if (conn == null) {
-            return const Text("No selected connection");
-          }
-          return Text("${conn.fromData.name} -> ${conn.toData.name}");
-        })
+        Resizable(
+          horizontal: ResizeHorizontal.left,
+          defaultWidth: 300,
+          child: Observer(builder: (context) {
+            final conn = selectedGraph.selectedConnection;
+            if (conn == null) {
+              return const Text("No selected connection");
+            }
+            return Text("${conn.fromData.name} -> ${conn.toData.name}");
+          }),
+        )
       ],
+    );
+  }
+}
+
+class NodePropertiesView extends HookWidget {
+  const NodePropertiesView({
+    Key key,
+    @required this.selectedGraph,
+  }) : super(key: key);
+
+  final Graph<Layer> selectedGraph;
+
+  @override
+  Widget build(BuildContext context) {
+    final contoller = useTextEditingController(
+      text: selectedGraph.selectedNode.data.name,
+    );
+
+    return Observer(
+      builder: (context) {
+        final selectedNode = selectedGraph.selectedNode;
+        if (selectedNode == null) {
+          return const Center(child: Text("No selected node"));
+        }
+        if (contoller.text != selectedNode.data.name) {
+          contoller.text = selectedNode.data.name;
+        }
+
+        bool isRepeated(String value) {
+          return selectedGraph.nodes.values.any((element) =>
+              element.key != selectedNode.key && element.data.name == value);
+        }
+
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 18,
+                    vertical: 10,
+                  ),
+                  child: Text(
+                    selectedNode.data.layerId,
+                    style: Theme.of(context).textTheme.headline6,
+                  ),
+                ),
+                SizedBox(
+                  width: 150,
+                  child: TextFormField(
+                    autovalidateMode: AutovalidateMode.onUserInteraction,
+                    controller: contoller,
+                    decoration: const InputDecoration(hintText: "Name"),
+                    onChanged: (value) {
+                      if (!isRepeated(value)) {
+                        selectedNode.data.setName(value);
+                      }
+                    },
+                    validator: (value) =>
+                        selectedNode.data.name != value ? "" : null,
+                  ),
+                ),
+                IconButton(
+                  icon: const Icon(Icons.delete),
+                  onPressed: selectedGraph.deleteSelected,
+                )
+              ],
+            ),
+            Expanded(
+              child: selectedNode.data.form(),
+            )
+          ],
+        );
+      },
     );
   }
 }
