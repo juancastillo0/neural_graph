@@ -2,7 +2,6 @@ import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
 import 'package:neural_graph/file_system_access_chrome/file_system_write_params.dart';
-import 'dart:html' as html;
 
 export 'package:neural_graph/file_system_access_chrome/file_system_write_params.dart';
 
@@ -13,7 +12,7 @@ abstract class FileSystemWriteChunkType {
     ByteBuffer value,
   ) = _BufferSource;
   const factory FileSystemWriteChunkType.blob(
-    html.Blob value,
+    dynamic /*html.Blob*/ value,
   ) = _Blob;
   const factory FileSystemWriteChunkType.string(
     String value,
@@ -26,7 +25,7 @@ abstract class FileSystemWriteChunkType {
 
   T when<T>({
     @required T Function(ByteBuffer value) bufferSource,
-    @required T Function(html.Blob value) blob,
+    @required T Function(dynamic /*html.Blob*/ value) blob,
     @required T Function(String value) string,
     @required T Function(WriteParams value) writeParams,
   }) {
@@ -41,7 +40,7 @@ abstract class FileSystemWriteChunkType {
   T maybeWhen<T>({
     T Function() orElse,
     T Function(ByteBuffer value) bufferSource,
-    T Function(html.Blob value) blob,
+    T Function(dynamic /*html.Blob*/ value) blob,
     T Function(String value) string,
     T Function(WriteParams value) writeParams,
   }) {
@@ -96,7 +95,7 @@ class _BufferSource extends FileSystemWriteChunkType {
 }
 
 class _Blob extends FileSystemWriteChunkType {
-  final html.Blob value;
+  final dynamic /*html.Blob*/ value;
 
   const _Blob(
     this.value,
