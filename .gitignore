@@ -44,3 +44,7 @@ app.*.map.json
 !/packages/flutter_tools/test/data/dart_dependencies_test/**/.packages
 .vscode/launch.json
 .fvm/flutter_sdk
+.vscode/settings.json
+
+/lib/**.g.dart
+/lib/**/*.freezed.dart

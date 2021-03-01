@@ -22,11 +22,43 @@ class Signal$MutationRoot with EquatableMixin {
 }
 
 @JsonSerializable(explicitToJson: true)
-class LogIn$SubscriptionRoot$Signal with EquatableMixin {
-  LogIn$SubscriptionRoot$Signal();
+class CreateSession$MutationRoot$UserSession with EquatableMixin {
+  CreateSession$MutationRoot$UserSession();
 
-  factory LogIn$SubscriptionRoot$Signal.fromJson(Map<String, dynamic> json) =>
-      _$LogIn$SubscriptionRoot$SignalFromJson(json);
+  factory CreateSession$MutationRoot$UserSession.fromJson(
+          Map<String, dynamic> json) =>
+      _$CreateSession$MutationRoot$UserSessionFromJson(json);
+
+  String userId;
+
+  String token;
+
+  @override
+  List<Object> get props => [userId, token];
+  Map<String, dynamic> toJson() =>
+      _$CreateSession$MutationRoot$UserSessionToJson(this);
+}
+
+@JsonSerializable(explicitToJson: true)
+class CreateSession$MutationRoot with EquatableMixin {
+  CreateSession$MutationRoot();
+
+  factory CreateSession$MutationRoot.fromJson(Map<String, dynamic> json) =>
+      _$CreateSession$MutationRootFromJson(json);
+
+  CreateSession$MutationRoot$UserSession createSessionId;
+
+  @override
+  List<Object> get props => [createSessionId];
+  Map<String, dynamic> toJson() => _$CreateSession$MutationRootToJson(this);
+}
+
+@JsonSerializable(explicitToJson: true)
+class Signals$SubscriptionRoot$Signal with EquatableMixin {
+  Signals$SubscriptionRoot$Signal();
+
+  factory Signals$SubscriptionRoot$Signal.fromJson(Map<String, dynamic> json) =>
+      _$Signals$SubscriptionRoot$SignalFromJson(json);
 
   String payload;
 
@@ -34,35 +66,36 @@ class LogIn$SubscriptionRoot$Signal with EquatableMixin {
 
   @override
   List<Object> get props => [payload, peerId];
-  Map<String, dynamic> toJson() => _$LogIn$SubscriptionRoot$SignalToJson(this);
+  Map<String, dynamic> toJson() =>
+      _$Signals$SubscriptionRoot$SignalToJson(this);
 }
 
 @JsonSerializable(explicitToJson: true)
-class LogIn$SubscriptionRoot with EquatableMixin {
-  LogIn$SubscriptionRoot();
+class Signals$SubscriptionRoot with EquatableMixin {
+  Signals$SubscriptionRoot();
 
-  factory LogIn$SubscriptionRoot.fromJson(Map<String, dynamic> json) =>
-      _$LogIn$SubscriptionRootFromJson(json);
+  factory Signals$SubscriptionRoot.fromJson(Map<String, dynamic> json) =>
+      _$Signals$SubscriptionRootFromJson(json);
 
-  LogIn$SubscriptionRoot$Signal logIn;
+  Signals$SubscriptionRoot$Signal signals;
 
   @override
-  List<Object> get props => [logIn];
-  Map<String, dynamic> toJson() => _$LogIn$SubscriptionRootToJson(this);
+  List<Object> get props => [signals];
+  Map<String, dynamic> toJson() => _$Signals$SubscriptionRootToJson(this);
 }
 
 @JsonSerializable(explicitToJson: true)
-class Room$SubscriptionRoot$RoomObj with EquatableMixin {
-  Room$SubscriptionRoot$RoomObj();
+class Room$SubscriptionRoot$Room with EquatableMixin {
+  Room$SubscriptionRoot$Room();
 
-  factory Room$SubscriptionRoot$RoomObj.fromJson(Map<String, dynamic> json) =>
-      _$Room$SubscriptionRoot$RoomObjFromJson(json);
+  factory Room$SubscriptionRoot$Room.fromJson(Map<String, dynamic> json) =>
+      _$Room$SubscriptionRoot$RoomFromJson(json);
 
   List<String> users;
 
   @override
   List<Object> get props => [users];
-  Map<String, dynamic> toJson() => _$Room$SubscriptionRoot$RoomObjToJson(this);
+  Map<String, dynamic> toJson() => _$Room$SubscriptionRoot$RoomToJson(this);
 }
 
 @JsonSerializable(explicitToJson: true)
@@ -72,7 +105,7 @@ class Room$SubscriptionRoot with EquatableMixin {
   factory Room$SubscriptionRoot.fromJson(Map<String, dynamic> json) =>
       _$Room$SubscriptionRootFromJson(json);
 
-  Room$SubscriptionRoot$RoomObj room;
+  Room$SubscriptionRoot$Room room;
 
   @override
   List<Object> get props => [room];
@@ -81,8 +114,7 @@ class Room$SubscriptionRoot with EquatableMixin {
 
 @JsonSerializable(explicitToJson: true)
 class SignalArguments extends JsonSerializable with EquatableMixin {
-  SignalArguments(
-      {@required this.peerId, @required this.signal, @required this.userId});
+  SignalArguments({@required this.peerId, @required this.signal});
 
   @override
   factory SignalArguments.fromJson(Map<String, dynamic> json) =>
@@ -92,10 +124,8 @@ class SignalArguments extends JsonSerializable with EquatableMixin {
 
   final String signal;
 
-  final String userId;
-
   @override
-  List<Object> get props => [peerId, signal, userId];
+  List<Object> get props => [peerId, signal];
   @override
   Map<String, dynamic> toJson() => _$SignalArgumentsToJson(this);
 }
@@ -121,12 +151,6 @@ class SignalMutation
               type: NamedTypeNode(
                   name: NameNode(value: 'String'), isNonNull: true),
               defaultValue: DefaultValueNode(value: null),
-              directives: []),
-          VariableDefinitionNode(
-              variable: VariableNode(name: NameNode(value: 'userId')),
-              type: NamedTypeNode(
-                  name: NameNode(value: 'String'), isNonNull: true),
-              defaultValue: DefaultValueNode(value: null),
               directives: [])
         ],
         directives: [],
@@ -140,35 +164,47 @@ class SignalMutation
                     value: VariableNode(name: NameNode(value: 'peerId'))),
                 ArgumentNode(
                     name: NameNode(value: 'signal'),
-                    value: VariableNode(name: NameNode(value: 'signal'))),
-                ArgumentNode(
-                    name: NameNode(value: 'userId'),
-                    value: VariableNode(name: NameNode(value: 'userId')))
+                    value: VariableNode(name: NameNode(value: 'signal')))
               ],
               directives: [],
               selectionSet: null)
         ])),
     OperationDefinitionNode(
-        type: OperationType.subscription,
-        name: NameNode(value: 'LogIn'),
-        variableDefinitions: [
-          VariableDefinitionNode(
-              variable: VariableNode(name: NameNode(value: 'userId')),
-              type: NamedTypeNode(
-                  name: NameNode(value: 'String'), isNonNull: true),
-              defaultValue: DefaultValueNode(value: null),
-              directives: [])
-        ],
+        type: OperationType.mutation,
+        name: NameNode(value: 'CreateSession'),
+        variableDefinitions: [],
         directives: [],
         selectionSet: SelectionSetNode(selections: [
           FieldNode(
-              name: NameNode(value: 'logIn'),
+              name: NameNode(value: 'createSessionId'),
               alias: null,
-              arguments: [
-                ArgumentNode(
+              arguments: [],
+              directives: [],
+              selectionSet: SelectionSetNode(selections: [
+                FieldNode(
                     name: NameNode(value: 'userId'),
-                    value: VariableNode(name: NameNode(value: 'userId')))
-              ],
+                    alias: null,
+                    arguments: [],
+                    directives: [],
+                    selectionSet: null),
+                FieldNode(
+                    name: NameNode(value: 'token'),
+                    alias: null,
+                    arguments: [],
+                    directives: [],
+                    selectionSet: null)
+              ]))
+        ])),
+    OperationDefinitionNode(
+        type: OperationType.subscription,
+        name: NameNode(value: 'Signals'),
+        variableDefinitions: [],
+        directives: [],
+        selectionSet: SelectionSetNode(selections: [
+          FieldNode(
+              name: NameNode(value: 'signals'),
+              alias: null,
+              arguments: [],
               directives: [],
               selectionSet: SelectionSetNode(selections: [
                 FieldNode(
@@ -194,12 +230,6 @@ class SignalMutation
               type: NamedTypeNode(
                   name: NameNode(value: 'String'), isNonNull: true),
               defaultValue: DefaultValueNode(value: null),
-              directives: []),
-          VariableDefinitionNode(
-              variable: VariableNode(name: NameNode(value: 'userId')),
-              type: NamedTypeNode(
-                  name: NameNode(value: 'String'), isNonNull: true),
-              defaultValue: DefaultValueNode(value: null),
               directives: [])
         ],
         directives: [],
@@ -208,9 +238,6 @@ class SignalMutation
               name: NameNode(value: 'room'),
               alias: null,
               arguments: [
-                ArgumentNode(
-                    name: NameNode(value: 'userId'),
-                    value: VariableNode(name: NameNode(value: 'userId'))),
                 ArgumentNode(
                     name: NameNode(value: 'roomId'),
                     value: VariableNode(name: NameNode(value: 'roomId')))
@@ -240,25 +267,9 @@ class SignalMutation
       Signal$MutationRoot.fromJson(json);
 }
 
-@JsonSerializable(explicitToJson: true)
-class LogInArguments extends JsonSerializable with EquatableMixin {
-  LogInArguments({@required this.userId});
-
-  @override
-  factory LogInArguments.fromJson(Map<String, dynamic> json) =>
-      _$LogInArgumentsFromJson(json);
-
-  final String userId;
-
-  @override
-  List<Object> get props => [userId];
-  @override
-  Map<String, dynamic> toJson() => _$LogInArgumentsToJson(this);
-}
-
-class LogInSubscription
-    extends GraphQLQuery<LogIn$SubscriptionRoot, LogInArguments> {
-  LogInSubscription({this.variables});
+class CreateSessionMutation
+    extends GraphQLQuery<CreateSession$MutationRoot, JsonSerializable> {
+  CreateSessionMutation();
 
   @override
   final DocumentNode document = DocumentNode(definitions: [
@@ -277,12 +288,6 @@ class LogInSubscription
               type: NamedTypeNode(
                   name: NameNode(value: 'String'), isNonNull: true),
               defaultValue: DefaultValueNode(value: null),
-              directives: []),
-          VariableDefinitionNode(
-              variable: VariableNode(name: NameNode(value: 'userId')),
-              type: NamedTypeNode(
-                  name: NameNode(value: 'String'), isNonNull: true),
-              defaultValue: DefaultValueNode(value: null),
               directives: [])
         ],
         directives: [],
@@ -296,35 +301,47 @@ class LogInSubscription
                     value: VariableNode(name: NameNode(value: 'peerId'))),
                 ArgumentNode(
                     name: NameNode(value: 'signal'),
-                    value: VariableNode(name: NameNode(value: 'signal'))),
-                ArgumentNode(
-                    name: NameNode(value: 'userId'),
-                    value: VariableNode(name: NameNode(value: 'userId')))
+                    value: VariableNode(name: NameNode(value: 'signal')))
               ],
               directives: [],
               selectionSet: null)
         ])),
     OperationDefinitionNode(
-        type: OperationType.subscription,
-        name: NameNode(value: 'LogIn'),
-        variableDefinitions: [
-          VariableDefinitionNode(
-              variable: VariableNode(name: NameNode(value: 'userId')),
-              type: NamedTypeNode(
-                  name: NameNode(value: 'String'), isNonNull: true),
-              defaultValue: DefaultValueNode(value: null),
-              directives: [])
-        ],
+        type: OperationType.mutation,
+        name: NameNode(value: 'CreateSession'),
+        variableDefinitions: [],
         directives: [],
         selectionSet: SelectionSetNode(selections: [
           FieldNode(
-              name: NameNode(value: 'logIn'),
+              name: NameNode(value: 'createSessionId'),
               alias: null,
-              arguments: [
-                ArgumentNode(
+              arguments: [],
+              directives: [],
+              selectionSet: SelectionSetNode(selections: [
+                FieldNode(
                     name: NameNode(value: 'userId'),
-                    value: VariableNode(name: NameNode(value: 'userId')))
-              ],
+                    alias: null,
+                    arguments: [],
+                    directives: [],
+                    selectionSet: null),
+                FieldNode(
+                    name: NameNode(value: 'token'),
+                    alias: null,
+                    arguments: [],
+                    directives: [],
+                    selectionSet: null)
+              ]))
+        ])),
+    OperationDefinitionNode(
+        type: OperationType.subscription,
+        name: NameNode(value: 'Signals'),
+        variableDefinitions: [],
+        directives: [],
+        selectionSet: SelectionSetNode(selections: [
+          FieldNode(
+              name: NameNode(value: 'signals'),
+              alias: null,
+              arguments: [],
               directives: [],
               selectionSet: SelectionSetNode(selections: [
                 FieldNode(
@@ -350,12 +367,6 @@ class LogInSubscription
               type: NamedTypeNode(
                   name: NameNode(value: 'String'), isNonNull: true),
               defaultValue: DefaultValueNode(value: null),
-              directives: []),
-          VariableDefinitionNode(
-              variable: VariableNode(name: NameNode(value: 'userId')),
-              type: NamedTypeNode(
-                  name: NameNode(value: 'String'), isNonNull: true),
-              defaultValue: DefaultValueNode(value: null),
               directives: [])
         ],
         directives: [],
@@ -364,9 +375,6 @@ class LogInSubscription
               name: NameNode(value: 'room'),
               alias: null,
               arguments: [
-                ArgumentNode(
-                    name: NameNode(value: 'userId'),
-                    value: VariableNode(name: NameNode(value: 'userId'))),
                 ArgumentNode(
                     name: NameNode(value: 'roomId'),
                     value: VariableNode(name: NameNode(value: 'roomId')))
@@ -384,21 +392,152 @@ class LogInSubscription
   ]);
 
   @override
-  final String operationName = 'LogIn';
+  final String operationName = 'CreateSession';
 
   @override
-  final LogInArguments variables;
+  List<Object> get props => [document, operationName];
+  @override
+  CreateSession$MutationRoot parse(Map<String, dynamic> json) =>
+      CreateSession$MutationRoot.fromJson(json);
+}
+
+class SignalsSubscription
+    extends GraphQLQuery<Signals$SubscriptionRoot, JsonSerializable> {
+  SignalsSubscription();
 
   @override
-  List<Object> get props => [document, operationName, variables];
+  final DocumentNode document = DocumentNode(definitions: [
+    OperationDefinitionNode(
+        type: OperationType.mutation,
+        name: NameNode(value: 'Signal'),
+        variableDefinitions: [
+          VariableDefinitionNode(
+              variable: VariableNode(name: NameNode(value: 'peerId')),
+              type: NamedTypeNode(
+                  name: NameNode(value: 'String'), isNonNull: true),
+              defaultValue: DefaultValueNode(value: null),
+              directives: []),
+          VariableDefinitionNode(
+              variable: VariableNode(name: NameNode(value: 'signal')),
+              type: NamedTypeNode(
+                  name: NameNode(value: 'String'), isNonNull: true),
+              defaultValue: DefaultValueNode(value: null),
+              directives: [])
+        ],
+        directives: [],
+        selectionSet: SelectionSetNode(selections: [
+          FieldNode(
+              name: NameNode(value: 'signal'),
+              alias: null,
+              arguments: [
+                ArgumentNode(
+                    name: NameNode(value: 'peerId'),
+                    value: VariableNode(name: NameNode(value: 'peerId'))),
+                ArgumentNode(
+                    name: NameNode(value: 'signal'),
+                    value: VariableNode(name: NameNode(value: 'signal')))
+              ],
+              directives: [],
+              selectionSet: null)
+        ])),
+    OperationDefinitionNode(
+        type: OperationType.mutation,
+        name: NameNode(value: 'CreateSession'),
+        variableDefinitions: [],
+        directives: [],
+        selectionSet: SelectionSetNode(selections: [
+          FieldNode(
+              name: NameNode(value: 'createSessionId'),
+              alias: null,
+              arguments: [],
+              directives: [],
+              selectionSet: SelectionSetNode(selections: [
+                FieldNode(
+                    name: NameNode(value: 'userId'),
+                    alias: null,
+                    arguments: [],
+                    directives: [],
+                    selectionSet: null),
+                FieldNode(
+                    name: NameNode(value: 'token'),
+                    alias: null,
+                    arguments: [],
+                    directives: [],
+                    selectionSet: null)
+              ]))
+        ])),
+    OperationDefinitionNode(
+        type: OperationType.subscription,
+        name: NameNode(value: 'Signals'),
+        variableDefinitions: [],
+        directives: [],
+        selectionSet: SelectionSetNode(selections: [
+          FieldNode(
+              name: NameNode(value: 'signals'),
+              alias: null,
+              arguments: [],
+              directives: [],
+              selectionSet: SelectionSetNode(selections: [
+                FieldNode(
+                    name: NameNode(value: 'payload'),
+                    alias: null,
+                    arguments: [],
+                    directives: [],
+                    selectionSet: null),
+                FieldNode(
+                    name: NameNode(value: 'peerId'),
+                    alias: null,
+                    arguments: [],
+                    directives: [],
+                    selectionSet: null)
+              ]))
+        ])),
+    OperationDefinitionNode(
+        type: OperationType.subscription,
+        name: NameNode(value: 'Room'),
+        variableDefinitions: [
+          VariableDefinitionNode(
+              variable: VariableNode(name: NameNode(value: 'roomId')),
+              type: NamedTypeNode(
+                  name: NameNode(value: 'String'), isNonNull: true),
+              defaultValue: DefaultValueNode(value: null),
+              directives: [])
+        ],
+        directives: [],
+        selectionSet: SelectionSetNode(selections: [
+          FieldNode(
+              name: NameNode(value: 'room'),
+              alias: null,
+              arguments: [
+                ArgumentNode(
+                    name: NameNode(value: 'roomId'),
+                    value: VariableNode(name: NameNode(value: 'roomId')))
+              ],
+              directives: [],
+              selectionSet: SelectionSetNode(selections: [
+                FieldNode(
+                    name: NameNode(value: 'users'),
+                    alias: null,
+                    arguments: [],
+                    directives: [],
+                    selectionSet: null)
+              ]))
+        ]))
+  ]);
+
   @override
-  LogIn$SubscriptionRoot parse(Map<String, dynamic> json) =>
-      LogIn$SubscriptionRoot.fromJson(json);
+  final String operationName = 'Signals';
+
+  @override
+  List<Object> get props => [document, operationName];
+  @override
+  Signals$SubscriptionRoot parse(Map<String, dynamic> json) =>
+      Signals$SubscriptionRoot.fromJson(json);
 }
 
 @JsonSerializable(explicitToJson: true)
 class RoomArguments extends JsonSerializable with EquatableMixin {
-  RoomArguments({@required this.roomId, @required this.userId});
+  RoomArguments({@required this.roomId});
 
   @override
   factory RoomArguments.fromJson(Map<String, dynamic> json) =>
@@ -406,10 +545,8 @@ class RoomArguments extends JsonSerializable with EquatableMixin {
 
   final String roomId;
 
-  final String userId;
-
   @override
-  List<Object> get props => [roomId, userId];
+  List<Object> get props => [roomId];
   @override
   Map<String, dynamic> toJson() => _$RoomArgumentsToJson(this);
 }
@@ -435,12 +572,6 @@ class RoomSubscription
               type: NamedTypeNode(
                   name: NameNode(value: 'String'), isNonNull: true),
               defaultValue: DefaultValueNode(value: null),
-              directives: []),
-          VariableDefinitionNode(
-              variable: VariableNode(name: NameNode(value: 'userId')),
-              type: NamedTypeNode(
-                  name: NameNode(value: 'String'), isNonNull: true),
-              defaultValue: DefaultValueNode(value: null),
               directives: [])
         ],
         directives: [],
@@ -454,35 +585,47 @@ class RoomSubscription
                     value: VariableNode(name: NameNode(value: 'peerId'))),
                 ArgumentNode(
                     name: NameNode(value: 'signal'),
-                    value: VariableNode(name: NameNode(value: 'signal'))),
-                ArgumentNode(
-                    name: NameNode(value: 'userId'),
-                    value: VariableNode(name: NameNode(value: 'userId')))
+                    value: VariableNode(name: NameNode(value: 'signal')))
               ],
               directives: [],
               selectionSet: null)
         ])),
     OperationDefinitionNode(
-        type: OperationType.subscription,
-        name: NameNode(value: 'LogIn'),
-        variableDefinitions: [
-          VariableDefinitionNode(
-              variable: VariableNode(name: NameNode(value: 'userId')),
-              type: NamedTypeNode(
-                  name: NameNode(value: 'String'), isNonNull: true),
-              defaultValue: DefaultValueNode(value: null),
-              directives: [])
-        ],
+        type: OperationType.mutation,
+        name: NameNode(value: 'CreateSession'),
+        variableDefinitions: [],
         directives: [],
         selectionSet: SelectionSetNode(selections: [
           FieldNode(
-              name: NameNode(value: 'logIn'),
+              name: NameNode(value: 'createSessionId'),
               alias: null,
-              arguments: [
-                ArgumentNode(
+              arguments: [],
+              directives: [],
+              selectionSet: SelectionSetNode(selections: [
+                FieldNode(
                     name: NameNode(value: 'userId'),
-                    value: VariableNode(name: NameNode(value: 'userId')))
-              ],
+                    alias: null,
+                    arguments: [],
+                    directives: [],
+                    selectionSet: null),
+                FieldNode(
+                    name: NameNode(value: 'token'),
+                    alias: null,
+                    arguments: [],
+                    directives: [],
+                    selectionSet: null)
+              ]))
+        ])),
+    OperationDefinitionNode(
+        type: OperationType.subscription,
+        name: NameNode(value: 'Signals'),
+        variableDefinitions: [],
+        directives: [],
+        selectionSet: SelectionSetNode(selections: [
+          FieldNode(
+              name: NameNode(value: 'signals'),
+              alias: null,
+              arguments: [],
               directives: [],
               selectionSet: SelectionSetNode(selections: [
                 FieldNode(
@@ -508,12 +651,6 @@ class RoomSubscription
               type: NamedTypeNode(
                   name: NameNode(value: 'String'), isNonNull: true),
               defaultValue: DefaultValueNode(value: null),
-              directives: []),
-          VariableDefinitionNode(
-              variable: VariableNode(name: NameNode(value: 'userId')),
-              type: NamedTypeNode(
-                  name: NameNode(value: 'String'), isNonNull: true),
-              defaultValue: DefaultValueNode(value: null),
               directives: [])
         ],
         directives: [],
@@ -522,9 +659,6 @@ class RoomSubscription
               name: NameNode(value: 'room'),
               alias: null,
               arguments: [
-                ArgumentNode(
-                    name: NameNode(value: 'userId'),
-                    value: VariableNode(name: NameNode(value: 'userId'))),
                 ArgumentNode(
                     name: NameNode(value: 'roomId'),
                     value: VariableNode(name: NameNode(value: 'roomId')))

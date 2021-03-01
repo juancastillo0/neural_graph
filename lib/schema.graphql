@@ -19,10 +19,15 @@ type BookChanged {
   book: Book
 }
 
-type MutationRoot {
+type BooksMutations {
   createBook(name: String!, author: String!): ID!
   deleteBook(id: ID!): Boolean!
-  signal(userId: String!, peerId: String!, signal: String!): Boolean!
+}
+
+type MutationRoot {
+  books: BooksMutations!
+  createSessionId: UserSession!
+  signal(peerId: String!, signal: String!): Boolean!
 }
 
 enum MutationType {
@@ -33,9 +38,11 @@ enum MutationType {
 type QueryRoot {
   books: [Book!]!
   token: String
+  users: [String!]!
+  rooms: [String!]!
 }
 
-type RoomObj {
+type Room {
   users: [String!]!
 }
 
@@ -47,6 +54,11 @@ type Signal {
 type SubscriptionRoot {
   interval(n: Int! = 1): Int!
   books(mutationType: MutationType): BookChanged!
-  room(roomId: String!, userId: String!): RoomObj!
-  logIn(userId: String!): Signal!
+  room(roomId: String!): Room!
+  signals: Signal!
+}
+
+type UserSession {
+  userId: String!
+  token: String
 }
