@@ -2,6 +2,7 @@ import 'dart:math' show Random;
 
 import 'package:flutter/cupertino.dart';
 import 'package:mobx/mobx.dart';
+import 'package:neural_graph/common/extensions.dart';
 import 'package:neural_graph/diagram/connection.dart' show Connection, Port;
 import 'package:neural_graph/diagram/graph_item.dart';
 import 'package:neural_graph/diagram/node.dart' show Node, NodeData;
@@ -177,7 +178,7 @@ class Graph<N extends NodeData> {
 
   Node<N> createNode(Offset offset, N Function(Node<N>) layer) {
     return runInAction(() {
-      final newKey = _generateKey();
+      final newKey = random.generateKey();
       final newNode = Node<N>(
         key: newKey,
         offset: offset,
@@ -193,23 +194,12 @@ class Graph<N extends NodeData> {
     });
   }
 
-  String _generateKey([int length = 7]) {
-    return Iterable<int>.generate(length).map((_) {
-      final _index = (random.nextDouble() * _charsKey.length).floor();
-      return _charsKey[_index];
-    }).join("");
-  }
-
   final random = Random();
 
   // static Graph<N> of<N extends NodeData>(BuildContext context) =>
   //     Provider.get<Graph<N>>(context) ??
   //     Provider.get<Graph>(context) as Graph<N>;
 }
-
-final _charsKey =
-    'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_-0123456789'
-        .split("");
 
 class Provider<T> extends InheritedWidget {
   final T data;

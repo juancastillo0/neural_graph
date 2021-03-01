@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
@@ -7,15 +8,14 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:mobx/mobx.dart';
 import 'package:neural_graph/common/extensions.dart';
 import 'package:neural_graph/diagram/graph.dart';
-import 'package:neural_graph/diagram/operations.dart';
 import 'package:neural_graph/fields/button_select_field.dart';
 import 'package:neural_graph/file_system_access_chrome/file_system_access.dart';
 import 'package:neural_graph/graph_canvas/graph_canvas.dart';
 import 'package:neural_graph/layers/codegen_helper.dart';
-import 'package:neural_graph/layers/generator.dart';
 import 'package:neural_graph/layers/layers.dart';
 import 'package:neural_graph/layers_menu.dart';
 import 'package:neural_graph/root_store.dart';
+import 'package:neural_graph/rtc/data_channel.dart';
 import 'package:neural_graph/widgets/gesture_listener.dart';
 import 'package:neural_graph/widgets/resizable.dart';
 import 'package:neural_graph/widgets/scrollable.dart';
@@ -102,7 +102,7 @@ class _MyHomePageState extends State<MyHomePage> {
       body: Row(
         children: [
           const Resizable(
-            defaultWidth: 230,
+            defaultWidth: 210,
             horizontal: ResizeHorizontal.right,
             child: LayersMenu(),
           ),
@@ -162,22 +162,28 @@ class CodeGenerated extends HookWidget {
                 icon: const Icon(Icons.file_present),
                 label: const Text("File"),
                 onPressed: () async {
-                  final handles = await showOpenFilePicker();
-                  final handle = handles[0];
+                  if (kIsWeb) {
+                    final handles =
+                        await FileSystem.instance.showOpenFilePicker();
+                    final handle = handles[0];
 
-                  // final file = await handle.getFile();
-                  // final contents = await readFileAsText(file);
+                    // final file = await handle.getFile();
+                    // final contents = await readFileAsText(file);
 
-                  final v = await verifyPermission(handle, readWrite: true);
-                  print(v);
+                    final v = await FileSystem.instance.verifyPermission(
+                      handle,
+                      mode: FileSystemPermissionMode.readwrite,
+                    );
+                    print(v);
 
-                  // final writable = await handle.createWritable(
-                  //     FileSystemCreateWritableOptions(keepExistingData: true));
+                    // final writable = await handle.createWritable(
+                    //     FileSystemCreateWritableOptions(keepExistingData: true));
 
-                  // await writable.write(
-                  //     FileSystemWriteChunkType.string("value" + contents));
-                  // // Close the file and write the contents to disk.
-                  // await writable.close();
+                    // await writable.write(
+                    //     FileSystemWriteChunkType.string("value" + contents));
+                    // // Close the file and write the contents to disk.
+                    // await writable.close();
+                  }
                 },
               ),
               Observer(builder: (context) {
@@ -252,7 +258,7 @@ class PropertiesView extends HookWidget {
         ),
         Resizable(
           horizontal: ResizeHorizontal.left,
-          defaultWidth: 300,
+          defaultWidth: 150,
           child: Observer(builder: (context) {
             final conn = selectedGraph.selectedConnection;
             if (conn == null) {
@@ -260,6 +266,11 @@ class PropertiesView extends HookWidget {
             }
             return Text("${conn.fromData.name} -> ${conn.toData.name}");
           }),
+        ),
+        const Resizable(
+          horizontal: ResizeHorizontal.left,
+          defaultWidth: 270,
+          child: Center(child: DataChannelSample()),
         )
       ],
     );

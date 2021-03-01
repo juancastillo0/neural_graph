@@ -1,23 +1,22 @@
 import 'package:artemis/artemis.dart';
-import 'package:http/http.dart' as http;
 import 'package:meta/meta.dart';
 import 'package:neural_graph/api.graphql.dart';
 
 class GraphQlPeerSignalProtocol extends SingalProtocol<String> {
   GraphQlPeerSignalProtocol({
-    @required Uri uri,
     @required this.peerId,
-    @required this.userId,
-    http.Client client,
-  }) :
-        // this.client = client ?? http.Client(),
-        this._gqlClient = ArtemisClient(uri.toString(), httpClient: client);
+    @required this.client,
+    Stream<GraphQLResponse<Signals$SubscriptionRoot>> signals,
+  }) {
+    signals ??= this.client.stream(SignalsSubscription());
 
-  // final http.Client client;
-  final ArtemisClient _gqlClient;
-  // final Uri uri;
+    this.remoteSignalStream = signals
+        .where((event) => event.data.signals.peerId == peerId)
+        .map((event) => event.data.signals.payload);
+  }
+
+  final ArtemisClient client;
   final String peerId;
-  final String userId;
 
   // static const _headers = {
   //   "content-type": "application/json",
@@ -25,25 +24,17 @@ class GraphQlPeerSignalProtocol extends SingalProtocol<String> {
   // };
 
   @override
-  Stream<String> get remoteSignalStream {
-    final logInSubscription =
-        LogInSubscription(variables: LogInArguments(userId: userId));
-    return this
-        ._gqlClient
-        .stream(logInSubscription)
-        .where((event) => event.data.logIn.peerId == peerId)
-        .map((event) => event.data.logIn.payload);
-  }
+  Stream<String> remoteSignalStream;
 
   @override
   Future<bool> sendSignal(String signal) async {
     final signalMutation = SignalMutation(
-        variables: SignalArguments(
-      peerId: peerId,
-      signal: signal,
-      userId: userId,
-    ));
-    final response = await _gqlClient.execute(signalMutation);
+      variables: SignalArguments(
+        peerId: peerId,
+        signal: signal,
+      ),
+    );
+    final response = await client.execute(signalMutation);
 
     return response.data.signal;
 
