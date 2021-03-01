@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
@@ -63,6 +65,18 @@ T parseEnum<T>(String rawString, List<T> enumValues) {
 
 String toEnumString(Object enumValue) {
   return enumValue.toString().split(".")[1];
+}
+
+final _charsKey =
+    'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'.split("");
+
+extension GenerateString on Random {
+  String generateKey([int length = 7]) {
+    return Iterable<int>.generate(length).map((_) {
+      final _index = (this.nextDouble() * _charsKey.length).floor();
+      return _charsKey[_index];
+    }).join("");
+  }
 }
 
 extension ValueListenableBuilderExtension<T> on ValueListenable<T> {
