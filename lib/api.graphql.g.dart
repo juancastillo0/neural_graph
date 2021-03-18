@@ -16,43 +16,73 @@ Map<String, dynamic> _$Signal$MutationRootToJson(
       'signal': instance.signal,
     };
 
-LogIn$SubscriptionRoot$Signal _$LogIn$SubscriptionRoot$SignalFromJson(
+CreateSession$MutationRoot$UserSession
+    _$CreateSession$MutationRoot$UserSessionFromJson(
+        Map<String, dynamic> json) {
+  return CreateSession$MutationRoot$UserSession()
+    ..userId = json['userId'] as String
+    ..token = json['token'] as String;
+}
+
+Map<String, dynamic> _$CreateSession$MutationRoot$UserSessionToJson(
+        CreateSession$MutationRoot$UserSession instance) =>
+    <String, dynamic>{
+      'userId': instance.userId,
+      'token': instance.token,
+    };
+
+CreateSession$MutationRoot _$CreateSession$MutationRootFromJson(
     Map<String, dynamic> json) {
-  return LogIn$SubscriptionRoot$Signal()
+  return CreateSession$MutationRoot()
+    ..createSessionId = json['createSessionId'] == null
+        ? null
+        : CreateSession$MutationRoot$UserSession.fromJson(
+            json['createSessionId'] as Map<String, dynamic>);
+}
+
+Map<String, dynamic> _$CreateSession$MutationRootToJson(
+        CreateSession$MutationRoot instance) =>
+    <String, dynamic>{
+      'createSessionId': instance.createSessionId?.toJson(),
+    };
+
+Signals$SubscriptionRoot$Signal _$Signals$SubscriptionRoot$SignalFromJson(
+    Map<String, dynamic> json) {
+  return Signals$SubscriptionRoot$Signal()
     ..payload = json['payload'] as String
     ..peerId = json['peerId'] as String;
 }
 
-Map<String, dynamic> _$LogIn$SubscriptionRoot$SignalToJson(
-        LogIn$SubscriptionRoot$Signal instance) =>
+Map<String, dynamic> _$Signals$SubscriptionRoot$SignalToJson(
+        Signals$SubscriptionRoot$Signal instance) =>
     <String, dynamic>{
       'payload': instance.payload,
       'peerId': instance.peerId,
     };
 
-LogIn$SubscriptionRoot _$LogIn$SubscriptionRootFromJson(
+Signals$SubscriptionRoot _$Signals$SubscriptionRootFromJson(
     Map<String, dynamic> json) {
-  return LogIn$SubscriptionRoot()
-    ..logIn = json['logIn'] == null
+  return Signals$SubscriptionRoot()
+    ..signals = json['signals'] == null
         ? null
-        : LogIn$SubscriptionRoot$Signal.fromJson(
-            json['logIn'] as Map<String, dynamic>);
+        : Signals$SubscriptionRoot$Signal.fromJson(
+            json['signals'] as Map<String, dynamic>);
 }
 
-Map<String, dynamic> _$LogIn$SubscriptionRootToJson(
-        LogIn$SubscriptionRoot instance) =>
+Map<String, dynamic> _$Signals$SubscriptionRootToJson(
+        Signals$SubscriptionRoot instance) =>
     <String, dynamic>{
-      'logIn': instance.logIn?.toJson(),
+      'signals': instance.signals?.toJson(),
     };
 
-Room$SubscriptionRoot$RoomObj _$Room$SubscriptionRoot$RoomObjFromJson(
+Room$SubscriptionRoot$Room _$Room$SubscriptionRoot$RoomFromJson(
     Map<String, dynamic> json) {
-  return Room$SubscriptionRoot$RoomObj()
+  return Room$SubscriptionRoot$Room()
     ..users = (json['users'] as List)?.map((e) => e as String)?.toList();
 }
 
-Map<String, dynamic> _$Room$SubscriptionRoot$RoomObjToJson(
-        Room$SubscriptionRoot$RoomObj instance) =>
+Map<String, dynamic> _$Room$SubscriptionRoot$RoomToJson(
+        Room$SubscriptionRoot$Room instance) =>
     <String, dynamic>{
       'users': instance.users,
     };
@@ -62,7 +92,7 @@ Room$SubscriptionRoot _$Room$SubscriptionRootFromJson(
   return Room$SubscriptionRoot()
     ..room = json['room'] == null
         ? null
-        : Room$SubscriptionRoot$RoomObj.fromJson(
+        : Room$SubscriptionRoot$Room.fromJson(
             json['room'] as Map<String, dynamic>);
 }
 
@@ -76,7 +106,6 @@ SignalArguments _$SignalArgumentsFromJson(Map<String, dynamic> json) {
   return SignalArguments(
     peerId: json['peerId'] as String,
     signal: json['signal'] as String,
-    userId: json['userId'] as String,
   );
 }
 
@@ -84,29 +113,15 @@ Map<String, dynamic> _$SignalArgumentsToJson(SignalArguments instance) =>
     <String, dynamic>{
       'peerId': instance.peerId,
       'signal': instance.signal,
-      'userId': instance.userId,
-    };
-
-LogInArguments _$LogInArgumentsFromJson(Map<String, dynamic> json) {
-  return LogInArguments(
-    userId: json['userId'] as String,
-  );
-}
-
-Map<String, dynamic> _$LogInArgumentsToJson(LogInArguments instance) =>
-    <String, dynamic>{
-      'userId': instance.userId,
     };
 
 RoomArguments _$RoomArgumentsFromJson(Map<String, dynamic> json) {
   return RoomArguments(
     roomId: json['roomId'] as String,
-    userId: json['userId'] as String,
   );
 }
 
 Map<String, dynamic> _$RoomArgumentsToJson(RoomArguments instance) =>
     <String, dynamic>{
       'roomId': instance.roomId,
-      'userId': instance.userId,
     };

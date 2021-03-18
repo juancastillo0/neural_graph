@@ -296,13 +296,6 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
-  get:
-    dependency: "direct main"
-    description:
-      name: get
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "2.14.1"
   get_it:
     dependency: "direct main"
     description:
@@ -330,7 +323,7 @@ packages:
       name: gql
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.12.5-alpha+1609864025904"
+    version: "0.12.5-alpha+1612972259606"
   gql_code_gen:
     dependency: transitive
     description:
@@ -351,7 +344,7 @@ packages:
       name: gql_exec
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.2.6-alpha+1609864025912"
+    version: "0.2.6-alpha+1612972259614"
   gql_http_link:
     dependency: transitive
     description:
@@ -365,14 +358,14 @@ packages:
       name: gql_link
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.3.2-alpha+1609864025917"
+    version: "0.3.2-alpha+1612972259620"
   gql_websocket_link:
     dependency: "direct main"
     description:
       name: gql_websocket_link
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.1.6-alpha+1609864025923"
+    version: "0.1.8-alpha+1612972259626"
   graphs:
     dependency: transitive
     description:
@@ -638,7 +631,7 @@ packages:
       name: rxdart
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.24.1"
+    version: "0.25.0"
   shelf:
     dependency: transitive
     description:
@@ -728,13 +721,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.1.0"
-  styled_widget:
-    dependency: "direct main"
-    description:
-      name: styled_widget
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "0.2.2"
   sync_http:
     dependency: transitive
     description:

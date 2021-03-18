@@ -36,8 +36,6 @@ dependencies:
   freezed_annotation:
   uuid:
   get_it: ^4.0.2
-  styled_widget:
-  get: ^2.5.9
   intl: ^0.16.1
   logger: ^0.9.1
   google_fonts: 
@@ -54,7 +52,7 @@ dependencies:
   cupertino_icons: ^0.1.3
 
   artemis:
-  gql_websocket_link: ^0.1.6-alpha+1609864025923
+  gql_websocket_link: ^0.1.8-alpha+1612972259626
   json_annotation:
   equatable:
   meta:

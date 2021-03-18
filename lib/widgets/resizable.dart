@@ -1,7 +1,6 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:styled_widget/styled_widget.dart';
 
 enum ResizeHorizontal { left, right, both }
 enum ResizeVertical { top, bottom, both }
@@ -22,7 +21,7 @@ class Resizable extends StatefulWidget {
     this.handle,
     this.horizontal,
     this.defaultWidth,
-    this.child,
+    @required this.child,
     this.minWidth,
     this.vertical,
     this.defaultHeight,
@@ -51,12 +50,14 @@ class _ResizableState extends State<Resizable> {
     return horizontal
         ? (DragUpdateDetails details) {
             setState(() {
-              _width += proportional ? details.delta.dx : -details.delta.dx;
+              _width = _width +
+                  (proportional ? details.delta.dx : -details.delta.dx);
             });
           }
         : (DragUpdateDetails details) {
             setState(() {
-              _height += proportional ? details.delta.dy : -details.delta.dy;
+              _height = _height +
+                  (proportional ? details.delta.dy : -details.delta.dy);
             });
           };
   }
@@ -75,14 +76,17 @@ class _ResizableState extends State<Resizable> {
         ),
       );
 
-      return Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          if (!isBottom) handle,
-          widget.child.expanded(),
-          if (isBottom) handle
-        ],
-      ).constrained(height: _height);
+      return SizedBox(
+        height: _height,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            if (!isBottom) handle,
+            Expanded(child: widget.child),
+            if (isBottom) handle
+          ],
+        ),
+      );
     } else {
       final isRight = widget.horizontal == ResizeHorizontal.right;
       final handle = GestureDetector(
@@ -95,14 +99,17 @@ class _ResizableState extends State<Resizable> {
         ),
       );
 
-      return Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          if (!isRight) handle,
-          widget.child.expanded(),
-          if (isRight) handle
-        ],
-      ).constrained(width: _width);
+      return SizedBox(
+        width: _width,
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            if (!isRight) handle,
+            Expanded(child: widget.child),
+            if (isRight) handle
+          ],
+        ),
+      );
     }
   }
 }

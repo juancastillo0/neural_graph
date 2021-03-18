@@ -7,7 +7,6 @@ import 'package:flutter/scheduler.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:neural_graph/graph_canvas/store_graph_canvas.dart';
 import 'package:neural_graph/main.dart';
-import 'package:styled_widget/styled_widget.dart';
 
 const _iconSize = 24.0;
 const _scrollIconPadding = EdgeInsets.all(0);
@@ -157,11 +156,17 @@ class ButtonScrollbar extends HookWidget {
       GestureDetector(
         onLongPressStart: onLongPressStartBackward,
         onLongPressEnd: (details) => isPressedButton.value = false,
-        child: FlatButton(
-          onPressed: onPressedScrollButtonStart,
-          padding: _scrollIconPadding,
-          child: Icon(horizontal ? Icons.arrow_left : Icons.arrow_drop_up),
-        ).constrained(maxHeight: _iconSize, maxWidth: _iconSize),
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(
+            maxHeight: _iconSize,
+            maxWidth: _iconSize,
+          ),
+          child: FlatButton(
+            onPressed: onPressedScrollButtonStart,
+            padding: _scrollIconPadding,
+            child: Icon(horizontal ? Icons.arrow_left : Icons.arrow_drop_up),
+          ),
+        ),
       ),
       Expanded(
         child: MultiScrollbar(
@@ -172,11 +177,17 @@ class ButtonScrollbar extends HookWidget {
       GestureDetector(
         onLongPressStart: onLongPressStartForward,
         onLongPressEnd: (details) => isPressedButton.value = false,
-        child: FlatButton(
-          onPressed: onPressedScrollButtonEnd,
-          padding: _scrollIconPadding,
-          child: Icon(horizontal ? Icons.arrow_right : Icons.arrow_drop_down),
-        ).constrained(maxHeight: _iconSize, maxWidth: _iconSize),
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(
+            maxHeight: _iconSize,
+            maxWidth: _iconSize,
+          ),
+          child: FlatButton(
+            onPressed: onPressedScrollButtonEnd,
+            padding: _scrollIconPadding,
+            child: Icon(horizontal ? Icons.arrow_right : Icons.arrow_drop_down),
+          ),
+        ),
       )
     ];
 
@@ -266,15 +277,7 @@ class _ScrollHandle extends HookWidget {
     return MouseRegion(
       onEnter: (_) => hovering.value = true,
       onExit: (_) => hovering.value = false,
-      child: SizedBox(
-        height: horizontal ? double.infinity : handleSize,
-        width: horizontal ? handleSize : double.infinity,
-        child: Container(
-          color: hovering.value || dragging.value
-              ? Colors.black26
-              : Colors.black12,
-        ),
-      ).gestures(
+      child: GestureDetector(
         dragStartBehavior: DragStartBehavior.down,
         onPanDown: (_) => dragging.value = true,
         onPanEnd: (_) => dragging.value = false,
@@ -284,6 +287,15 @@ class _ScrollHandle extends HookWidget {
               .clamp(0.0, position.maxScrollExtent) as double;
           controller.jumpTo(_offset);
         },
+        child: SizedBox(
+          height: horizontal ? double.infinity : handleSize,
+          width: horizontal ? handleSize : double.infinity,
+          child: Container(
+            color: hovering.value || dragging.value
+                ? Colors.black26
+                : Colors.black12,
+          ),
+        ),
       ),
     );
   }

@@ -5,6 +5,7 @@ linter:
     avoid_classes_with_only_static_members: false
     unnecessary_this: false
     use_setters_to_change_properties: false
+    sort_pub_dependencies: false
     
     type_annotate_public_apis: true
     avoid_redundant_argument_values: true
