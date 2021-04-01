@@ -27,8 +27,8 @@ abstract class WriteParams {
     throw "";
   }
 
-  T maybeWhen<T>({
-    T Function() orElse,
+  T/*!*/ maybeWhen<T>({
+    T Function()/*!*/ orElse,
     T Function(FileSystemWriteChunkType data, int position) write,
     T Function(int position) seek,
     T Function(int size) truncate,
@@ -54,8 +54,8 @@ abstract class WriteParams {
     throw "";
   }
 
-  T maybeMap<T>({
-    T Function() orElse,
+  T/*!*/ maybeMap<T>({
+    T Function()/*!*/ orElse,
     T Function(_Write value) write,
     T Function(_Seek value) seek,
     T Function(_Truncate value) truncate,

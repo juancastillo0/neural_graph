@@ -22,9 +22,9 @@ abstract class FileSystemHandle {
 }
 
 class FilePickerAcceptType {
-  const FilePickerAcceptType({this.description, this.accept});
-  final String description; //@optional
-  final Map<String, List<String> /*String | String[]*/ > accept;
+  const FilePickerAcceptType({this.description, @required this.accept});
+  final String/*?*/ description; //@optional
+  final Map<String, List<String>/*!*/ /*String | String[]*/ > accept;
 }
 
 enum FileSystemPermissionMode {
@@ -65,7 +65,7 @@ abstract class FileSystemDirectoryHandle extends FileSystemHandle {
     bool recursive,
   });
 
-  Future<List<String> /*@optional*/ > resolve(
+  Future<List<String>/*?*/ /*@optional*/ > resolve(
     FileSystemHandle possibleDescendant,
   );
 }
