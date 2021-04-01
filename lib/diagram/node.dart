@@ -56,7 +56,7 @@ class Node<T extends NodeData> {
         .where((conn) => conn.from.node == this);
   }
 
-  T data;
+  /*late final*/ T data;
 
   void move(Offset delta) {
     runInAction(() {

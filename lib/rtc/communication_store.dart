@@ -33,7 +33,7 @@ class CommunicationStore {
   final rooms = ObservableMap<String, Room>();
   final peers = ObservableMap<String, PeerConnectionState>();
   final _peerSignals =
-      ObservableMap<String, List<GraphQLResponse<Signals$SubscriptionRoot>>>();
+      ObservableMap<String/*!*/, List<GraphQLResponse<Signals$SubscriptionRoot>>>();
   final String userId;
 
   // static const _headers = {
@@ -41,7 +41,7 @@ class CommunicationStore {
   //   "accept": "application/json",
   // };
 
-  Stream<GraphQLResponse<Signals$SubscriptionRoot>> remoteSignalStream;
+  /*late final*/ Stream<GraphQLResponse<Signals$SubscriptionRoot>> remoteSignalStream;
 
   static Future<CommunicationStore> create(String url) async {
     try {
@@ -90,7 +90,7 @@ class CommunicationStore {
     room.messages[now] = message;
   }
 
-  Future<Room> subscribeToRoom(String roomId) async {
+  Future<Room/*!*/> subscribeToRoom(String roomId) async {
     if (this.rooms.containsKey(roomId)) {
       return this.rooms[roomId];
     }

@@ -168,10 +168,10 @@ class ConvolutionalFormFields {
       set: (v) => state.dilationRate = v,
     );
   }
-  FormFieldValue<double> depthMultiplier;
-  FormFieldValue<List<int>> dilationRate;
-  FormFieldValue<List<int>> strides;
-  FormFieldValue<List<int>> kernelSize;
+  /*late final*/FormFieldValue<double> depthMultiplier;
+  /*late final*/FormFieldValue<List<int>> dilationRate;
+  /*late final*/FormFieldValue<List<int>> strides;
+  /*late final*/FormFieldValue<List<int>> kernelSize;
 
   void dispose() {
     depthMultiplier.dispose();

@@ -9,7 +9,7 @@ class DefaultForm extends HookWidget {
     this.child,
   }) : super(key: key);
 
-  final Widget child;
+  final Widget/*!*/ child;
 
   @override
   Widget build(BuildContext context) {

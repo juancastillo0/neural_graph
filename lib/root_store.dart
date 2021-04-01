@@ -44,10 +44,10 @@ abstract class _RootStore with Store {
   }
 
   @observable
-  ObservableMap<String, NeuralNetwork> networks;
+  /*late final*/ObservableMap<String, NeuralNetwork> networks;
 
   @observable
-  NeuralNetwork selectedNetwork;
+  /*late*/NeuralNetwork selectedNetwork;
 
   @observable
   ProgrammingLanguage language = ProgrammingLanguage.python;

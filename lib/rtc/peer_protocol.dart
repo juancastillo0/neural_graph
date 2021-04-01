@@ -24,7 +24,7 @@ class GraphQlPeerSignalProtocol extends SingalProtocol<String> {
   // };
 
   @override
-  Stream<String> remoteSignalStream;
+  /*late final*/ Stream<String/*!*/> remoteSignalStream;
 
   @override
   Future<bool> sendSignal(String signal) async {

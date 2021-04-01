@@ -4,7 +4,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 class Disposable<T> {
   const Disposable(this.data, this.dispose);
 
-  final void Function() dispose;
+  final void Function()/*!*/ dispose;
   final T data;
 }
 

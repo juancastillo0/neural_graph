@@ -14,7 +14,7 @@ class DataChannelSample extends StatefulWidget {
 }
 
 class _DataChannelSampleState extends State<DataChannelSample> {
-  TextEditingController urlController;
+  /*late final*/ TextEditingController urlController;
   AsyncResult<CommunicationStore, String> storeResult =
       const AsyncResult.idle();
 
@@ -96,7 +96,7 @@ class _DataChannelSampleState extends State<DataChannelSample> {
         ],
       );
     } else {
-      return RoomsView(store: storeResult.valueOrNull);
+      return RoomsView(store: storeResult.valueOrNull/*!*/);
     }
   }
 }
@@ -113,7 +113,7 @@ class _RoomsViewState extends State<RoomsView> {
   CommunicationStore get store => widget.store;
 
   final _rand = Random();
-  TextEditingController roomController;
+  /*late final*/TextEditingController roomController;
   final messageController = TextEditingController();
   Room room;
 

@@ -66,7 +66,7 @@ class ShapeField extends StatelessWidget {
     );
   }
 
-  static List<int> shapeFromString(String value) {
+  static List<int/*!*/> shapeFromString(String value) {
     return value
         .split(",")
         .map((e) => int.tryParse(e))

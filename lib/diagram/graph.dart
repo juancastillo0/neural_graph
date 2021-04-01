@@ -11,7 +11,7 @@ import 'package:neural_graph/graph_canvas/store_graph_canvas.dart';
 import 'package:uuid/uuid.dart';
 
 class Graph<N extends NodeData> {
-  static final _uuid = Uuid();
+  static const _uuid = Uuid();
   factory Graph() {
     return Graph._(_uuid.v4());
   }
@@ -161,7 +161,7 @@ class Graph<N extends NodeData> {
     });
   }
 
-  void addConnection(Port<N> port) {
+  void addConnection(Port<N>/*!*/ port) {
     runInAction(() {
       _addingConnection.value = addingConnection.when(
         none: () {
@@ -205,7 +205,7 @@ class Provider<T> extends InheritedWidget {
   final T data;
 
   const Provider({
-    this.data,
+    @required this.data,
     Widget child,
     Key key,
   }) : super(child: child, key: key);

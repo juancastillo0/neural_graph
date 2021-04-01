@@ -17,7 +17,7 @@ class Connection<NF extends NodeData, NT extends NodeData> {
   NF get fromData => from.node.data;
   NT get toData => to.node.data;
 
-  final innerPoints = ObservableList<Offset>();
+  final innerPoints = ObservableList<Offset/*!*/>();
 
   Connection(this.from, this.to);
 
@@ -61,7 +61,7 @@ class Port<N extends NodeData> {
 
 class PortView<N extends NodeData> extends StatelessWidget {
   final Widget child;
-  final Port<N> port;
+  final Port<N>/*!*/ port;
   final bool canBeStart;
   final bool Function(Port<N>) canBeEnd;
 

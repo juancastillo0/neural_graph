@@ -26,8 +26,8 @@ abstract class RTCSignal {
     throw "";
   }
 
-  T maybeWhen<T>({
-    T Function() orElse,
+  T/*!*/ maybeWhen<T>({
+    T Function()/*!*/ orElse,
     T Function(String sdp) answer,
     T Function(String sdp) offer,
     T Function(RTCIceCandidate candidate) candidate,
@@ -52,8 +52,8 @@ abstract class RTCSignal {
     throw "";
   }
 
-  T maybeMap<T>({
-    T Function() orElse,
+  T/*!*/ maybeMap<T>({
+    T Function()/*!*/ orElse,
     T Function(_Answer value) answer,
     T Function(_Offer value) offer,
     T Function(_Candidate value) candidate,
