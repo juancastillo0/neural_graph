@@ -10,7 +10,7 @@ environment:
 dependencies:
   build:
   source_gen:
-  analyzer: 0.41.1
+  analyzer:
   formgen: 
     path: ../formgen/
   
@@ -23,9 +23,6 @@ dev_dependencies:
   
   flutter_test:
     sdk: flutter
-
-dependency_overrides:
-  analyzer: ">=0.41.1"
     
 
 # For information on the generic Dart part of this file, see the
