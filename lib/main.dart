@@ -19,26 +19,52 @@ import 'package:neural_graph/rtc/data_channel.dart';
 import 'package:neural_graph/widgets/gesture_listener.dart';
 import 'package:neural_graph/widgets/resizable.dart';
 import 'package:neural_graph/widgets/scrollable.dart';
+import 'package:url_strategy/url_strategy.dart';
 
 final RouteObserver<ModalRoute> routeObserver = RouteObserver<ModalRoute>();
 
-final theme = ThemeData(
-  primaryColor: Colors.blue[900],
-  toggleableActiveColor: Colors.blue[900],
-  visualDensity: VisualDensity.adaptivePlatformDensity,
-  inputDecorationTheme: const InputDecorationTheme(
-    isDense: true,
-    border: OutlineInputBorder(),
-    errorStyle: TextStyle(height: 0),
-    contentPadding: EdgeInsets.only(top: 7, bottom: 7, left: 10, right: 10),
-    labelStyle: TextStyle(fontSize: 18),
-  ),
-);
+ThemeData get theme {
+  return ThemeData(
+    primaryColor: Colors.blue[900],
+    toggleableActiveColor: Colors.blue[900],
+    visualDensity: VisualDensity.adaptivePlatformDensity,
+    inputDecorationTheme: const InputDecorationTheme(
+      isDense: true,
+      border: OutlineInputBorder(),
+      errorStyle: TextStyle(height: 0),
+      contentPadding: EdgeInsets.only(top: 7, bottom: 7, left: 10, right: 10),
+      labelStyle: TextStyle(fontSize: 18),
+    ),
+    textTheme: GoogleFonts.nunitoSansTextTheme(),
+    // inputDecorationTheme: const InputDecorationTheme(
+    //   isDense: true,
+    //   filled: true,
+    //   contentPadding: EdgeInsets.only(top: 7, left: 7, right: 7, bottom: 8),
+    //   labelStyle: TextStyle(height: 1),
+    // ),
+    tooltipTheme: const TooltipThemeData(
+      textStyle: TextStyle(fontSize: 14, color: Colors.white),
+      padding: EdgeInsets.only(left: 8, right: 8, bottom: 8, top: 5),
+    ),
+  );
+}
 
 void main() {
+  setPathUrlStrategy();
+  LicenseRegistry.addLicense(() async* {
+    final licenseCousine =
+        await rootBundle.loadString('google_fonts/LICENSE.txt');
+    final licenseNunitoSans =
+        await rootBundle.loadString('google_fonts/OFL.txt');
+
+    yield LicenseEntryWithLineBreaks(['google_fonts'], licenseCousine);
+    yield LicenseEntryWithLineBreaks(['google_fonts'], licenseNunitoSans);
+  });
+  
   GetIt.instance.registerSingleton(RootStore());
   mainContext.config = mainContext.config.clone(
     writePolicy: ReactiveWritePolicy.never,
+    disableErrorBoundaries: true,
   );
   runApp(GlobalKeyboardListener.wrapper(child: MyApp()));
 }
@@ -159,6 +185,7 @@ class CodeGenerated extends HookWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               TextButton.icon(
+                style: TextButton.styleFrom(padding: const EdgeInsets.all(14)),
                 icon: const Icon(Icons.file_present),
                 label: const Text("File"),
                 onPressed: () async {
