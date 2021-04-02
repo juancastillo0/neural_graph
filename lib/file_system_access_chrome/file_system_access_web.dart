@@ -7,6 +7,7 @@
 library file_system_access;
 
 import 'dart:async';
+import 'dart:js_util';
 
 import "package:js/js.dart";
 import 'package:neural_graph/common/extensions.dart';
@@ -78,9 +79,9 @@ abstract class _FileSystemHandle {
   external String get name;
 
   external _Promise<bool> isSameEntry(_FileSystemHandle other);
-  external _Promise<String /*PermissionStateEnum*/> queryPermission(
+  external _Promise<String /*PermissionStateEnum*/ > queryPermission(
       [_FileSystemHandlePermissionDescriptor? descriptor]);
-  external _Promise<String /*PermissionStateEnum*/> requestPermission(
+  external _Promise<String /*PermissionStateEnum*/ > requestPermission(
       [_FileSystemHandlePermissionDescriptor? descriptor]);
 
   // /**
@@ -131,23 +132,23 @@ abstract class _FileSystemHandleJS implements FileSystemHandle {
 
 @JS()
 @anonymous
-class FilePickerAcceptTypeJS {
-  external factory FilePickerAcceptTypeJS({
+class _FilePickerAcceptTypeJS {
+  external factory _FilePickerAcceptTypeJS({
     String? description,
-    required Map<String, List<String>> accept,
+    required Object accept,
   });
   external String? get description; //@optional
-  external Map<String, List<String>/*String | String[]*/ > get accept;
+  external Object /*Map<String, List<String> /*String | String[]*/ >*/ get accept;
 }
 
 @JS()
 @anonymous
 class _FilePickerOptions {
   external factory _FilePickerOptions({
-    List<FilePickerAcceptTypeJS>? types,
+    required List<_FilePickerAcceptTypeJS> types,
     bool? excludeAcceptAllOption,
   });
-  external List<FilePickerAcceptTypeJS>? get types; //@optional
+  external List<_FilePickerAcceptTypeJS>? get types; //@optional
   external bool? get excludeAcceptAllOption; //@optional
 }
 
@@ -156,11 +157,11 @@ class _FilePickerOptions {
 class _OpenFilePickerOptions {
   external factory _OpenFilePickerOptions({
     bool? multiple,
-    List<FilePickerAcceptTypeJS>? types,
+    List<_FilePickerAcceptTypeJS>? types,
     bool? excludeAcceptAllOption,
   });
   external bool? get multiple; //@optional
-  external List<FilePickerAcceptTypeJS>? get types; //@optional
+  external List<_FilePickerAcceptTypeJS>? get types; //@optional
   external bool? get excludeAcceptAllOption; //@optional
 }
 
@@ -238,7 +239,7 @@ class _WriteParams {
 
   external String get type;
   external int? get position;
-  external dynamic/*?*/ get data;
+  external dynamic /*?*/ get data;
   external int? get size;
 }
 
@@ -334,8 +335,7 @@ abstract class _FileSystemDirectoryHandle extends _FileSystemHandle {
       [_FileSystemGetDirectoryOptions? options]);
   external _Promise<void> removeEntry(String name,
       [_FileSystemRemoveOptions? options]);
-  external _Promise<List<String>? /*@optional*/ > resolve(
-      FileSystemHandle possibleDescendant);
+  external _Promise<List<String>?> resolve(FileSystemHandle possibleDescendant);
 
   // AsyncIterableIterator<string> keys();
   // AsyncIterableIterator<FileSystemHandle> values();
@@ -356,7 +356,8 @@ class FileSystemDirectoryHandleJS extends _FileSystemHandleJS
 
   @override
   Future<FileSystemFileHandle> getFileHandle(String name, {bool? create}) =>
-      _ptf(_inner.getFileHandle(name, _FileSystemGetFileOptions(create: create)))
+      _ptf(_inner.getFileHandle(
+              name, _FileSystemGetFileOptions(create: create)))
           .then((value) => FileSystemFileHandleJS(value));
 
   @override
@@ -371,9 +372,8 @@ class FileSystemDirectoryHandleJS extends _FileSystemHandleJS
       _inner.removeEntry(name, _FileSystemRemoveOptions(recursive: recursive)));
 
   @override
-  Future<List<String>? /*@optional*/ > resolve(
-          FileSystemHandle possibleDescendant) =>
-      _pltf(_inner.resolve(possibleDescendant));
+  Future<List<String>?> resolve(FileSystemHandle possibleDescendant) =>
+      _pltfNull(_inner.resolve(possibleDescendant));
 }
 
 // @JS()
@@ -444,14 +444,16 @@ class FileSystem extends FileSystemI {
     List<FilePickerAcceptType>? types,
     bool? excludeAcceptAllOption,
     bool? multiple,
-  }) =>
-      _pltf(_showOpenFilePicker(_OpenFilePickerOptions(
-        multiple: multiple,
-        excludeAcceptAllOption: excludeAcceptAllOption,
-        types: _mapFilePickerTypes(types),
-      ))).then(
-        (value) => value.map((e) => FileSystemFileHandleJS(e)).toList(),
-      );
+  }) {
+    final _promise = _showOpenFilePicker(_OpenFilePickerOptions(
+      multiple: multiple,
+      excludeAcceptAllOption: excludeAcceptAllOption,
+      types: _mapFilePickerTypes(types) ?? [],
+    ));
+    return _pltf(_promise).then(
+      (value) => value.map((e) => FileSystemFileHandleJS(e)).toList(),
+    );
+  }
 
   @override
   Future<FileSystemFileHandle> showSaveFilePicker({
@@ -461,7 +463,7 @@ class FileSystem extends FileSystemI {
       _ptf(
         _showSaveFilePicker(_FilePickerOptions(
           excludeAcceptAllOption: excludeAcceptAllOption,
-          types: _mapFilePickerTypes(types),
+          types: _mapFilePickerTypes(types) ?? [],
         )),
       ).then((value) => FileSystemFileHandleJS(value));
 
@@ -471,47 +473,54 @@ class FileSystem extends FileSystemI {
           .then((value) => FileSystemDirectoryHandleJS(value));
 }
 
-List<FilePickerAcceptTypeJS>? _mapFilePickerTypes(
+List<_FilePickerAcceptTypeJS>? _mapFilePickerTypes(
     List<FilePickerAcceptType>? list) {
   if (list == null) {
     return null;
   }
   return list
-      .map((e) => FilePickerAcceptTypeJS(
-            accept: e.accept,
-            description: e.description,
-          ))
+      .map(
+        (e) => _FilePickerAcceptTypeJS(
+          accept: jsify(e.accept) as Object,
+          description: e.description,
+        ),
+      )
       .toList();
 }
 
-/// Converts a JavaScript Promise to a Dart [Future].
-///
-/// ```dart
-/// @JS()
-/// external Promise<num> get threePromise; // Resolves to 3
-///
-/// final Future<num> threeFuture = promiseToFuture(threePromise);
-///
-/// final three = await threeFuture; // == 3
-/// ```
-Future<T> promiseToFuture<T>(_Promise<T> jsPromise) {
-  final completer = Completer<T>();
+// /// Converts a JavaScript Promise to a Dart [Future].
+// ///
+// /// ```dart
+// /// @JS()
+// /// external Promise<num> get threePromise; // Resolves to 3
+// ///
+// /// final Future<num> threeFuture = promiseToFuture(threePromise);
+// ///
+// /// final three = await threeFuture; // == 3
+// /// ```
+// Future<T> promiseToFuture<T>(_Promise<T> jsPromise) {
+//   final completer = Completer<T>();
 
-  final success = allowInterop((r) => completer.complete(r as T?));
-  final error = allowInterop((e) => completer.completeError(e as Object));
+//   final success = allowInterop((r) => completer.complete(r as T?));
+//   final error = allowInterop((e) => completer.completeError(e as Object));
 
-  jsPromise.then(success).catchFn(error);
-  return completer.future;
-}
+//   jsPromise.then(success).catchFn(error);
+//   return completer.future;
+// }
 
 Future<T> _ptf<T>(_Promise<T> v) async {
   final vm = await promiseToFuture(v);
   return vm as T;
 }
 
-Future<List<T>> _pltf<T>(_Promise<List<T>?> v) async {
-  final vm = await promiseToFuture(v as _Promise<List<T>>);
+Future<List<T>> _pltf<T>(_Promise<List<T>> v) async {
+  final vm = await promiseToFuture(v);
   return (vm as List).cast();
+}
+
+Future<List<T>?> _pltfNull<T>(_Promise<List<T>?> v) async {
+  final vm = await promiseToFuture(v);
+  return (vm as List?)?.cast();
 }
 
 // DEPRECATED
