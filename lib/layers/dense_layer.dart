@@ -40,7 +40,7 @@ ${applyCode(h)}
   }
 
   @override
-  Widget form([Key key]) {
+  Widget form([Key? key]) {
     return DenseForm(
       key: key,
       state: this,
@@ -56,7 +56,7 @@ ${applyCode(h)}
   String get layerId => "Dense";
 
   @override
-  Tensor output(Tensor input) {
+  Tensor? output(Tensor input) {
     return null;
   }
 
@@ -88,7 +88,7 @@ ${applyCode(h)}
 }
 
 class DenseForm extends HookWidget {
-  const DenseForm({Key key, @required this.state}) : super(key: key);
+  const DenseForm({Key? key, required this.state}) : super(key: key);
   final DenseLayer state;
 
   @override

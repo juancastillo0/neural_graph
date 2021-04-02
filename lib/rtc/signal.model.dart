@@ -5,69 +5,69 @@ abstract class RTCSignal {
   const RTCSignal._();
 
   const factory RTCSignal.answer(
-    String sdp,
+    String? sdp,
   ) = _Answer;
   const factory RTCSignal.offer(
-    String sdp,
+    String? sdp,
   ) = _Offer;
   const factory RTCSignal.candidate(
     RTCIceCandidate candidate,
   ) = _Candidate;
 
   T when<T>({
-    @required T Function(String sdp) answer,
-    @required T Function(String sdp) offer,
-    @required T Function(RTCIceCandidate candidate) candidate,
+    required T Function(String? sdp) answer,
+    required T Function(String? sdp) offer,
+    required T Function(RTCIceCandidate candidate) candidate,
   }) {
-    final v = this;
+    final RTCSignal v = this;
     if (v is _Answer) return answer(v.sdp);
     if (v is _Offer) return offer(v.sdp);
     if (v is _Candidate) return candidate(v.candidate);
     throw "";
   }
 
-  T/*!*/ maybeWhen<T>({
-    T Function()/*!*/ orElse,
-    T Function(String sdp) answer,
-    T Function(String sdp) offer,
-    T Function(RTCIceCandidate candidate) candidate,
+  T maybeWhen<T>({
+    required T Function() orElse,
+    T Function(String? sdp)? answer,
+    T Function(String? sdp)? offer,
+    T Function(RTCIceCandidate candidate)? candidate,
   }) {
-    final v = this;
-    if (v is _Answer) return answer != null ? answer(v.sdp) : orElse?.call();
-    if (v is _Offer) return offer != null ? offer(v.sdp) : orElse?.call();
+    final RTCSignal v = this;
+    if (v is _Answer) return answer != null ? answer(v.sdp) : orElse.call();
+    if (v is _Offer) return offer != null ? offer(v.sdp) : orElse.call();
     if (v is _Candidate)
-      return candidate != null ? candidate(v.candidate) : orElse?.call();
+      return candidate != null ? candidate(v.candidate) : orElse.call();
     throw "";
   }
 
   T map<T>({
-    @required T Function(_Answer value) answer,
-    @required T Function(_Offer value) offer,
-    @required T Function(_Candidate value) candidate,
+    required T Function(_Answer value) answer,
+    required T Function(_Offer value) offer,
+    required T Function(_Candidate value) candidate,
   }) {
-    final v = this;
+    final RTCSignal v = this;
     if (v is _Answer) return answer(v);
     if (v is _Offer) return offer(v);
     if (v is _Candidate) return candidate(v);
     throw "";
   }
 
-  T/*!*/ maybeMap<T>({
-    T Function()/*!*/ orElse,
-    T Function(_Answer value) answer,
-    T Function(_Offer value) offer,
-    T Function(_Candidate value) candidate,
+  T maybeMap<T>({
+    required T Function() orElse,
+    T Function(_Answer value)? answer,
+    T Function(_Offer value)? offer,
+    T Function(_Candidate value)? candidate,
   }) {
-    final v = this;
-    if (v is _Answer) return answer != null ? answer(v) : orElse?.call();
-    if (v is _Offer) return offer != null ? offer(v) : orElse?.call();
+    final RTCSignal v = this;
+    if (v is _Answer) return answer != null ? answer(v) : orElse.call();
+    if (v is _Offer) return offer != null ? offer(v) : orElse.call();
     if (v is _Candidate)
-      return candidate != null ? candidate(v) : orElse?.call();
+      return candidate != null ? candidate(v) : orElse.call();
     throw "";
   }
 
-  static RTCSignal fromJson(Map<String, dynamic> map) {
-    switch (map["runtimeType"] as String) {
+  static RTCSignal? fromJson(Map<String, dynamic> map) {
+    switch (map["runtimeType"] as String?) {
       case '_Answer':
         return _Answer.fromJson(map);
       case '_Offer':
@@ -83,7 +83,7 @@ abstract class RTCSignal {
 }
 
 class _Answer extends RTCSignal {
-  final String sdp;
+  final String? sdp;
 
   const _Answer(
     this.sdp,
@@ -91,7 +91,7 @@ class _Answer extends RTCSignal {
 
   static _Answer fromJson(Map<String, dynamic> map) {
     return _Answer(
-      map['sdp'] as String,
+      map['sdp'] as String?,
     );
   }
 
@@ -105,7 +105,7 @@ class _Answer extends RTCSignal {
 }
 
 class _Offer extends RTCSignal {
-  final String sdp;
+  final String? sdp;
 
   const _Offer(
     this.sdp,
@@ -113,7 +113,7 @@ class _Offer extends RTCSignal {
 
   static _Offer fromJson(Map<String, dynamic> map) {
     return _Offer(
-      map['sdp'] as String,
+      map['sdp'] as String?,
     );
   }
 
@@ -137,9 +137,9 @@ class _Candidate extends RTCSignal {
     final _m = map['candidate'] as Map<String, dynamic>;
     return _Candidate(
       RTCIceCandidate(
-        _m['candidate'] as String,
-        _m['sdpMid'] as String,
-        _m['sdpMlineIndex'] as int,
+        _m['candidate'] as String?,
+        _m['sdpMid'] as String?,
+        _m['sdpMlineIndex'] as int?,
       ),
     );
   }

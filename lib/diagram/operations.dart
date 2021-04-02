@@ -26,7 +26,7 @@ List<Node<N>> orderedGraph<N extends NodeData>(Iterable<Node<N>> nodes) {
           counts.remove(dep);
           orderedNodes.add(dep);
         } else {
-          counts.set(dep, m - 1);
+          counts.set(dep, m! - 1);
         }
       }
     }

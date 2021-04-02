@@ -38,7 +38,7 @@ const _menuMap = {
 };
 
 class LayersMenu extends HookWidget {
-  const LayersMenu({Key key}) : super(key: key);
+  const LayersMenu({Key? key}) : super(key: key);
   @override
   Widget build(BuildContext ctx) {
     final textTheme = Theme.of(ctx).textTheme;
@@ -93,10 +93,10 @@ class LayersMenu extends HookWidget {
 
 class _ListSection extends HookWidget {
   const _ListSection({
-    Key key,
-    @required this.firstSection,
-    @required this.textTheme,
-    @required this.e,
+    Key? key,
+    required this.firstSection,
+    required this.textTheme,
+    required this.e,
   }) : super(key: key);
 
   final String firstSection;

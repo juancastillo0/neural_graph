@@ -21,7 +21,7 @@ CreateSession$MutationRoot$UserSession
         Map<String, dynamic> json) {
   return CreateSession$MutationRoot$UserSession()
     ..userId = json['userId'] as String
-    ..token = json['token'] as String;
+    ..token = json['token'] as String?;
 }
 
 Map<String, dynamic> _$CreateSession$MutationRoot$UserSessionToJson(
@@ -34,16 +34,14 @@ Map<String, dynamic> _$CreateSession$MutationRoot$UserSessionToJson(
 CreateSession$MutationRoot _$CreateSession$MutationRootFromJson(
     Map<String, dynamic> json) {
   return CreateSession$MutationRoot()
-    ..createSessionId = json['createSessionId'] == null
-        ? null
-        : CreateSession$MutationRoot$UserSession.fromJson(
-            json['createSessionId'] as Map<String, dynamic>);
+    ..createSessionId = CreateSession$MutationRoot$UserSession.fromJson(
+        json['createSessionId'] as Map<String, dynamic>);
 }
 
 Map<String, dynamic> _$CreateSession$MutationRootToJson(
         CreateSession$MutationRoot instance) =>
     <String, dynamic>{
-      'createSessionId': instance.createSessionId?.toJson(),
+      'createSessionId': instance.createSessionId.toJson(),
     };
 
 Signals$SubscriptionRoot$Signal _$Signals$SubscriptionRoot$SignalFromJson(
@@ -63,22 +61,20 @@ Map<String, dynamic> _$Signals$SubscriptionRoot$SignalToJson(
 Signals$SubscriptionRoot _$Signals$SubscriptionRootFromJson(
     Map<String, dynamic> json) {
   return Signals$SubscriptionRoot()
-    ..signals = json['signals'] == null
-        ? null
-        : Signals$SubscriptionRoot$Signal.fromJson(
-            json['signals'] as Map<String, dynamic>);
+    ..signals = Signals$SubscriptionRoot$Signal.fromJson(
+        json['signals'] as Map<String, dynamic>);
 }
 
 Map<String, dynamic> _$Signals$SubscriptionRootToJson(
         Signals$SubscriptionRoot instance) =>
     <String, dynamic>{
-      'signals': instance.signals?.toJson(),
+      'signals': instance.signals.toJson(),
     };
 
 Room$SubscriptionRoot$Room _$Room$SubscriptionRoot$RoomFromJson(
     Map<String, dynamic> json) {
   return Room$SubscriptionRoot$Room()
-    ..users = (json['users'] as List)?.map((e) => e as String)?.toList();
+    ..users = (json['users'] as List<dynamic>).map((e) => e as String).toList();
 }
 
 Map<String, dynamic> _$Room$SubscriptionRoot$RoomToJson(
@@ -90,16 +86,14 @@ Map<String, dynamic> _$Room$SubscriptionRoot$RoomToJson(
 Room$SubscriptionRoot _$Room$SubscriptionRootFromJson(
     Map<String, dynamic> json) {
   return Room$SubscriptionRoot()
-    ..room = json['room'] == null
-        ? null
-        : Room$SubscriptionRoot$Room.fromJson(
-            json['room'] as Map<String, dynamic>);
+    ..room = Room$SubscriptionRoot$Room.fromJson(
+        json['room'] as Map<String, dynamic>);
 }
 
 Map<String, dynamic> _$Room$SubscriptionRootToJson(
         Room$SubscriptionRoot instance) =>
     <String, dynamic>{
-      'room': instance.room?.toJson(),
+      'room': instance.room.toJson(),
     };
 
 SignalArguments _$SignalArgumentsFromJson(Map<String, dynamic> json) {

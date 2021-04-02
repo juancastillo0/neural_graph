@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:meta/meta.dart';
 import 'file_system_write_chunk_type.dart';
 
 enum PermissionStateEnum { granted, denied, prompt }
@@ -13,18 +12,18 @@ abstract class FileSystemHandle {
   String get name;
 
   Future<PermissionStateEnum> queryPermission({
-    FileSystemPermissionMode mode,
+    FileSystemPermissionMode? mode,
   });
 
   Future<PermissionStateEnum> requestPermission({
-    FileSystemPermissionMode mode,
+    FileSystemPermissionMode? mode,
   });
 }
 
 class FilePickerAcceptType {
-  const FilePickerAcceptType({this.description, @required this.accept});
-  final String/*?*/ description; //@optional
-  final Map<String, List<String>/*!*/ /*String | String[]*/ > accept;
+  const FilePickerAcceptType({this.description, required this.accept});
+  final String? description; //@optional
+  final Map<String, List<String> /*String | String[]*/ > accept;
 }
 
 enum FileSystemPermissionMode {
@@ -46,55 +45,55 @@ abstract class FileSystemWritableFileStream {
 
 abstract class FileSystemFileHandle extends FileSystemHandle {
   Future<dynamic /*html.File*/ > getFile();
-  Future<FileSystemWritableFileStream> createWritable({bool keepExistingData});
+  Future<FileSystemWritableFileStream> createWritable({bool? keepExistingData});
 }
 
 abstract class FileSystemDirectoryHandle extends FileSystemHandle {
   Future<FileSystemFileHandle> getFileHandle(
     String name, {
-    bool create,
+    bool? create,
   });
 
   Future<FileSystemWritableFileStream> getDirectoryHandle(
     String name, {
-    bool create,
+    bool? create,
   });
 
   Future<void> removeEntry(
     String name, {
-    bool recursive,
+    bool? recursive,
   });
 
-  Future<List<String>/*?*/ /*@optional*/ > resolve(
+  Future<List<String>? /*@optional*/ > resolve(
     FileSystemHandle possibleDescendant,
   );
 }
 
 abstract class FileSystem extends FileSystemI {
-  static const FileSystem instance = null;
+  static const FileSystem? instance = null;
 }
 
 abstract class FileSystemI {
   const FileSystemI();
 
-  Future<String> readFileAsText(dynamic /*html.File*/ file);
+  Future<String?> readFileAsText(dynamic /*html.File*/ file);
 
   Future<List<FileSystemFileHandle>> showOpenFilePicker({
-    List<FilePickerAcceptType> types,
-    bool excludeAcceptAllOption,
-    bool multiple,
+    List<FilePickerAcceptType>? types,
+    bool? excludeAcceptAllOption,
+    bool? multiple,
   });
 
   Future<FileSystemFileHandle> showSaveFilePicker({
-    List<FilePickerAcceptType> types,
-    bool excludeAcceptAllOption,
+    List<FilePickerAcceptType>? types,
+    bool? excludeAcceptAllOption,
   });
 
   Future<FileSystemDirectoryHandle> showDirectoryPicker();
 
   Future<bool> verifyPermission(
     FileSystemHandle fileHandle, {
-    @required FileSystemPermissionMode mode,
+    required FileSystemPermissionMode mode,
   }) async {
     // Check if permission was already granted. If so, return true.
     if (await fileHandle.queryPermission(mode: mode) ==

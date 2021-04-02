@@ -9,13 +9,13 @@ import 'package:touchable/touchable.dart';
 
 class PartialConnectionsPainter extends CustomPainter {
   final AddingConnectionState addingConnectionState;
-  final Offset mousePosition;
+  final Offset? mousePosition;
   // final BuildContext context;
 
   const PartialConnectionsPainter({
     // @required this.context,
-    @required this.addingConnectionState,
-    @required this.mousePosition,
+    required this.addingConnectionState,
+    required this.mousePosition,
   });
   static final _paint = Paint()
     ..color = Colors.black
@@ -27,7 +27,7 @@ class PartialConnectionsPainter extends CustomPainter {
     addingConnectionState.maybeWhen(
       orElse: () {},
       addedInput: (port) {
-        canvas.drawLine(port.offset, mousePosition, _paint);
+        canvas.drawLine(port.offset, mousePosition!, _paint);
       },
     );
   }
@@ -38,17 +38,17 @@ class PartialConnectionsPainter extends CustomPainter {
 
 class ConnectionsPainter extends CustomPainter {
   final Map<String, Node> nodes;
-  final int selectedConnectionPoint;
-  final Connection selectedConnection;
+  final int? selectedConnectionPoint;
+  final Connection? selectedConnection;
   final BuildContext context;
   final Graph graph;
 
   ConnectionsPainter({
-    @required this.context,
-    @required this.nodes,
-    @required this.selectedConnectionPoint,
-    @required this.selectedConnection,
-    @required this.graph,
+    required this.context,
+    required this.nodes,
+    required this.selectedConnectionPoint,
+    required this.selectedConnection,
+    required this.graph,
   }) {
     // mobx
     graph.nodes.values.forEach((node) => node.data.ports.forEach(
@@ -88,7 +88,7 @@ class ConnectionsPainter extends CustomPainter {
           Offset curr = port.offset;
           for (final pointIndex
               in Iterable<int>.generate(conn.innerPoints.length)) {
-            final innerPoint = conn.innerPoints[pointIndex];
+            final innerPoint = conn.innerPoints[pointIndex]!;
             canvas.drawLine(
               curr,
               innerPoint,
@@ -132,8 +132,8 @@ class ConnectionsPainter extends CustomPainter {
           final paragraph = paragraphB.build();
           paragraph.layout(const ui.ParagraphConstraints(width: 200));
 
-          Offset _paragraphPoint1 = other.offset;
-          Offset _paragraphPoint2 = port.offset;
+          Offset? _paragraphPoint1 = other.offset;
+          Offset? _paragraphPoint2 = port.offset;
 
           if (conn.innerPoints.isNotEmpty) {
             final _pos = ((conn.innerPoints.length - 1) / 2).floor();
@@ -153,7 +153,7 @@ class ConnectionsPainter extends CustomPainter {
               _paragraphPoint1,
               _paragraphPoint2,
               0.5,
-            ).translate(-100, -12),
+            )!.translate(-100, -12),
           );
 
           // // DRAW ARROW TRIANGLE

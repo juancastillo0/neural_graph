@@ -52,7 +52,7 @@ abstract class _Input extends Layer with Store {
   }
 
   @override
-  Widget form([Key key]) => DefaultForm(
+  Widget form([Key? key]) => DefaultForm(
         key: key,
         child: InputForm(state: this as Input),
       );
@@ -66,7 +66,7 @@ abstract class _Input extends Layer with Store {
 }
 
 class InputForm extends HookWidget {
-  const InputForm({Key key, @required this.state}) : super(key: key);
+  const InputForm({Key? key, required this.state}) : super(key: key);
   final Input state;
   @override
   Widget build(BuildContext ctx) {

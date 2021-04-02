@@ -3,7 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:neural_graph/fields/form.dart';
 
-RegExp shapeRegexFn(int dimensions) {
+RegExp shapeRegexFn(int? dimensions) {
   return RegExp(
       //ignore: prefer_interpolation_to_compose_strings
       r"^[1-9]\d*(,[1-9]\d*){0," + (dimensions ?? 7).toString() + r"}(,)?$");
@@ -11,13 +11,13 @@ RegExp shapeRegexFn(int dimensions) {
 
 class ShapeField extends StatelessWidget {
   const ShapeField({
-    Key key,
-    @required this.field,
-    @required this.dimensions,
+    Key? key,
+    required this.field,
+    required this.dimensions,
   }) : super(key: key);
 
   final FormFieldValue<List<int>> field;
-  final int dimensions;
+  final int? dimensions;
   // final cc = TextEditingController();
 
   @override
@@ -66,12 +66,12 @@ class ShapeField extends StatelessWidget {
     );
   }
 
-  static List<int/*!*/> shapeFromString(String value) {
+  static List<int> shapeFromString(String value) {
     return value
         .split(",")
         .map((e) => int.tryParse(e))
         .where((e) => e != null)
-        .toList();
+        .toList() as List<int>;
   }
 
   static String shapeToString(List<int> value) {

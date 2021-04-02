@@ -10,7 +10,7 @@ import 'package:neural_graph/diagram/node.dart';
 import 'package:neural_graph/layers/output_layer.dart';
 
 abstract class Layer implements NodeData {
-  Layer(this.node, {String name}) : this._name = Observable(name ?? "");
+  Layer(this.node, {String? name}) : this._name = Observable(name ?? "");
   final Node<Layer> node;
 
   final Observable<String> _name;
@@ -23,7 +23,7 @@ abstract class Layer implements NodeData {
 
   String get layerId;
 
-  Tensor output(Tensor input);
+  Tensor? output(Tensor input);
 
   String code(CodeGenHelper h);
 
@@ -34,7 +34,7 @@ abstract class Layer implements NodeData {
     "Dense": (node) => DenseLayer(node as Node<Layer>),
   };
 
-  Widget form([Key key]);
+  Widget form([Key? key]);
 
   @override
   Widget nodeView() {

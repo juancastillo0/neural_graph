@@ -6,22 +6,22 @@ enum ResizeHorizontal { left, right, both }
 enum ResizeVertical { top, bottom, both }
 
 class Resizable extends StatefulWidget {
-  final ResizeHorizontal horizontal;
-  final double defaultWidth;
-  final double minWidth;
+  final ResizeHorizontal? horizontal;
+  final double? defaultWidth;
+  final double? minWidth;
 
-  final ResizeVertical vertical;
-  final double defaultHeight;
-  final double minHeight;
+  final ResizeVertical? vertical;
+  final double? defaultHeight;
+  final double? minHeight;
 
   final Widget child;
-  final Widget handle;
+  final Widget? handle;
 
   const Resizable({
     this.handle,
     this.horizontal,
     this.defaultWidth,
-    @required this.child,
+    required this.child,
     this.minWidth,
     this.vertical,
     this.defaultHeight,
@@ -33,8 +33,8 @@ class Resizable extends StatefulWidget {
 }
 
 class _ResizableState extends State<Resizable> {
-  double _width;
-  double _height;
+  double? _width;
+  double? _height;
 
   @override
   void initState() {
@@ -50,13 +50,13 @@ class _ResizableState extends State<Resizable> {
     return horizontal
         ? (DragUpdateDetails details) {
             setState(() {
-              _width = _width +
+              _width = _width! +
                   (proportional ? details.delta.dx : -details.delta.dx);
             });
           }
         : (DragUpdateDetails details) {
             setState(() {
-              _height = _height +
+              _height = _height! +
                   (proportional ? details.delta.dy : -details.delta.dy);
             });
           };

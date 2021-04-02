@@ -12,14 +12,14 @@ enum ListEventEnum { change, insert, remove, many }
 abstract class ListEvent<E> implements Event {
   const ListEvent._();
 
-  const factory ListEvent.change(int index, {E oldValue, E newValue}) =
+  const factory ListEvent.change(int index, {E? oldValue, E? newValue}) =
       ChangeListEvent._;
   const factory ListEvent.insert(int index, E value) = InsertListEvent._;
   const factory ListEvent.remove(int index, E value) = RemoveListEvent._;
   const factory ListEvent.many(List<ListEvent<E>> events) = ManyListEvent._;
 
   ListEventEnum get typeId {
-    final v = this;
+    final ListEvent<E> v = this;
     if (v is ChangeListEvent<E>) {
       return ListEventEnum.change;
     } else if (v is InsertListEvent<E>) {
@@ -35,14 +35,14 @@ abstract class ListEvent<E> implements Event {
   bool isType(ListEventEnum type) => type == typeId;
 
   T when<T>({
-    T Function(ChangeListEvent<E>) change,
-    T Function(InsertListEvent<E>) insert,
-    T Function(RemoveListEvent<E>) remove,
-    T Function(ManyListEvent<E>) many,
+    T Function(ChangeListEvent<E>)? change,
+    T Function(InsertListEvent<E>)? insert,
+    T Function(RemoveListEvent<E>)? remove,
+    T Function(ManyListEvent<E>)? many,
   }) {
     final callback =
-        [change, insert, remove, many] as List<T Function(ListEvent<E>)>;
-    return callback[typeId.index](this);
+        [change, insert, remove, many] as List<T Function(ListEvent<E>)?>;
+    return callback[typeId.index]!(this);
   }
 
   ListEvent<E> revert();
@@ -52,8 +52,8 @@ class ChangeListEvent<E> extends ListEvent<E> {
   const ChangeListEvent._(this.index, {this.oldValue, this.newValue})
       : super._();
   final int index;
-  final E oldValue;
-  final E newValue;
+  final E? oldValue;
+  final E? newValue;
 
   @override
   ListEvent<E> revert() {
@@ -97,7 +97,7 @@ class ManyListEvent<E> extends ListEvent<E> {
 
 abstract class EventConsumer<V extends Event> {
   EventConsumer({
-    int maxHistoryLength,
+    int? maxHistoryLength,
   }) : history = EventHistory(maxHistoryLength: maxHistoryLength);
 
   final EventHistory<V> history;
@@ -113,7 +113,7 @@ abstract class EventConsumer<V extends Event> {
 
 class EventHistory<V extends Event> {
   EventHistory({
-    int maxHistoryLength,
+    int? maxHistoryLength,
   }) : maxHistoryLength = maxHistoryLength ?? 25;
 
   final int maxHistoryLength;
@@ -152,14 +152,14 @@ class EventHistory<V extends Event> {
   int get hashCode => super.hashCode;
 }
 
-class MutableList<E> extends EventConsumer<ListEvent<E>> implements List<E> {
+class MutableList<E> extends EventConsumer<ListEvent<E?>> implements List<E?> {
   MutableList(
     List<E> inner, {
-    int maxHistoryLength,
+    int? maxHistoryLength,
   })  : _inner = inner,
         super(maxHistoryLength: maxHistoryLength);
 
-  final List<E> _inner;
+  final List<E?> _inner;
 
   // @override
   // bool operator ==(Object other) {
@@ -173,7 +173,7 @@ class MutableList<E> extends EventConsumer<ListEvent<E>> implements List<E> {
   // int get hashCode => super.hashCode;
 
   @override
-  void _consume(ListEvent<E> e) {
+  void _consume(ListEvent<E?> e) {
     e.when(
       change: (c) {
         _inner[c.index] = c.newValue;
@@ -196,7 +196,7 @@ class MutableList<E> extends EventConsumer<ListEvent<E>> implements List<E> {
   }
 
   @override
-  E operator [](int index) {
+  E? operator [](int index) {
     return _inner[index];
   }
 
@@ -204,12 +204,12 @@ class MutableList<E> extends EventConsumer<ListEvent<E>> implements List<E> {
   // INSERT SINGLE
 
   @override
-  void add(E value) {
+  void add(E? value) {
     apply(ListEvent.insert(_inner.length, value));
   }
 
   @override
-  void insert(int index, E element) {
+  void insert(int index, E? element) {
     apply(ListEvent.insert(index, element));
   }
 
@@ -217,13 +217,13 @@ class MutableList<E> extends EventConsumer<ListEvent<E>> implements List<E> {
   // INSERT MANY
 
   @override
-  MutableList<E> operator +(List<E> other) {
+  MutableList<E?> operator +(List<E?> other) {
     addAll(other);
     return MutableList(_inner + other);
   }
 
   @override
-  void addAll(Iterable<E> iterable) {
+  void addAll(Iterable<E?> iterable) {
     int offset = length;
     final event = ListEvent.many(iterable.map((v) {
       return ListEvent.insert(offset++, v);
@@ -232,14 +232,14 @@ class MutableList<E> extends EventConsumer<ListEvent<E>> implements List<E> {
   }
 
   @override
-  void fillRange(int start, int end, [E fillValue]) {
+  void fillRange(int start, int end, [E? fillValue]) {
     ListEvent.many(Iterable<int>.generate(end - start)
         .map((index) => ListEvent.insert(index + start, fillValue))
         .toList());
   }
 
   @override
-  void insertAll(int index, Iterable<E> iterable) {
+  void insertAll(int index, Iterable<E?> iterable) {
     int offset = index;
     final event = ListEvent.many(iterable.map((v) {
       return ListEvent.insert(offset++, v);
@@ -251,7 +251,7 @@ class MutableList<E> extends EventConsumer<ListEvent<E>> implements List<E> {
   // REMOVE SINGLE
 
   @override
-  bool remove(Object value) {
+  bool remove(Object? value) {
     if (value is E) {
       final index = _inner.indexOf(value);
       if (index != -1) {
@@ -263,14 +263,14 @@ class MutableList<E> extends EventConsumer<ListEvent<E>> implements List<E> {
   }
 
   @override
-  E removeAt(int index) {
+  E? removeAt(int index) {
     final value = _inner[index];
     apply(ListEvent.remove(index, value));
     return value;
   }
 
   @override
-  E removeLast() {
+  E? removeLast() {
     return removeAt(_inner.length - 1);
   }
 
@@ -301,7 +301,7 @@ class MutableList<E> extends EventConsumer<ListEvent<E>> implements List<E> {
   }
 
   @override
-  void setAll(int index, Iterable<E> iterable) {
+  void setAll(int index, Iterable<E?> iterable) {
     // TODO: implement setAll
   }
 
@@ -309,17 +309,17 @@ class MutableList<E> extends EventConsumer<ListEvent<E>> implements List<E> {
   // CHANGE SINGLE
 
   @override
-  void operator []=(int index, E value) {
+  void operator []=(int index, E? value) {
     _inner[index] = value;
   }
 
   @override
-  set first(E value) {
+  set first(E? value) {
     _inner.first = value;
   }
 
   @override
-  set last(E value) {
+  set last(E? value) {
     _inner.last = value;
   }
 
@@ -327,12 +327,12 @@ class MutableList<E> extends EventConsumer<ListEvent<E>> implements List<E> {
   // CHANGE MANY
 
   @override
-  void replaceRange(int start, int end, Iterable<E> replacement) {
+  void replaceRange(int start, int end, Iterable<E?> replacement) {
     // TODO: implement replaceRange
   }
 
   @override
-  void setRange(int start, int end, Iterable<E> iterable, [int skipCount = 0]) {
+  void setRange(int start, int end, Iterable<E?> iterable, [int skipCount = 0]) {
     // TODO: implement setRange
   }
 
@@ -340,58 +340,58 @@ class MutableList<E> extends EventConsumer<ListEvent<E>> implements List<E> {
   // REORDER
 
   @override
-  void shuffle([Random random]) {
+  void shuffle([Random? random]) {
     // TODO: implement shuffle
   }
 
   @override
-  void sort([int Function(E a, E b) compare]) {
+  void sort([int Function(E a, E b)? compare]) {
     // TODO: implement sort
   }
 
   @override
-  bool any(bool Function(E element) test) => _inner.any(test);
+  bool any(bool Function(E? element) test) => _inner.any(test);
 
   @override
-  Map<int, E> asMap() => _inner.asMap();
+  Map<int, E?> asMap() => _inner.asMap();
 
   @override
   List<R> cast<R>() => _inner.cast();
 
   @override
-  bool contains(Object element) => _inner.contains(element);
+  bool contains(Object? element) => _inner.contains(element);
 
   @override
-  E elementAt(int index) => _inner.elementAt(index);
+  E? elementAt(int index) => _inner.elementAt(index);
 
   @override
-  bool every(bool Function(E element) test) => _inner.every(test);
+  bool every(bool Function(E? element) test) => _inner.every(test);
 
   @override
-  Iterable<T> expand<T>(Iterable<T> Function(E element) f) => _inner.expand(f);
+  Iterable<T> expand<T>(Iterable<T> Function(E? element) f) => _inner.expand(f);
 
   @override
-  E firstWhere(bool Function(E element) test, {E Function() orElse}) =>
+  E? firstWhere(bool Function(E? element) test, {E? Function()? orElse}) =>
       _inner.firstWhere(test, orElse: orElse);
 
   @override
-  T fold<T>(T initialValue, T Function(T previousValue, E element) combine) =>
+  T fold<T>(T initialValue, T Function(T previousValue, E? element) combine) =>
       _inner.fold(initialValue, combine);
 
   @override
-  Iterable<E> followedBy(Iterable<E> other) => _inner.followedBy(other);
+  Iterable<E?> followedBy(Iterable<E?> other) => _inner.followedBy(other);
 
   @override
-  void forEach(void Function(E element) f) => _inner.forEach(f);
+  void forEach(void Function(E? element) f) => _inner.forEach(f);
 
   @override
-  Iterable<E> getRange(int start, int end) => _inner.getRange(start, end);
+  Iterable<E?> getRange(int start, int end) => _inner.getRange(start, end);
 
   @override
-  int indexOf(E element, [int start = 0]) => _inner.indexOf(element, start);
+  int indexOf(E? element, [int start = 0]) => _inner.indexOf(element, start);
 
   @override
-  int indexWhere(bool Function(E element) test, [int start = 0]) =>
+  int indexWhere(bool Function(E? element) test, [int start = 0]) =>
       _inner.indexWhere(test, start);
 
   @override
@@ -401,70 +401,70 @@ class MutableList<E> extends EventConsumer<ListEvent<E>> implements List<E> {
   bool get isNotEmpty => _inner.isNotEmpty;
 
   @override
-  Iterator<E> get iterator => _inner.iterator;
+  Iterator<E?> get iterator => _inner.iterator;
 
   @override
   String join([String separator = ""]) => _inner.join(separator);
 
   @override
-  int lastIndexOf(E element, [int start]) => _inner.lastIndexOf(element, start);
+  int lastIndexOf(E? element, [int? start]) => _inner.lastIndexOf(element, start);
 
   @override
-  int lastIndexWhere(bool Function(E element) test, [int start]) =>
+  int lastIndexWhere(bool Function(E? element) test, [int? start]) =>
       _inner.lastIndexWhere(test, start);
 
   @override
-  E lastWhere(bool Function(E element) test, {E Function() orElse}) =>
+  E? lastWhere(bool Function(E? element) test, {E? Function()? orElse}) =>
       _inner.lastWhere(test, orElse: orElse);
 
   @override
-  Iterable<T> map<T>(T Function(E e) f) => _inner.map(f);
+  Iterable<T> map<T>(T Function(E? e) f) => _inner.map(f);
 
   @override
-  E reduce(E Function(E value, E element) combine) => _inner.reduce(combine);
+  E? reduce(E? Function(E? value, E? element) combine) => _inner.reduce(combine);
 
   @override
-  Iterable<E> get reversed => _inner.reversed;
+  Iterable<E?> get reversed => _inner.reversed;
 
   @override
-  E get single => _inner.single;
+  E? get single => _inner.single;
 
   @override
-  E singleWhere(bool Function(E element) test, {E Function() orElse}) =>
+  E? singleWhere(bool Function(E? element) test, {E? Function()? orElse}) =>
       _inner.singleWhere(test, orElse: orElse);
 
   @override
-  Iterable<E> skip(int count) => _inner.skip(count);
+  Iterable<E?> skip(int count) => _inner.skip(count);
 
   @override
-  Iterable<E> skipWhile(bool Function(E value) test) => _inner.skipWhile(test);
+  Iterable<E?> skipWhile(bool Function(E? value) test) => _inner.skipWhile(test);
 
   @override
-  List<E> sublist(int start, [int end]) => _inner.sublist(start, end);
+  List<E?> sublist(int start, [int? end]) => _inner.sublist(start, end);
 
   @override
-  Iterable<E> take(int count) => _inner.take(count);
+  Iterable<E?> take(int count) => _inner.take(count);
 
   @override
-  Iterable<E> takeWhile(bool Function(E value) test) => _inner.takeWhile(test);
+  Iterable<E?> takeWhile(bool Function(E? value) test) => _inner.takeWhile(test);
 
   @override
-  List<E> toList({bool growable = true}) => _inner.toList(growable: growable);
+  List<E?> toList({bool growable = true}) => _inner.toList(growable: growable);
 
   @override
-  Set<E> toSet() => _inner.toSet();
+  Set<E?> toSet() => _inner.toSet();
 
   @override
-  Iterable<E> where(bool Function(E element) test) => _inner.where(test);
+  Iterable<E?> where(bool Function(E? element) test) => _inner.where(test);
 
   @override
   Iterable<T> whereType<T>() => _inner.whereType<T>();
 
   @override
-  E get first => _inner.first;
+  E? get first => _inner.first;
 
   @override
-  E get last => _inner.last;
+  E? get last => _inner.last;
 
   @override
   int get length => _inner.length;

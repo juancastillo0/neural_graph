@@ -1,18 +1,17 @@
 import 'package:artemis/artemis.dart';
-import 'package:meta/meta.dart';
 import 'package:neural_graph/api.graphql.dart';
 
 class GraphQlPeerSignalProtocol extends SingalProtocol<String> {
   GraphQlPeerSignalProtocol({
-    @required this.peerId,
-    @required this.client,
-    Stream<GraphQLResponse<Signals$SubscriptionRoot>> signals,
+    required this.peerId,
+    required this.client,
+    Stream<GraphQLResponse<Signals$SubscriptionRoot>>? signals,
   }) {
     signals ??= this.client.stream(SignalsSubscription());
 
     this.remoteSignalStream = signals
-        .where((event) => event.data.signals.peerId == peerId)
-        .map((event) => event.data.signals.payload);
+        .where((event) => event.data!.signals.peerId == peerId)
+        .map((event) => event.data!.signals.payload);
   }
 
   final ArtemisClient client;
@@ -24,10 +23,10 @@ class GraphQlPeerSignalProtocol extends SingalProtocol<String> {
   // };
 
   @override
-  /*late final*/ Stream<String/*!*/> remoteSignalStream;
+  late final Stream<String> remoteSignalStream;
 
   @override
-  Future<bool> sendSignal(String signal) async {
+  Future<bool?> sendSignal(String signal) async {
     final signalMutation = SignalMutation(
       variables: SignalArguments(
         peerId: peerId,
@@ -36,7 +35,7 @@ class GraphQlPeerSignalProtocol extends SingalProtocol<String> {
     );
     final response = await client.execute(signalMutation);
 
-    return response.data.signal;
+    return response.data!.signal;
 
     // final request = await client.post(
     //   uri,
@@ -73,7 +72,7 @@ abstract class SingalProtocol<T> {
   const SingalProtocol();
   Stream<T> get remoteSignalStream;
 
-  Future<bool> sendSignal(T signal);
+  Future<bool?> sendSignal(T signal);
 
   void dispose() {}
 
@@ -100,7 +99,7 @@ class _MappedSingalProtocol<T, V> extends SingalProtocol<V> {
   }
 
   @override
-  Future<bool> sendSignal(V signal) {
+  Future<bool?> sendSignal(V signal) {
     return _inner.sendSignal(from(signal));
   }
 }
@@ -111,27 +110,27 @@ class GraphQlError {
     this.locations,
     this.path,
   });
-  final String message;
-  final List locations;
-  final List<String> path;
+  final String? message;
+  final List? locations;
+  final List<String>? path;
 
   static GraphQlError fromJson(Map<String, dynamic> json) {
     return GraphQlError(
-      message: json["message"] as String,
-      locations: json["locations"] as List,
-      path: json["path"] as List<String>,
+      message: json["message"] as String?,
+      locations: json["locations"] as List?,
+      path: json["path"] as List<String>?,
     );
   }
 }
 
 class GraphQlBody {
   const GraphQlBody({this.data, this.errors});
-  final Map<String, dynamic> data;
-  final List<GraphQlError> errors;
+  final Map<String, dynamic>? data;
+  final List<GraphQlError>? errors;
 
   static GraphQlBody fromJson(Map<String, dynamic> json) {
     return GraphQlBody(
-      data: json["data"] as Map<String, dynamic>,
+      data: json["data"] as Map<String, dynamic>?,
       errors: (json["errors"] as List)
           .map((e) => GraphQlError.fromJson(e as Map<String, dynamic>))
           .toList(),

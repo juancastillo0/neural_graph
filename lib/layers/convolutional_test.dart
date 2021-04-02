@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:neural_graph/diagram/graph.dart';
 import 'package:neural_graph/diagram/node.dart';
 import 'package:test/test.dart';
 import 'package:neural_graph/layers/convolutional_layer.dart';
 import 'package:neural_graph/layers/layers.dart';
 
 void main() {
+  final g = Graph<Layer>();
   Node makeNode(Iterable inputs) {
     return Node<Layer>(
+      graph: g,
       key: '2',
       offset: const Offset(20, 20),
       dataBuilder: (n) => Convolutional(

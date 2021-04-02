@@ -14,32 +14,32 @@ const _scrollIconPadding = EdgeInsets.all(0);
 class MultiScrollable extends StatefulWidget {
   const MultiScrollable({
     this.child,
-    Key key,
+    Key? key,
     this.vertical,
     this.horizontal,
   }) : super(key: key);
-  final Widget child;
-  final ScrollController vertical;
-  final ScrollController horizontal;
+  final Widget? child;
+  final ScrollController? vertical;
+  final ScrollController? horizontal;
 
   @override
   _MultiScrollableState createState() => _MultiScrollableState();
 }
 
 class _MultiScrollableState extends State<MultiScrollable> with RouteAware {
-  double innerWidth;
-  double innerHeight;
+  double? innerWidth;
+  double? innerHeight;
 
   @override
   void initState() {
-    SchedulerBinding.instance.addPostFrameCallback((_) => setState(() {}));
+    SchedulerBinding.instance!.addPostFrameCallback((_) => setState(() {}));
     super.initState();
   }
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    routeObserver.subscribe(this, ModalRoute.of(context));
+    routeObserver.subscribe(this, ModalRoute.of(context)!);
   }
 
   @override
@@ -67,7 +67,7 @@ class _MultiScrollableState extends State<MultiScrollable> with RouteAware {
               Expanded(
                 child: LayoutBuilder(
                   builder: (context, box) {
-                    SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
+                    SchedulerBinding.instance!.addPostFrameCallback((timeStamp) {
                       if (innerWidth != box.maxWidth ||
                           innerHeight != box.maxHeight) {
                         setState(() {
@@ -76,7 +76,7 @@ class _MultiScrollableState extends State<MultiScrollable> with RouteAware {
                         });
                       }
                     });
-                    return widget.child;
+                    return widget.child!;
                   },
                 ),
               ),
@@ -99,23 +99,23 @@ class _MultiScrollableState extends State<MultiScrollable> with RouteAware {
 
 class ButtonScrollbar extends HookWidget {
   const ButtonScrollbar({
-    Key key,
-    @required this.controller,
-    @required this.maxSize,
+    Key? key,
+    required this.controller,
+    required this.maxSize,
     this.horizontal = false,
   }) : super(key: key);
 
-  final ScrollController controller;
+  final ScrollController? controller;
   final bool horizontal;
-  final double maxSize;
+  final double? maxSize;
 
   void onPressedScrollButtonStart() {
-    controller.jumpTo(max(controller.offset - 20, 0));
+    controller!.jumpTo(max(controller!.offset - 20, 0));
   }
 
   void onPressedScrollButtonEnd() {
-    controller.jumpTo(
-      min(controller.offset + 20, controller.position.maxScrollExtent),
+    controller!.jumpTo(
+      min(controller!.offset + 20, controller!.position.maxScrollExtent),
     );
   }
 
@@ -123,18 +123,18 @@ class ButtonScrollbar extends HookWidget {
   Widget build(BuildContext context) {
     final isPressedButton = useState(false);
     if (controller == null ||
-        !controller.hasClients ||
-        controller.position?.viewportDimension == null ||
-        controller.position.viewportDimension < maxSize) {
+        !controller!.hasClients ||
+        controller!.position?.viewportDimension == null ||
+        controller!.position.viewportDimension < maxSize!) {
       return const SizedBox(width: 0, height: 0);
     }
 
     Future onLongPressStartForward(LongPressStartDetails _) async {
       isPressedButton.value = true;
       while (isPressedButton.value &&
-          controller.offset < controller.position.maxScrollExtent) {
-        await controller.animateTo(
-          min(controller.offset + 50, controller.position.maxScrollExtent),
+          controller!.offset < controller!.position.maxScrollExtent) {
+        await controller!.animateTo(
+          min(controller!.offset + 50, controller!.position.maxScrollExtent),
           duration: const Duration(milliseconds: 150),
           curve: Curves.linear,
         );
@@ -143,9 +143,9 @@ class ButtonScrollbar extends HookWidget {
 
     Future onLongPressStartBackward(LongPressStartDetails _) async {
       isPressedButton.value = true;
-      while (isPressedButton.value && controller.offset > 0) {
-        await controller.animateTo(
-          max(controller.offset - 50, 0),
+      while (isPressedButton.value && controller!.offset > 0) {
+        await controller!.animateTo(
+          max(controller!.offset - 50, 0),
           duration: const Duration(milliseconds: 150),
           curve: Curves.linear,
         );
@@ -209,18 +209,18 @@ class ButtonScrollbar extends HookWidget {
 
 class MultiScrollbar extends HookWidget {
   const MultiScrollbar({
-    @required this.controller,
+    required this.controller,
     this.horizontal = false,
-    Key key,
+    Key? key,
   }) : super(key: key);
-  final ScrollController controller;
+  final ScrollController? controller;
   final bool horizontal;
 
   @override
   Widget build(BuildContext ctx) {
-    useListenable(controller);
-    final position = controller.position;
-    final offset = controller.offset;
+    useListenable(controller!);
+    final position = controller!.position;
+    final offset = controller!.offset;
     final scrollExtent = position.maxScrollExtent + position.viewportDimension;
 
     return LayoutBuilder(
@@ -256,21 +256,21 @@ class MultiScrollbar extends HookWidget {
 
 class _ScrollHandle extends HookWidget {
   const _ScrollHandle({
-    Key key,
-    @required this.horizontal,
-    @required this.handleSize,
-    @required this.controller,
-    @required this.rate,
+    Key? key,
+    required this.horizontal,
+    required this.handleSize,
+    required this.controller,
+    required this.rate,
   }) : super(key: key);
 
   final bool horizontal;
   final double handleSize;
-  final ScrollController controller;
+  final ScrollController? controller;
   final double rate;
 
   @override
   Widget build(BuildContext context) {
-    final position = controller.position;
+    final position = controller!.position;
     final hovering = useState(false);
     final dragging = useState(false);
 
@@ -283,9 +283,9 @@ class _ScrollHandle extends HookWidget {
         onPanEnd: (_) => dragging.value = false,
         onPanUpdate: (DragUpdateDetails p) {
           final _delta = horizontal ? p.delta.dx : p.delta.dy;
-          final _offset = (controller.offset + _delta / rate)
-              .clamp(0.0, position.maxScrollExtent) as double;
-          controller.jumpTo(_offset);
+          final _offset = (controller!.offset + _delta / rate)
+              .clamp(0.0, position.maxScrollExtent);
+          controller!.jumpTo(_offset);
         },
         child: SizedBox(
           height: horizontal ? double.infinity : handleSize,

@@ -17,7 +17,7 @@ import 'package:touchable/touchable.dart';
 class GraphView extends HookWidget {
   final Graph graph;
 
-  const GraphView({@required this.graph});
+  const GraphView({required this.graph});
 
   @override
   Widget build(BuildContext context) {
@@ -47,6 +47,7 @@ class GraphView extends HookWidget {
                 final isAdding = !addingConnection.isNone();
                 return FlatButton.icon(
                   icon: const Icon(Icons.add_circle_outline),
+                  onPressed: (){},
                   // onPressed: isAdding
                   //     ? () {
                   //         // graph.addingConnection =
@@ -92,7 +93,7 @@ class GraphView extends HookWidget {
 }
 
 class CanvasView extends HookWidget {
-  const CanvasView({Key key, @required this.graph}) : super(key: key);
+  const CanvasView({Key? key, required this.graph}) : super(key: key);
   final Graph graph;
 
   @override
@@ -184,9 +185,9 @@ class ScrollableCanvasWrapper extends StatelessWidget {
   final Widget child;
 
   const ScrollableCanvasWrapper({
-    Key key,
-    @required this.graph,
-    @required this.child,
+    Key? key,
+    required this.graph,
+    required this.child,
   }) : super(key: key);
 
   @override

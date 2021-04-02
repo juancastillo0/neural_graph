@@ -11,16 +11,16 @@ import 'package:neural_graph/common/extensions.dart';
 
 class ButtonSelect<T> extends HookWidget {
   const ButtonSelect({
-    Key key,
-    @required this.options,
-    @required this.selected,
-    @required this.onChange,
+    Key? key,
+    required this.options,
+    required this.selected,
+    required this.onChange,
     this.asString,
   }) : super(key: key);
 
   final Iterable<T> options;
   final T selected;
-  final String Function(T) asString;
+  final String Function(T)? asString;
   final void Function(T) onChange;
 
   @override
@@ -28,9 +28,9 @@ class ButtonSelect<T> extends HookWidget {
     final theme = Theme.of(ctx);
     final isDropdown = useState(false);
     final checkedShouldBeDropdown = useState(false);
-    double buttonTop;
+    double? buttonTop;
 
-    String _asString(T e) => asString == null ? e.toString() : asString(e);
+    String _asString(T e) => asString == null ? e.toString() : asString!(e);
 
     if (isDropdown.value) {
       return Align(
@@ -45,7 +45,7 @@ class ButtonSelect<T> extends HookWidget {
                 child: Text(s),
               );
             }).toList(),
-            onChanged: onChange,
+            onChanged: (v) => onChange(v!),
           ),
         ),
       );
@@ -67,14 +67,14 @@ class ButtonSelect<T> extends HookWidget {
             onPressed: () => onChange(e),
             color: e == selected ? theme.primaryColor : null,
             child: Builder(builder: (ctx) {
-              SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
+              SchedulerBinding.instance!.addPostFrameCallback((timeStamp) {
                 // print("Text ${ctx.size} ${ctx.globalPaintBounds}");
                 if (buttonTop == null) {
-                  buttonTop = ctx.globalPaintBounds.top;
+                  buttonTop = ctx.globalPaintBounds!.top;
                   return;
                 }
                 if (!checkedShouldBeDropdown.value) {
-                  if (buttonTop != ctx.globalPaintBounds.top) {
+                  if (buttonTop != ctx.globalPaintBounds!.top) {
                     isDropdown.value = true;
                   }
                   checkedShouldBeDropdown.value = true;

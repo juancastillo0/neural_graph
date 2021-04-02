@@ -9,7 +9,7 @@ import 'package:uuid/uuid.dart';
 class NeuralNetwork {
   final String key;
   static final _uuid = Uuid();
-  factory NeuralNetwork({@required Graph<Layer> graph}) {
+  factory NeuralNetwork({required Graph<Layer> graph}) {
     return NeuralNetwork._(_uuid.v4(), graph);
   }
 
@@ -17,7 +17,7 @@ class NeuralNetwork {
 
   final Graph<Layer> graph;
 
-  String name;
+  String? name;
   final optimizerObs = Observable(Optimizer.momentum);
   Optimizer get optimizer => optimizerObs.value;
 

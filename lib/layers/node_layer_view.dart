@@ -6,15 +6,15 @@ import 'package:neural_graph/layers/layers.dart';
 
 class SimpleLayerView extends StatelessWidget {
   const SimpleLayerView({
-    Key key,
-    @required this.layer,
-    @required this.outPort,
-    @required this.inPort,
+    Key? key,
+    required this.layer,
+    required this.outPort,
+    required this.inPort,
   }) : super(key: key);
 
   final Layer layer;
-  final Port<Layer> outPort;
-  final Port<Layer> inPort;
+  final Port<Layer>? outPort;
+  final Port<Layer>? inPort;
 
   @override
   Widget build(BuildContext context) {
@@ -34,7 +34,7 @@ class SimpleLayerView extends StatelessWidget {
                 children: [
                   Text(
                     layer.layerId,
-                    style: context.textTheme.subtitle2.copyWith(
+                    style: context.textTheme.subtitle2!.copyWith(
                       fontWeight: FontWeight.bold,
                       fontSize: 11,
                     ),
@@ -50,7 +50,7 @@ class SimpleLayerView extends StatelessWidget {
               width: 10,
               height: 10,
               child: PortView(
-                port: outPort,
+                port: outPort!,
                 canBeStart: true,
                 child: const DecoratedBox(
                   decoration: BoxDecoration(
@@ -66,7 +66,7 @@ class SimpleLayerView extends StatelessWidget {
               width: 10,
               height: 10,
               child: PortView<Layer>(
-                port: inPort,
+                port: inPort!,
                 canBeEnd: (inputPort) {
                   return inputPort.node != node;
                 },

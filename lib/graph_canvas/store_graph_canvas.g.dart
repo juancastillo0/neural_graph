@@ -9,7 +9,7 @@ part of 'store_graph_canvas.dart';
 // ignore_for_file: non_constant_identifier_names, unnecessary_brace_in_string_interps, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic
 
 mixin _$GraphCanvasStore on _GraphCanvasStore, Store {
-  Computed<Offset> _$translateOffsetComputed;
+  Computed<Offset>? _$translateOffsetComputed;
 
   @override
   Offset get translateOffset => (_$translateOffsetComputed ??= Computed<Offset>(
@@ -50,13 +50,13 @@ mixin _$GraphCanvasStore on _GraphCanvasStore, Store {
   final _$mousePositionAtom = Atom(name: '_GraphCanvasStore.mousePosition');
 
   @override
-  Offset get mousePosition {
+  Offset? get mousePosition {
     _$mousePositionAtom.reportRead();
     return super.mousePosition;
   }
 
   @override
-  set mousePosition(Offset value) {
+  set mousePosition(Offset? value) {
     _$mousePositionAtom.reportWrite(value, super.mousePosition, () {
       super.mousePosition = value;
     });

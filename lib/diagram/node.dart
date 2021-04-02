@@ -21,10 +21,10 @@ class Node<T extends NodeData> {
   final Graph<T> graph;
 
   Node({
-    @required this.key,
-    @required this.graph,
-    @required Offset offset,
-    @required T Function(Node<T>) dataBuilder,
+    required this.key,
+    required this.graph,
+    required Offset offset,
+    required T Function(Node<T>) dataBuilder,
   }) : _offset = Observable<Offset>(offset) {
     data = dataBuilder(this);
   }
@@ -56,7 +56,7 @@ class Node<T extends NodeData> {
         .where((conn) => conn.from.node == this);
   }
 
-  /*late final*/ T data;
+  late final T data;
 
   void move(Offset delta) {
     runInAction(() {
@@ -65,8 +65,8 @@ class Node<T extends NodeData> {
   }
 
   void updateSize(BuildContext ctx) {
-    final newWidth = ctx.size.width + _nodePadding * 2;
-    final newHeight = ctx.size.height + _nodePadding * 2;
+    final newWidth = ctx.size!.width + _nodePadding * 2;
+    final newHeight = ctx.size!.height + _nodePadding * 2;
     if (newWidth != width || newHeight != height) {
       runInAction(() {
         _size.value = Size(newWidth, newHeight);
@@ -74,7 +74,7 @@ class Node<T extends NodeData> {
     }
   }
 
-  static Node<T> fromJson<T extends NodeData>(Map<String, dynamic> json) {
+  static Node<T>? fromJson<T extends NodeData>(Map<String, dynamic>? json) {
     return null;
   }
 
@@ -107,8 +107,8 @@ const _nodeEdgeInsets = EdgeInsets.all(_nodePadding);
 
 class NodeView extends hooks.HookWidget {
   const NodeView({
-    @required this.node,
-    Key key,
+    required this.node,
+    Key? key,
   }) : super(key: key);
   final Node node;
 
@@ -133,7 +133,7 @@ class NodeView extends hooks.HookWidget {
             onPanUpdate: (details) => node.move(details.delta),
             child: LayoutBuilder(
               builder: (ctx, box) {
-                SchedulerBinding.instance.addPostFrameCallback(
+                SchedulerBinding.instance!.addPostFrameCallback(
                   (_) => node.updateSize(ctx),
                 );
                 return node.data.nodeView();
@@ -148,9 +148,9 @@ class NodeView extends hooks.HookWidget {
 
 class NodeContainer extends StatelessWidget {
   const NodeContainer({
-    Key key,
-    @required this.isSelected,
-    @required this.child,
+    Key? key,
+    required this.isSelected,
+    required this.child,
   }) : super(key: key);
 
   final bool isSelected;
@@ -167,7 +167,7 @@ class NodeContainer extends StatelessWidget {
           BoxShadow(
             blurRadius: 1,
             spreadRadius: 0.5,
-            color: isSelected ? Colors.blue[900] : Colors.black26,
+            color: isSelected ? Colors.blue[900]! : Colors.black26,
             offset: const Offset(0, 1),
           ),
         ],

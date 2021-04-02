@@ -4,11 +4,11 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 extension GlobalPaintBoundsExt on BuildContext {
-  Rect get globalPaintBounds {
+  Rect? get globalPaintBounds {
     final renderObject = findRenderObject();
-    final translation = renderObject?.getTransformTo(null)?.getTranslation();
-    if (translation != null && renderObject.paintBounds != null) {
-      return renderObject.paintBounds
+    final translation = renderObject?.getTransformTo(null).getTranslation();
+    if (translation != null && renderObject?.paintBounds != null) {
+      return renderObject!.paintBounds
           .shift(Offset(translation.x, translation.y));
     } else {
       return null;
@@ -44,7 +44,7 @@ extension IndexedMap<T> on Iterable<T> {
 }
 
 extension GetterSetterMap<K, V> on Map<K, V> {
-  V get(K key) {
+  V? get(K key) {
     return this[key];
   }
 
@@ -53,7 +53,7 @@ extension GetterSetterMap<K, V> on Map<K, V> {
   }
 }
 
-T parseEnum<T>(String rawString, List<T> enumValues) {
+T? parseEnum<T>(String rawString, List<T> enumValues) {
   for (final value in enumValues) {
     final str = value.toString();
     if (str == rawString || str.split(".")[1] == rawString) {
@@ -80,7 +80,7 @@ extension GenerateString on Random {
 }
 
 extension ValueListenableBuilderExtension<T> on ValueListenable<T> {
-  Widget rebuild(Widget Function(T value) fn, {Key key}) {
+  Widget rebuild(Widget Function(T value) fn, {Key? key}) {
     return ValueListenableBuilder<T>(
       key: key,
       valueListenable: this,
@@ -102,4 +102,4 @@ extension ListenableBuilder on Listenable {
   }
 }
 
-const importExtensions = null;
+const dynamic importExtensions = null;

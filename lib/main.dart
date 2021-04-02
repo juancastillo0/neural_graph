@@ -85,8 +85,8 @@ class MyApp extends StatelessWidget {
 }
 
 class MyHomePage extends StatefulWidget {
-  const MyHomePage({Key key, this.title}) : super(key: key);
-  final String title;
+  const MyHomePage({Key? key, this.title}) : super(key: key);
+  final String? title;
 
   @override
   _MyHomePageState createState() => _MyHomePageState();
@@ -98,7 +98,7 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(widget.title)),
+      appBar: AppBar(title: Text(widget.title!)),
       body: Row(
         children: [
           const Resizable(
@@ -143,7 +143,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
 class CodeGenerated extends HookWidget {
   const CodeGenerated({
-    Key key,
+    Key? key,
   }) : super(key: key);
 
   @override
@@ -164,13 +164,13 @@ class CodeGenerated extends HookWidget {
                 onPressed: () async {
                   if (kIsWeb) {
                     final handles =
-                        await FileSystem.instance.showOpenFilePicker();
+                        await FileSystem.instance!.showOpenFilePicker();
                     final handle = handles[0];
 
                     // final file = await handle.getFile();
                     // final contents = await readFileAsText(file);
 
-                    final v = await FileSystem.instance.verifyPermission(
+                    final v = await FileSystem.instance!.verifyPermission(
                       handle,
                       mode: FileSystemPermissionMode.readwrite,
                     );
@@ -244,7 +244,7 @@ class CodeGenerated extends HookWidget {
 }
 
 class PropertiesView extends HookWidget {
-  const PropertiesView({Key key}) : super(key: key);
+  const PropertiesView({Key? key}) : super(key: key);
   @override
   Widget build(BuildContext ctx) {
     final selectedGraph = useRoot().selectedNetwork.graph;
@@ -279,8 +279,8 @@ class PropertiesView extends HookWidget {
 
 class NodePropertiesView extends HookWidget {
   const NodePropertiesView({
-    Key key,
-    @required this.selectedGraph,
+    Key? key,
+    required this.selectedGraph,
   }) : super(key: key);
 
   final Graph<Layer> selectedGraph;
@@ -288,7 +288,7 @@ class NodePropertiesView extends HookWidget {
   @override
   Widget build(BuildContext context) {
     final contoller = useTextEditingController(
-      text: selectedGraph.selectedNode.data.name,
+      text: selectedGraph.selectedNode!.data.name,
     );
 
     return Observer(

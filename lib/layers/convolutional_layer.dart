@@ -3,7 +3,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_hooks/flutter_hooks.dart' show HookWidget, useMemoized;
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:formgen/formgen.dart';
-import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:mobx/mobx.dart';
 import 'package:neural_graph/common/extensions.dart';
 import 'package:neural_graph/fields/button_select_field.dart';
@@ -28,7 +27,7 @@ class Convolutional = _Convolutional with _$Convolutional;
 
 @FormGen(allRequired: true)
 abstract class _Convolutional extends Layer with Store {
-  _Convolutional(Node<Layer> node, {String name})
+  _Convolutional(Node<Layer> node, {String? name})
       : this.outPort = Port<Layer>(node),
         this.inPort = Port<Layer>(node),
         super(node, name: name);
@@ -136,7 +135,7 @@ ${applyCode(h)}
   }
 
   @override
-  Widget form([Key key]) => DefaultForm(
+  Widget form([Key? key]) => DefaultForm(
         key: key,
         child: ConvolutionalForm(state: this as Convolutional),
       );
@@ -168,10 +167,10 @@ class ConvolutionalFormFields {
       set: (v) => state.dilationRate = v,
     );
   }
-  /*late final*/FormFieldValue<double> depthMultiplier;
-  /*late final*/FormFieldValue<List<int>> dilationRate;
-  /*late final*/FormFieldValue<List<int>> strides;
-  /*late final*/FormFieldValue<List<int>> kernelSize;
+  late final FormFieldValue<double> depthMultiplier;
+  late final FormFieldValue<List<int>> dilationRate;
+  late final FormFieldValue<List<int>> strides;
+  late final FormFieldValue<List<int>> kernelSize;
 
   void dispose() {
     depthMultiplier.dispose();
@@ -183,8 +182,8 @@ class ConvolutionalFormFields {
 
 class ConvolutionalForm extends HookWidget {
   const ConvolutionalForm({
-    Key key,
-    @required this.state,
+    Key? key,
+    required this.state,
   }) : super(key: key);
 
   final Convolutional state;

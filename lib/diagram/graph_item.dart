@@ -11,30 +11,30 @@ abstract class GraphItem<N extends NodeData> {
     Node<N> node,
   ) = _Node;
   const factory GraphItem.connectionPoint(
-    Connection<N, N> connection,
+    Connection<N, N>? connection,
     int index,
   ) = _ConnectionPoint;
 
   T when<T>({
-    @required T Function(Connection<N, N> connection) connection,
-    @required T Function(Node<N> node) node,
-    @required
-        T Function(Connection<N, N> connection, int index) connectionPoint,
+    required T Function(Connection<N, N>? connection) connection,
+    required T Function(Node<N>? node) node,
+    required
+        T Function(Connection<N, N>? connection, int? index) connectionPoint,
   }) {
-    final v = this;
+    final GraphItem<N> v = this;
     if (v is _Connection<N>) return connection(v.connection);
     if (v is _Node<N>) return node(v.node);
     if (v is _ConnectionPoint<N>) return connectionPoint(v.connection, v.index);
     throw "";
   }
 
-  T maybeWhen<T>({
-    T Function() orElse,
-    T Function(Connection<N, N> connection) connection,
-    T Function(Node<N> node) node,
-    T Function(Connection<N, N> connection, int index) connectionPoint,
+  T? maybeWhen<T>({
+    T Function()? orElse,
+    T Function(Connection<N, N>? connection)? connection,
+    T Function(Node<N>? node)? node,
+    T Function(Connection<N, N>? connection, int? index)? connectionPoint,
   }) {
-    final v = this;
+    final GraphItem<N> v = this;
     if (v is _Connection<N>)
       return connection != null ? connection(v.connection) : orElse?.call();
     if (v is _Node<N>) return node != null ? node(v.node) : orElse?.call();
@@ -46,24 +46,24 @@ abstract class GraphItem<N extends NodeData> {
   }
 
   T map<T>({
-    @required T Function(_Connection value) connection,
-    @required T Function(_Node value) node,
-    @required T Function(_ConnectionPoint value) connectionPoint,
+    required T Function(_Connection value) connection,
+    required T Function(_Node value) node,
+    required T Function(_ConnectionPoint value) connectionPoint,
   }) {
-    final v = this;
+    final GraphItem<N> v = this;
     if (v is _Connection<N>) return connection(v);
     if (v is _Node<N>) return node(v);
     if (v is _ConnectionPoint<N>) return connectionPoint(v);
     throw "";
   }
 
-  T maybeMap<T>({
-    T Function() orElse,
-    T Function(_Connection value) connection,
-    T Function(_Node value) node,
-    T Function(_ConnectionPoint value) connectionPoint,
+  T? maybeMap<T>({
+    T Function()? orElse,
+    T Function(_Connection value)? connection,
+    T Function(_Node value)? node,
+    T Function(_ConnectionPoint value)? connectionPoint,
   }) {
-    final v = this;
+    final GraphItem<N> v = this;
     if (v is _Connection<N>)
       return connection != null ? connection(v) : orElse?.call();
     if (v is _Node<N>) return node != null ? node(v) : orElse?.call();
@@ -72,8 +72,8 @@ abstract class GraphItem<N extends NodeData> {
     throw "";
   }
 
-  static GraphItem<N> fromJson<N extends NodeData>(Map<String, dynamic> map) {
-    switch (map["runtimeType"] as String) {
+  static GraphItem<N>? fromJson<N extends NodeData>(Map<String, dynamic> map) {
+    switch (map["runtimeType"] as String?) {
       case '_Connection':
         return _Connection.fromJson<N>(map);
       case '_Node':
@@ -89,14 +89,14 @@ abstract class GraphItem<N extends NodeData> {
 }
 
 class _Connection<N extends NodeData> extends GraphItem<N> {
-  final Connection<N, N> connection;
+  final Connection<N, N>? connection;
 
   const _Connection(
     this.connection,
   ) : super._();
 
   _Connection<N> copyWith({
-    Connection<N, N> connection,
+    Connection<N, N>? connection,
   }) {
     return _Connection(
       connection ?? this.connection,
@@ -122,7 +122,7 @@ class _Connection<N extends NodeData> extends GraphItem<N> {
 
   static _Connection<N> fromJson<N extends NodeData>(Map<String, dynamic> map) {
     return _Connection(
-      Connection.fromJson(map['connection'] as Map<String, dynamic>),
+      Connection.fromJson(map['connection'] as Map<String, dynamic>?),
     );
   }
 
@@ -130,20 +130,20 @@ class _Connection<N extends NodeData> extends GraphItem<N> {
   Map<String, dynamic> toJson() {
     return {
       "runtimeType": "_Connection",
-      "connection": connection.toJson(),
+      "connection": connection!.toJson(),
     };
   }
 }
 
 class _Node<N extends NodeData> extends GraphItem<N> {
-  final Node<N> node;
+  final Node<N>? node;
 
   const _Node(
     this.node,
   ) : super._();
 
   _Node<N> copyWith({
-    Node<N> node,
+    Node<N>? node,
   }) {
     return _Node(
       node ?? this.node,
@@ -169,7 +169,7 @@ class _Node<N extends NodeData> extends GraphItem<N> {
 
   static _Node<N> fromJson<N extends NodeData>(Map<String, dynamic> map) {
     return _Node(
-      Node.fromJson<N>(map['node'] as Map<String, dynamic>),
+      Node.fromJson<N>(map['node'] as Map<String, dynamic>?),
     );
   }
 
@@ -177,14 +177,14 @@ class _Node<N extends NodeData> extends GraphItem<N> {
   Map<String, dynamic> toJson() {
     return {
       "runtimeType": "_Node",
-      "node": node.toJson(),
+      "node": node!.toJson(),
     };
   }
 }
 
 class _ConnectionPoint<N extends NodeData> extends GraphItem<N> {
-  final Connection<N, N> connection;
-  final int index;
+  final Connection<N, N>? connection;
+  final int? index;
 
   const _ConnectionPoint(
     this.connection,
@@ -192,8 +192,8 @@ class _ConnectionPoint<N extends NodeData> extends GraphItem<N> {
   ) : super._();
 
   _ConnectionPoint<N> copyWith({
-    Connection<N, N> connection,
-    int index,
+    Connection<N, N>? connection,
+    int? index,
   }) {
     return _ConnectionPoint(
       connection ?? this.connection,
@@ -222,8 +222,8 @@ class _ConnectionPoint<N extends NodeData> extends GraphItem<N> {
   static _ConnectionPoint<N> fromJson<N extends NodeData>(
       Map<String, dynamic> map) {
     return _ConnectionPoint(
-      Connection.fromJson(map['connection'] as Map<String, dynamic>),
-      map['index'] as int,
+      Connection.fromJson(map['connection'] as Map<String, dynamic>?),
+      map['index'] as int?,
     );
   }
 
@@ -231,7 +231,7 @@ class _ConnectionPoint<N extends NodeData> extends GraphItem<N> {
   Map<String, dynamic> toJson() {
     return {
       "runtimeType": "_ConnectionPoint",
-      "connection": connection.toJson(),
+      "connection": connection!.toJson(),
       "index": index,
     };
   }

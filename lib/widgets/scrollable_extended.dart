@@ -11,9 +11,9 @@ import 'package:neural_graph/widgets/scrollable.dart';
 
 class CustomScrollGestures extends HookWidget {
   const CustomScrollGestures({
-    Key key,
-    @required this.child,
-    @required this.canvas,
+    Key? key,
+    required this.child,
+    required this.canvas,
     this.allowDrag = true,
   }) : super(key: key);
   final Widget child;
@@ -101,9 +101,9 @@ class CustomScrollGestures extends HookWidget {
 
 class MouseScrollListener extends StatefulWidget {
   const MouseScrollListener({
-    Key key,
-    @required this.controller,
-    @required this.child,
+    Key? key,
+    required this.controller,
+    required this.child,
   }) : super(key: key);
   final GraphCanvasStore controller;
   final Widget child;

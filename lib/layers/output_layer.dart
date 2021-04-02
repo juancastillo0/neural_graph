@@ -31,7 +31,7 @@ class OutputLayer extends Layer {
   }
 
   @override
-  Widget form([Key key]) {
+  Widget form([Key? key]) {
     return OutputForm(
       key: key,
       state: this,
@@ -72,7 +72,7 @@ class OutputLayer extends Layer {
 }
 
 class OutputForm extends HookWidget {
-  const OutputForm({Key key, @required this.state}) : super(key: key);
+  const OutputForm({Key? key, required this.state}) : super(key: key);
   final OutputLayer state;
 
   @override

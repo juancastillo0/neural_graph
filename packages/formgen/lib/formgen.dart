@@ -13,10 +13,10 @@ class EnumField {
 class FormInput<T> {
   const FormInput({
     this.label,
-    this.description = "",
+    String? description,
     this.width,
     this.validate,
-  });
+  }): description = description ?? "";
   final String? label;
   final String description;
 

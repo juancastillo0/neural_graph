@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:artemis/artemis.dart';
 import 'package:flutter/material.dart';
-import 'package:meta/meta.dart';
 import 'package:mobx/mobx.dart';
 import 'package:neural_graph/api.graphql.dart';
 import 'package:gql_websocket_link/gql_websocket_link.dart';
@@ -12,8 +11,8 @@ import 'package:neural_graph/rtc/peer_protocol.dart';
 
 class CommunicationStore {
   CommunicationStore({
-    @required this.gqlClient,
-    @required this.userId,
+    required this.gqlClient,
+    required this.userId,
   }) {
     remoteSignalStream =
         this.gqlClient.stream(SignalsSubscription()).asBroadcastStream();
@@ -22,7 +21,7 @@ class CommunicationStore {
       if (event.hasErrors) {
         return;
       }
-      final data = event.data.signals;
+      final data = event.data!.signals;
       if (!peers.containsKey(data.peerId)) {
         _peerSignals.putIfAbsent(data.peerId, () => []).add(event);
       }
@@ -33,17 +32,18 @@ class CommunicationStore {
   final rooms = ObservableMap<String, Room>();
   final peers = ObservableMap<String, PeerConnectionState>();
   final _peerSignals =
-      ObservableMap<String/*!*/, List<GraphQLResponse<Signals$SubscriptionRoot>>>();
-  final String userId;
+      ObservableMap<String, List<GraphQLResponse<Signals$SubscriptionRoot>>>();
+  final String? userId;
 
   // static const _headers = {
   //   "content-type": "application/json",
   //   "accept": "application/json",
   // };
 
-  /*late final*/ Stream<GraphQLResponse<Signals$SubscriptionRoot>> remoteSignalStream;
+  late final Stream<GraphQLResponse<Signals$SubscriptionRoot>>
+      remoteSignalStream;
 
-  static Future<CommunicationStore> create(String url) async {
+  static Future<CommunicationStore?> create(String url) async {
     try {
       final response =
           await ArtemisClient(url).execute(CreateSessionMutation());
@@ -51,7 +51,7 @@ class CommunicationStore {
       if (response.hasErrors) {
         return null;
       }
-      final data = response.data.createSessionId;
+      final data = response.data!.createSessionId;
       final wsUrl = url.replaceAll(RegExp("https?://"), "ws://");
       final channel = WebSocketChannel.connect(
         Uri.parse("$wsUrl?token=${data.token}"),
@@ -90,23 +90,23 @@ class CommunicationStore {
     room.messages[now] = message;
   }
 
-  Future<Room/*!*/> subscribeToRoom(String roomId) async {
+  Future<Room> subscribeToRoom(String roomId) async {
     if (this.rooms.containsKey(roomId)) {
-      return this.rooms[roomId];
+      return this.rooms[roomId]!;
     }
     final _roomsQuery =
         RoomSubscription(variables: RoomArguments(roomId: roomId));
 
-    Room room;
+    Room? room;
     // ignore: cancel_subscriptions
     final _subscription = this.gqlClient.stream(_roomsQuery).listen((event) {
       if (event.hasErrors) {
         print(event.errors);
-        print(event.errors.map((e) => e.message).join());
+        print(event.errors!.map((e) => e.message).join());
         return unsubscribeFromRoom(roomId);
       }
-      final remotePeers = event.data.room.users.toSet();
-      final newPeers = remotePeers.difference(room.users.value);
+      final remotePeers = event.data!.room.users.toSet();
+      final newPeers = remotePeers.difference(room!.users.value);
       final disconnectedPeers = room.users.value.difference(remotePeers);
 
       room.users.value = remotePeers;
@@ -126,7 +126,7 @@ class CommunicationStore {
 
         final peerConn = PeerConnectionState(
           protocol: protocol,
-          isInitializer: peerId.compareTo(userId) > 0,
+          isInitializer: peerId.compareTo(userId!) > 0,
           peerId: peerId,
           userId: userId,
         );
@@ -136,7 +136,7 @@ class CommunicationStore {
         void _listener() {
           if (peerConn.canSendMessage) {
             peerConn.removeListener(_listener);
-            room._listenMessageStream(peerConn.messageStream);
+            room!._listenMessageStream(peerConn.messageStream);
             peerConn.sendTexts(room.messages.values);
           }
         }
@@ -159,7 +159,7 @@ class CommunicationStore {
     room.close();
   }
 
-  void _tryRemovePeers(Room room, Iterable<String> peerIds) {
+  void _tryRemovePeers(Room? room, Iterable<String> peerIds) {
     for (final peerId in peerIds) {
       final inOtherRoom = rooms.values.any(
         (_room) => _room != room && _room.users.value.contains(peerId),

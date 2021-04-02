@@ -7,14 +7,14 @@ import 'package:neural_graph/rtc/async_result.dart';
 import 'package:neural_graph/rtc/communication_store.dart';
 
 class DataChannelSample extends StatefulWidget {
-  const DataChannelSample({Key key}) : super(key: key);
+  const DataChannelSample({Key? key}) : super(key: key);
 
   @override
   _DataChannelSampleState createState() => _DataChannelSampleState();
 }
 
 class _DataChannelSampleState extends State<DataChannelSample> {
-  /*late final*/ TextEditingController urlController;
+  late final TextEditingController urlController;
   AsyncResult<CommunicationStore, String> storeResult =
       const AsyncResult.idle();
 
@@ -92,11 +92,11 @@ class _DataChannelSampleState extends State<DataChannelSample> {
                   )
                 : const Text("Init Connection"),
           ),
-          if (storeResult.isError) Text(storeResult.errorOrNull)
+          if (storeResult.isError) Text(storeResult.errorOrNull!)
         ],
       );
     } else {
-      return RoomsView(store: storeResult.valueOrNull/*!*/);
+      return RoomsView(store: storeResult.valueOrNull!);
     }
   }
 }
@@ -104,7 +104,7 @@ class _DataChannelSampleState extends State<DataChannelSample> {
 class RoomsView extends StatefulWidget {
   final CommunicationStore store;
 
-  const RoomsView({Key key, @required this.store}) : super(key: key);
+  const RoomsView({Key? key, required this.store}) : super(key: key);
   @override
   _RoomsViewState createState() => _RoomsViewState();
 }
@@ -113,9 +113,9 @@ class _RoomsViewState extends State<RoomsView> {
   CommunicationStore get store => widget.store;
 
   final _rand = Random();
-  /*late final*/TextEditingController roomController;
+  late final TextEditingController roomController;
   final messageController = TextEditingController();
-  Room room;
+  Room? room;
 
   @override
   void initState() {
@@ -168,9 +168,9 @@ class _RoomsViewState extends State<RoomsView> {
               children: [
                 const Text("Peers"),
                 AnimatedBuilder(
-                  animation: room.users,
+                  animation: room!.users,
                   builder: (context, _) {
-                    return Text(room.users.value.length.toString());
+                    return Text(room!.users.value.length.toString());
                   },
                 ),
               ],
@@ -186,11 +186,11 @@ class _RoomsViewState extends State<RoomsView> {
                   builder: (context) {
                     return ListView(
                       children: [
-                        ...room.messages.values.map(
+                        ...room!.messages.values.map(
                           (msg) => Column(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              Text(msg.text),
+                              Text(msg.text!),
                               Text(msg.timestamp.toIso8601String()),
                             ],
                           ),
@@ -211,7 +211,7 @@ class _RoomsViewState extends State<RoomsView> {
                     icon: const Icon(Icons.send),
                     onPressed: () {
                       if (messageController.text.isEmpty) return;
-                      store.sendMessageToRoom(room, messageController.text);
+                      store.sendMessageToRoom(room!, messageController.text);
                       messageController.clear();
                     },
                   )

@@ -215,11 +215,11 @@ class ModelVisitor extends SimpleElementVisitor {
     if (_fieldAnnotation.hasAnnotationOfExact(element)) {
       final annotation = _fieldAnnotation.annotationsOfExact(element).first;
       final _annot = FormInput(
-        description: annotation.getField("description").toStringValue(),
-        label: annotation.getField("label").toStringValue(),
+        description: annotation.getField("description")?.toStringValue(),
+        label: annotation.getField("label")?.toStringValue(),
         validate: (_) =>
             "", //annotation.getField("validate").toFunctionValue().name,
-        width: annotation.getField("width").toDoubleValue(),
+        width: annotation.getField("width")?.toDoubleValue(),
       );
       fields[element.name] = _Field(element, _annot);
     }

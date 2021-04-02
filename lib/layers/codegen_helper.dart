@@ -16,7 +16,7 @@ extension StringExtension on String {
 }
 
 class CodeGenHelper {
-  CodeGenHelper({@required this.language});
+  CodeGenHelper({required this.language});
 
   final ProgrammingLanguage language;
 

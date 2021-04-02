@@ -17,12 +17,12 @@ class Connection<NF extends NodeData, NT extends NodeData> {
   NF get fromData => from.node.data;
   NT get toData => to.node.data;
 
-  final innerPoints = ObservableList<Offset/*!*/>();
+  final ObservableList<Offset?> innerPoints = ObservableList<Offset>();
 
   Connection(this.from, this.to);
 
-  static Connection<NF, NT> fromJson<NF extends NodeData, NT extends NodeData>(
-      Map<String, dynamic> map) {
+  static Connection<NF, NT>? fromJson<NF extends NodeData, NT extends NodeData>(
+      Map<String, dynamic>? map) {
     return null;
   }
 
@@ -35,7 +35,7 @@ class Port<N extends NodeData> {
   final Node<N> node;
   final connections = ObservableList<Connection<N, N>>();
 
-  N get firstFromData =>
+  N? get firstFromData =>
       connections.isEmpty ? null : connections.first.from.node.data;
 
   final localOffset = ValueNotifier(const Offset(0, 0));
@@ -53,7 +53,7 @@ class Port<N extends NodeData> {
   void onBuild(BuildContext context) {
     Future.delayed(Duration.zero, () {
       localOffset.value = node.graph.graphCanvas
-              .toCanvasOffset(context.globalPaintBounds.center) -
+              .toCanvasOffset(context.globalPaintBounds!.center) -
           node.offset;
     });
   }
@@ -61,16 +61,16 @@ class Port<N extends NodeData> {
 
 class PortView<N extends NodeData> extends StatelessWidget {
   final Widget child;
-  final Port<N>/*!*/ port;
+  final Port<N> port;
   final bool canBeStart;
   final bool Function(Port<N>) canBeEnd;
 
   static bool defaultCanBeEnd(Port _) => false;
 
   const PortView({
-    Key key,
-    @required this.port,
-    @required this.child,
+    Key? key,
+    required this.port,
+    required this.child,
     this.canBeStart = false,
     this.canBeEnd = defaultCanBeEnd,
   }) : super(key: key);

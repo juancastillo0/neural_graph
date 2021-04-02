@@ -12,10 +12,10 @@ abstract class _GraphCanvasStore with Store {
   @observable
   double scale = 1;
   @observable
-  Offset mousePosition;
+  Offset? mousePosition;
 
   Offset toCanvasOffset(Offset offset) {
-    final _canvasOffset = offset + scrollOffset - globalPaintBounds.topLeft;
+    final _canvasOffset = offset + scrollOffset - globalPaintBounds!.topLeft;
     return _canvasOffset / scale;
   }
 
@@ -32,7 +32,7 @@ abstract class _GraphCanvasStore with Store {
 
   final ScrollController vertical = ScrollController();
   final ScrollController horizontal = ScrollController();
-  BuildContext _context;
+  late BuildContext _context;
 
   void setContext(BuildContext context) {
     this._context = context;
@@ -45,15 +45,14 @@ abstract class _GraphCanvasStore with Store {
   void onDrag(Offset delta) {
     if (delta.dx != 0) {
       final hp = horizontal.position;
-      final dx = (horizontal.offset - delta.dx).clamp(0.0, hp.maxScrollExtent)
-          as double;
+      final dx = (horizontal.offset - delta.dx).clamp(0.0, hp.maxScrollExtent);
       horizontal.jumpTo(dx);
     }
 
     if (delta.dy != 0) {
       final vp = vertical.position;
       final dy =
-          (vertical.offset - delta.dy).clamp(0.0, vp.maxScrollExtent) as double;
+          (vertical.offset - delta.dy).clamp(0.0, vp.maxScrollExtent);
       vertical.jumpTo(dy);
     }
   }
@@ -62,10 +61,10 @@ abstract class _GraphCanvasStore with Store {
         horizontal.offset,
         vertical.offset,
       );
-  Rect get globalPaintBounds => _context.globalPaintBounds;
+  Rect? get globalPaintBounds => _context.globalPaintBounds;
 
   void onScale(double scale) {
-    this.scale = scale.clamp(0.4, 2.5) as double;
+    this.scale = scale.clamp(0.4, 2.5);
     final multiplerH = horizontal.offset <= 0.01 ? 1 : -1;
     final multiplerV = vertical.offset <= 0.01 ? 1 : -1;
     horizontal.jumpTo(horizontal.offset + multiplerH * 0.0001);

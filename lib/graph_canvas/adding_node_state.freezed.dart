@@ -1,5 +1,5 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
-// ignore_for_file: deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies
+// ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides
 
 part of 'adding_node_state.dart';
 
@@ -9,16 +9,17 @@ part of 'adding_node_state.dart';
 
 T _$identity<T>(T value) => value;
 
+final _privateConstructorUsedError = UnsupportedError(
+    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more informations: https://github.com/rrousselGit/freezed#custom-getters-and-methods');
+
 /// @nodoc
 class _$AddingConnectionStateTearOff {
   const _$AddingConnectionStateTearOff();
 
-// ignore: unused_element
   _None<N> none<N extends NodeData>() {
     return _None<N>();
   }
 
-// ignore: unused_element
   _Added<N> addedInput<N extends NodeData>(Port<N> input) {
     return _Added<N>(
       input,
@@ -27,33 +28,36 @@ class _$AddingConnectionStateTearOff {
 }
 
 /// @nodoc
-// ignore: unused_element
 const $AddingConnectionState = _$AddingConnectionStateTearOff();
 
 /// @nodoc
 mixin _$AddingConnectionState<N extends NodeData> {
   @optionalTypeArgs
-  TResult when<TResult extends Object>({
-    @required TResult none(),
-    @required TResult addedInput(Port<N> input),
-  });
+  TResult when<TResult extends Object?>({
+    required TResult Function() none,
+    required TResult Function(Port<N> input) addedInput,
+  }) =>
+      throw _privateConstructorUsedError;
   @optionalTypeArgs
-  TResult maybeWhen<TResult extends Object>({
-    TResult none(),
-    TResult addedInput(Port<N> input),
-    @required TResult orElse(),
-  });
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function()? none,
+    TResult Function(Port<N> input)? addedInput,
+    required TResult orElse(),
+  }) =>
+      throw _privateConstructorUsedError;
   @optionalTypeArgs
-  TResult map<TResult extends Object>({
-    @required TResult none(_None<N> value),
-    @required TResult addedInput(_Added<N> value),
-  });
+  TResult map<TResult extends Object?>({
+    required TResult Function(_None<N> value) none,
+    required TResult Function(_Added<N> value) addedInput,
+  }) =>
+      throw _privateConstructorUsedError;
   @optionalTypeArgs
-  TResult maybeMap<TResult extends Object>({
-    TResult none(_None<N> value),
-    TResult addedInput(_Added<N> value),
-    @required TResult orElse(),
-  });
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(_None<N> value)? none,
+    TResult Function(_Added<N> value)? addedInput,
+    required TResult orElse(),
+  }) =>
+      throw _privateConstructorUsedError;
 }
 
 /// @nodoc
@@ -117,23 +121,20 @@ class _$_None<N extends NodeData> extends _None<N>
 
   @override
   @optionalTypeArgs
-  TResult when<TResult extends Object>({
-    @required TResult none(),
-    @required TResult addedInput(Port<N> input),
+  TResult when<TResult extends Object?>({
+    required TResult Function() none,
+    required TResult Function(Port<N> input) addedInput,
   }) {
-    assert(none != null);
-    assert(addedInput != null);
     return none();
   }
 
   @override
   @optionalTypeArgs
-  TResult maybeWhen<TResult extends Object>({
-    TResult none(),
-    TResult addedInput(Port<N> input),
-    @required TResult orElse(),
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function()? none,
+    TResult Function(Port<N> input)? addedInput,
+    required TResult orElse(),
   }) {
-    assert(orElse != null);
     if (none != null) {
       return none();
     }
@@ -142,23 +143,20 @@ class _$_None<N extends NodeData> extends _None<N>
 
   @override
   @optionalTypeArgs
-  TResult map<TResult extends Object>({
-    @required TResult none(_None<N> value),
-    @required TResult addedInput(_Added<N> value),
+  TResult map<TResult extends Object?>({
+    required TResult Function(_None<N> value) none,
+    required TResult Function(_Added<N> value) addedInput,
   }) {
-    assert(none != null);
-    assert(addedInput != null);
     return none(this);
   }
 
   @override
   @optionalTypeArgs
-  TResult maybeMap<TResult extends Object>({
-    TResult none(_None<N> value),
-    TResult addedInput(_Added<N> value),
-    @required TResult orElse(),
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(_None<N> value)? none,
+    TResult Function(_Added<N> value)? addedInput,
+    required TResult orElse(),
   }) {
-    assert(orElse != null);
     if (none != null) {
       return none(this);
     }
@@ -167,8 +165,8 @@ class _$_None<N extends NodeData> extends _None<N>
 }
 
 abstract class _None<N extends NodeData> extends AddingConnectionState<N> {
-  const _None._() : super._();
   const factory _None() = _$_None<N>;
+  const _None._() : super._();
 }
 
 /// @nodoc
@@ -190,10 +188,13 @@ class __$AddedCopyWithImpl<N extends NodeData, $Res>
 
   @override
   $Res call({
-    Object input = freezed,
+    Object? input = freezed,
   }) {
     return _then(_Added<N>(
-      input == freezed ? _value.input : input as Port<N>,
+      input == freezed
+          ? _value.input
+          : input // ignore: cast_nullable_to_non_nullable
+              as Port<N>,
     ));
   }
 }
@@ -201,9 +202,7 @@ class __$AddedCopyWithImpl<N extends NodeData, $Res>
 /// @nodoc
 class _$_Added<N extends NodeData> extends _Added<N>
     with DiagnosticableTreeMixin {
-  const _$_Added(this.input)
-      : assert(input != null),
-        super._();
+  const _$_Added(this.input) : super._();
 
   @override
   final Port<N> input;
@@ -233,29 +232,27 @@ class _$_Added<N extends NodeData> extends _Added<N>
   int get hashCode =>
       runtimeType.hashCode ^ const DeepCollectionEquality().hash(input);
 
+  @JsonKey(ignore: true)
   @override
   _$AddedCopyWith<N, _Added<N>> get copyWith =>
       __$AddedCopyWithImpl<N, _Added<N>>(this, _$identity);
 
   @override
   @optionalTypeArgs
-  TResult when<TResult extends Object>({
-    @required TResult none(),
-    @required TResult addedInput(Port<N> input),
+  TResult when<TResult extends Object?>({
+    required TResult Function() none,
+    required TResult Function(Port<N> input) addedInput,
   }) {
-    assert(none != null);
-    assert(addedInput != null);
     return addedInput(input);
   }
 
   @override
   @optionalTypeArgs
-  TResult maybeWhen<TResult extends Object>({
-    TResult none(),
-    TResult addedInput(Port<N> input),
-    @required TResult orElse(),
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function()? none,
+    TResult Function(Port<N> input)? addedInput,
+    required TResult orElse(),
   }) {
-    assert(orElse != null);
     if (addedInput != null) {
       return addedInput(input);
     }
@@ -264,23 +261,20 @@ class _$_Added<N extends NodeData> extends _Added<N>
 
   @override
   @optionalTypeArgs
-  TResult map<TResult extends Object>({
-    @required TResult none(_None<N> value),
-    @required TResult addedInput(_Added<N> value),
+  TResult map<TResult extends Object?>({
+    required TResult Function(_None<N> value) none,
+    required TResult Function(_Added<N> value) addedInput,
   }) {
-    assert(none != null);
-    assert(addedInput != null);
     return addedInput(this);
   }
 
   @override
   @optionalTypeArgs
-  TResult maybeMap<TResult extends Object>({
-    TResult none(_None<N> value),
-    TResult addedInput(_Added<N> value),
-    @required TResult orElse(),
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(_None<N> value)? none,
+    TResult Function(_Added<N> value)? addedInput,
+    required TResult orElse(),
   }) {
-    assert(orElse != null);
     if (addedInput != null) {
       return addedInput(this);
     }
@@ -289,9 +283,11 @@ class _$_Added<N extends NodeData> extends _Added<N>
 }
 
 abstract class _Added<N extends NodeData> extends AddingConnectionState<N> {
-  const _Added._() : super._();
   const factory _Added(Port<N> input) = _$_Added<N>;
+  const _Added._() : super._();
 
-  Port<N> get input;
-  _$AddedCopyWith<N, _Added<N>> get copyWith;
+  Port<N> get input => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  _$AddedCopyWith<N, _Added<N>> get copyWith =>
+      throw _privateConstructorUsedError;
 }

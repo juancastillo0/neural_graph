@@ -29,7 +29,7 @@ class GlobalKeyboardListener {
     _tapController.add(event);
   }
 
-  static Widget wrapper({@required Widget child}) {
+  static Widget wrapper({required Widget child}) {
     return RawKeyboardListener(
       autofocus: true,
       focusNode: GlobalKeyboardListener.focusNode,

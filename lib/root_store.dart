@@ -18,9 +18,8 @@ class RootStore extends _RootStore with _$RootStore {
 final log = Logger();
 
 abstract class _RootStore with Store {
+  final graph = Graph<Layer>();
   _RootStore() {
-    final graph = Graph<Layer>();
-
     final node1 = graph.createNode(
       const Offset(1420, 920),
       (n) => Convolutional(n, name: "conv1"),
@@ -36,18 +35,13 @@ abstract class _RootStore with Store {
         .addConnection((node1.data as Convolutional).inPort);
 
     graph.selectedNodes.add(node1.key);
-
-    final nn = NeuralNetwork(graph: graph);
-
-    this.networks = ObservableMap.of({graph.key: nn});
-    this.selectedNetwork = nn;
   }
 
-  @observable
-  /*late final*/ObservableMap<String, NeuralNetwork> networks;
+  late final ObservableMap<String, NeuralNetwork> networks =
+      ObservableMap.of({graph.key: selectedNetwork});
 
   @observable
-  /*late*/NeuralNetwork selectedNetwork;
+  late NeuralNetwork selectedNetwork = NeuralNetwork(graph: graph);
 
   @observable
   ProgrammingLanguage language = ProgrammingLanguage.python;

@@ -6,8 +6,8 @@ import 'package:neural_graph/diagram/node.dart';
 part 'adding_node_state.freezed.dart';
 
 @freezed
-abstract class AddingConnectionState<N extends NodeData>
-    implements _$AddingConnectionState<N> {
+class AddingConnectionState<N extends NodeData>
+    with _$AddingConnectionState<N> {
   const AddingConnectionState._();
   const factory AddingConnectionState.none() = _None<N>;
   const factory AddingConnectionState.addedInput(Port<N> input) = _Added<N>;

@@ -9,7 +9,6 @@ library file_system_access;
 import 'dart:async';
 
 import "package:js/js.dart";
-import 'package:meta/meta.dart';
 import 'package:neural_graph/common/extensions.dart';
 import 'dart:html' as html;
 
@@ -80,9 +79,9 @@ abstract class _FileSystemHandle {
 
   external _Promise<bool> isSameEntry(_FileSystemHandle other);
   external _Promise<String /*PermissionStateEnum*/> queryPermission(
-      [_FileSystemHandlePermissionDescriptor descriptor]);
+      [_FileSystemHandlePermissionDescriptor? descriptor]);
   external _Promise<String /*PermissionStateEnum*/> requestPermission(
-      [_FileSystemHandlePermissionDescriptor descriptor]);
+      [_FileSystemHandlePermissionDescriptor? descriptor]);
 
   // /**
   //  * @deprecated Old property just for Chromium <=85. Use `kind` property in the new API.
@@ -113,31 +112,31 @@ abstract class _FileSystemHandleJS implements FileSystemHandle {
 
   @override
   Future<PermissionStateEnum> queryPermission(
-          {FileSystemPermissionMode mode}) =>
+          {FileSystemPermissionMode? mode}) =>
       _ptf(inner.queryPermission(
         _FileSystemHandlePermissionDescriptor(
           mode: mode == null ? null : mode.toString().split(".")[1],
         ),
-      )).then((value) => parseEnum(value, PermissionStateEnum.values));
+      )).then((value) => parseEnum(value, PermissionStateEnum.values)!);
 
   @override
   Future<PermissionStateEnum> requestPermission(
-          {FileSystemPermissionMode mode}) =>
+          {FileSystemPermissionMode? mode}) =>
       _ptf(inner.requestPermission(
         _FileSystemHandlePermissionDescriptor(
           mode: mode == null ? null : mode.toString().split(".")[1],
         ),
-      )).then((value) => parseEnum(value, PermissionStateEnum.values));
+      )).then((value) => parseEnum(value, PermissionStateEnum.values)!);
 }
 
 @JS()
 @anonymous
 class FilePickerAcceptTypeJS {
   external factory FilePickerAcceptTypeJS({
-    String description,
-    @required Map<String, List<String>> accept,
+    String? description,
+    required Map<String, List<String>> accept,
   });
-  external String/*?*/ get description; //@optional
+  external String? get description; //@optional
   external Map<String, List<String>/*String | String[]*/ > get accept;
 }
 
@@ -145,24 +144,24 @@ class FilePickerAcceptTypeJS {
 @anonymous
 class _FilePickerOptions {
   external factory _FilePickerOptions({
-    List<FilePickerAcceptTypeJS> types,
-    bool excludeAcceptAllOption,
+    List<FilePickerAcceptTypeJS>? types,
+    bool? excludeAcceptAllOption,
   });
-  external List<FilePickerAcceptTypeJS>/*?*/ get types; //@optional
-  external bool/*?*/ get excludeAcceptAllOption; //@optional
+  external List<FilePickerAcceptTypeJS>? get types; //@optional
+  external bool? get excludeAcceptAllOption; //@optional
 }
 
 @JS()
 @anonymous
 class _OpenFilePickerOptions {
   external factory _OpenFilePickerOptions({
-    bool multiple,
-    List<FilePickerAcceptTypeJS> types,
-    bool excludeAcceptAllOption,
+    bool? multiple,
+    List<FilePickerAcceptTypeJS>? types,
+    bool? excludeAcceptAllOption,
   });
-  external bool/*?*/ get multiple; //@optional
-  external List<FilePickerAcceptTypeJS>/*?*/ get types; //@optional
-  external bool/*?*/ get excludeAcceptAllOption; //@optional
+  external bool? get multiple; //@optional
+  external List<FilePickerAcceptTypeJS>? get types; //@optional
+  external bool? get excludeAcceptAllOption; //@optional
 }
 
 // tslint:disable-next-line:no-empty-interface
@@ -188,42 +187,42 @@ class _OpenFilePickerOptions {
 @JS()
 @anonymous
 class _FileSystemHandlePermissionDescriptor {
-  external factory _FileSystemHandlePermissionDescriptor({String mode});
+  external factory _FileSystemHandlePermissionDescriptor({String? mode});
 
   // factory FileSystemHandlePermissionDescriptor.read() =>
   //     FileSystemHandlePermissionDescriptor(mode: "read");
   // factory FileSystemHandlePermissionDescriptor.readwrite() =>
   //     FileSystemHandlePermissionDescriptor(mode: "readwrite");
 
-  external String/*?*/ get mode; //@optional
+  external String? get mode; //@optional
 }
 
 @JS()
 @anonymous
 class _FileSystemCreateWritableOptions {
-  external factory _FileSystemCreateWritableOptions({bool keepExistingData});
-  external bool/*?*/ get keepExistingData; //@optional
+  external factory _FileSystemCreateWritableOptions({bool? keepExistingData});
+  external bool? get keepExistingData; //@optional
 }
 
 @JS()
 @anonymous
 class _FileSystemGetFileOptions {
-  external factory _FileSystemGetFileOptions({bool create});
-  external bool/*?*/ get create; //@optional
+  external factory _FileSystemGetFileOptions({bool? create});
+  external bool? get create; //@optional
 }
 
 @JS()
 @anonymous
 class _FileSystemGetDirectoryOptions {
-  external factory _FileSystemGetDirectoryOptions({bool create});
-  external bool/*?*/ get create; //@optional
+  external factory _FileSystemGetDirectoryOptions({bool? create});
+  external bool? get create; //@optional
 }
 
 @JS()
 @anonymous
 class _FileSystemRemoveOptions {
-  external factory _FileSystemRemoveOptions({bool recursive});
-  external bool/*?*/ get recursive; //@optional
+  external factory _FileSystemRemoveOptions({bool? recursive});
+  external bool? get recursive; //@optional
 }
 
 /// impl in [WriteParams]
@@ -231,16 +230,16 @@ class _FileSystemRemoveOptions {
 @anonymous
 class _WriteParams {
   external factory _WriteParams({
-    @required String type,
-    int position,
+    required String? type,
+    int? position,
     dynamic data,
-    int size,
+    int? size,
   });
 
   external String get type;
-  external int/*?*/ get position;
+  external int? get position;
   external dynamic/*?*/ get data;
-  external int/*?*/ get size;
+  external int? get size;
 }
 
 // type WriteParams =
@@ -278,10 +277,10 @@ class FileSystemWritableFileStreamJS implements FileSystemWritableFileStream {
         writeParams: (writeParams) {
           final map = writeParams.toJson();
           return _WriteParams(
-            type: map["type"] as String,
-            position: map["position"] as int,
+            type: map["type"] as String?,
+            position: map["position"] as int?,
             data: map["data"],
-            size: map["size"] as int,
+            size: map["size"] as int?,
           );
         },
         orElse: () => data.value,
@@ -307,7 +306,7 @@ class FileSystemWritableFileStreamJS implements FileSystemWritableFileStream {
 abstract class _FileSystemFileHandle extends _FileSystemHandle {
   external _Promise<html.File> getFile();
   external _Promise<_FileSystemWritableFileStream> createWritable(
-      [_FileSystemCreateWritableOptions options]);
+      [_FileSystemCreateWritableOptions? options]);
 }
 
 class FileSystemFileHandleJS extends _FileSystemHandleJS
@@ -319,7 +318,7 @@ class FileSystemFileHandleJS extends _FileSystemHandleJS
   Future<html.File> getFile() => _ptf(_inner.getFile());
   @override
   Future<FileSystemWritableFileStream> createWritable(
-          {bool keepExistingData}) =>
+          {bool? keepExistingData}) =>
       _ptf(_inner.createWritable(_FileSystemCreateWritableOptions(
               keepExistingData: keepExistingData)))
           .then((value) => FileSystemWritableFileStreamJS(value));
@@ -329,13 +328,13 @@ class FileSystemFileHandleJS extends _FileSystemHandleJS
 @JS("FileSystemDirectoryHandle")
 abstract class _FileSystemDirectoryHandle extends _FileSystemHandle {
   external _Promise<_FileSystemFileHandle> getFileHandle(String name,
-      [_FileSystemGetFileOptions options]);
+      [_FileSystemGetFileOptions? options]);
   external _Promise<_FileSystemWritableFileStream> getDirectoryHandle(
       String name,
-      [_FileSystemGetDirectoryOptions options]);
+      [_FileSystemGetDirectoryOptions? options]);
   external _Promise<void> removeEntry(String name,
-      [_FileSystemRemoveOptions options]);
-  external _Promise<List<String> /*?*/ /*@optional*/ > resolve(
+      [_FileSystemRemoveOptions? options]);
+  external _Promise<List<String>? /*@optional*/ > resolve(
       FileSystemHandle possibleDescendant);
 
   // AsyncIterableIterator<string> keys();
@@ -356,23 +355,23 @@ class FileSystemDirectoryHandleJS extends _FileSystemHandleJS
   _FileSystemDirectoryHandle get _inner => inner as _FileSystemDirectoryHandle;
 
   @override
-  Future<FileSystemFileHandle> getFileHandle(String name, {bool create}) =>
+  Future<FileSystemFileHandle> getFileHandle(String name, {bool? create}) =>
       _ptf(_inner.getFileHandle(name, _FileSystemGetFileOptions(create: create)))
           .then((value) => FileSystemFileHandleJS(value));
 
   @override
   Future<FileSystemWritableFileStream> getDirectoryHandle(String name,
-          {bool create}) =>
+          {bool? create}) =>
       _ptf(_inner.getDirectoryHandle(
               name, _FileSystemGetDirectoryOptions(create: create)))
           .then((value) => FileSystemWritableFileStreamJS(value));
 
   @override
-  Future<void> removeEntry(String name, {bool recursive}) => _ptf(
+  Future<void> removeEntry(String name, {bool? recursive}) => _ptf(
       _inner.removeEntry(name, _FileSystemRemoveOptions(recursive: recursive)));
 
   @override
-  Future<List<String>/*?*/ /*@optional*/ > resolve(
+  Future<List<String>? /*@optional*/ > resolve(
           FileSystemHandle possibleDescendant) =>
       _pltf(_inner.resolve(possibleDescendant));
 }
@@ -393,11 +392,11 @@ class FileSystemDirectoryHandleJS extends _FileSystemHandleJS
 
 @JS("showOpenFilePicker")
 external _Promise<List<_FileSystemFileHandle>> _showOpenFilePicker(
-    [_OpenFilePickerOptions options]);
+    [_OpenFilePickerOptions? options]);
 
 @JS("showSaveFilePicker")
 external _Promise<_FileSystemFileHandle> _showSaveFilePicker(
-    [/*Save*/ _FilePickerOptions options]);
+    [/*Save*/ _FilePickerOptions? options]);
 
 @JS("showDirectoryPicker")
 external _Promise<_FileSystemDirectoryHandle> _showDirectoryPicker();
@@ -408,13 +407,13 @@ class FileSystem extends FileSystemI {
   static const FileSystem instance = FileSystem._();
 
   @override
-  Future<String/*?*/> readFileAsText(dynamic file) {
+  Future<String?> readFileAsText(dynamic file) {
     final reader = html.FileReader();
-    final completer = Completer<String/*?*/>();
-    void _c(String v) => !completer.isCompleted ? completer.complete(v) : null;
+    final completer = Completer<String?>();
+    void _c(String? v) => !completer.isCompleted ? completer.complete(v) : null;
 
     reader.onLoad.listen((e) {
-      _c(reader.result as String);
+      _c(reader.result as String?);
     });
     reader.onError.listen((event) {
       _c(null);
@@ -442,9 +441,9 @@ class FileSystem extends FileSystemI {
 
   @override
   Future<List<FileSystemFileHandle>> showOpenFilePicker({
-    List<FilePickerAcceptType> types,
-    bool excludeAcceptAllOption,
-    bool multiple,
+    List<FilePickerAcceptType>? types,
+    bool? excludeAcceptAllOption,
+    bool? multiple,
   }) =>
       _pltf(_showOpenFilePicker(_OpenFilePickerOptions(
         multiple: multiple,
@@ -456,8 +455,8 @@ class FileSystem extends FileSystemI {
 
   @override
   Future<FileSystemFileHandle> showSaveFilePicker({
-    List<FilePickerAcceptType> types,
-    bool excludeAcceptAllOption,
+    List<FilePickerAcceptType>? types,
+    bool? excludeAcceptAllOption,
   }) =>
       _ptf(
         _showSaveFilePicker(_FilePickerOptions(
@@ -472,8 +471,8 @@ class FileSystem extends FileSystemI {
           .then((value) => FileSystemDirectoryHandleJS(value));
 }
 
-List<FilePickerAcceptTypeJS> _mapFilePickerTypes(
-    List<FilePickerAcceptType> list) {
+List<FilePickerAcceptTypeJS>? _mapFilePickerTypes(
+    List<FilePickerAcceptType>? list) {
   if (list == null) {
     return null;
   }
@@ -498,8 +497,8 @@ List<FilePickerAcceptTypeJS> _mapFilePickerTypes(
 Future<T> promiseToFuture<T>(_Promise<T> jsPromise) {
   final completer = Completer<T>();
 
-  final success = allowInterop((r) => completer.complete(r as T));
-  final error = allowInterop((e) => completer.completeError(e));
+  final success = allowInterop((r) => completer.complete(r as T?));
+  final error = allowInterop((e) => completer.completeError(e as Object));
 
   jsPromise.then(success).catchFn(error);
   return completer.future;
@@ -510,8 +509,8 @@ Future<T> _ptf<T>(_Promise<T> v) async {
   return vm as T;
 }
 
-Future<List<T>> _pltf<T>(_Promise<List<T>> v) async {
-  final vm = await promiseToFuture(v);
+Future<List<T>> _pltf<T>(_Promise<List<T>?> v) async {
+  final vm = await promiseToFuture(v as _Promise<List<T>>);
   return (vm as List).cast();
 }
 

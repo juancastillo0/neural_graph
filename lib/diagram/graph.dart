@@ -22,7 +22,7 @@ class Graph<N extends NodeData> {
       (keys) {
         this.selectedNodes.retainWhere(keys.contains);
       },
-      equals: (keys, prevKeys) => keys.difference(prevKeys).isEmpty,
+      equals: (keys, prevKeys) => keys!.difference(prevKeys!).isEmpty,
     );
   }
 
@@ -34,7 +34,7 @@ class Graph<N extends NodeData> {
 
   final graphCanvas = GraphCanvasStore();
 
-  Node<N> get selectedNode =>
+  Node<N>? get selectedNode =>
       selectedNodes.isEmpty ? null : nodes[selectedNodes.last];
 
   void selectNode(Node<N> node, {bool selectMany = false}) {
@@ -63,28 +63,28 @@ class Graph<N extends NodeData> {
   final _addingConnection = Observable(AddingConnectionState<N>.none());
   AddingConnectionState<N> get addingConnection => _addingConnection.value;
 
-  final _selectedConnection = Observable<Connection<N, N>>(null);
-  Connection<N, N> get selectedConnection => _selectedConnection.value;
+  final _selectedConnection = Observable<Connection<N, N>?>(null);
+  Connection<N, N>? get selectedConnection => _selectedConnection.value;
 
-  final _selectedConnectionPoint = Observable<int>(null);
+  final _selectedConnectionPoint = Observable<int?>(null);
 
-  Computed<int> __selectedConnectionPointComp;
-  int get selectedConnectionPoint {
+  Computed<int?>? __selectedConnectionPointComp;
+  int? get selectedConnectionPoint {
     __selectedConnectionPointComp ??= Computed(() {
       final _curr = _selectedConnectionPoint.value;
       if (_curr != null) {
         if (selectedConnection == null ||
-            _curr >= selectedConnection.innerPoints.length) {
+            _curr >= selectedConnection!.innerPoints.length) {
           _selectedConnectionPoint.value = null;
         }
       }
       return _selectedConnectionPoint.value;
     });
 
-    return __selectedConnectionPointComp.value;
+    return __selectedConnectionPointComp!.value;
   }
 
-  ReactionDisposer pointDragDisposer;
+  ReactionDisposer? pointDragDisposer;
 
   final selectedItems = ObservableSet<GraphItem<N>>();
 
@@ -97,14 +97,14 @@ class Graph<N extends NodeData> {
       for (final item in selectedItems) {
         item.when(
           connection: (conn) {
-            conn.from.connections.remove(conn);
+            conn!.from.connections.remove(conn);
             conn.to.connections.remove(conn);
           },
           node: (node) {
-            this.nodes.remove(node.key);
+            this.nodes.remove(node!.key);
           },
           connectionPoint: (connection, point) {
-            connection.innerPoints.removeAt(point);
+            connection!.innerPoints.removeAt(point!);
           },
         );
       }
@@ -139,7 +139,7 @@ class Graph<N extends NodeData> {
     });
   }
 
-  void selectConnectionPoint(Connection<N, N> conn, int index) {
+  void selectConnectionPoint(Connection<N, N>? conn, int? index) {
     runInAction(() {
       _selectedConnection.value = conn;
       if (index == null) {
@@ -148,20 +148,20 @@ class Graph<N extends NodeData> {
       } else {
         selectSingleItem(GraphItem.connectionPoint(conn, index));
         _selectedConnectionPoint.value = index;
-        pointDragDisposer = reaction<Offset>(
+        pointDragDisposer = reaction<Offset?>(
           (reaction) {
             if (selectedConnectionPoint != index) {
               reaction.dispose();
             }
             return graphCanvas.mousePosition;
           },
-          (pos) => conn.innerPoints[index] = pos,
+          (pos) => conn!.innerPoints[index] = pos,
         );
       }
     });
   }
 
-  void addConnection(Port<N>/*!*/ port) {
+  void addConnection(Port<N> port) {
     runInAction(() {
       _addingConnection.value = addingConnection.when(
         none: () {
@@ -205,9 +205,9 @@ class Provider<T> extends InheritedWidget {
   final T data;
 
   const Provider({
-    @required this.data,
-    Widget child,
-    Key key,
+    required this.data,
+    required Widget child,
+    Key? key,
   }) : super(child: child, key: key);
 
   @override
@@ -215,7 +215,7 @@ class Provider<T> extends InheritedWidget {
     return oldWidget.data != this.data;
   }
 
-  static T get<T>(BuildContext context) {
+  static T? get<T>(BuildContext context) {
     return context.dependOnInheritedWidgetOfExactType<Provider<T>>()?.data;
   }
 }

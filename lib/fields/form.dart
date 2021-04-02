@@ -5,11 +5,11 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 
 class DefaultForm extends HookWidget {
   const DefaultForm({
-    Key key,
-    this.child,
+    Key? key,
+    required this.child,
   }) : super(key: key);
 
-  final Widget/*!*/ child;
+  final Widget child;
 
   @override
   Widget build(BuildContext context) {
@@ -33,7 +33,7 @@ class DefaultForm extends HookWidget {
                   labelStyle: TextStyle(fontSize: 18),
                 )),
                 child: DefaultTextStyle(
-                  style: theme.textTheme.bodyText1.copyWith(fontSize: 16),
+                  style: theme.textTheme.bodyText1!.copyWith(fontSize: 16),
                   child: Padding(
                     padding: const EdgeInsets.only(bottom: 8.0),
                     child: FocusTraversalGroup(
@@ -56,8 +56,8 @@ class DefaultFormTable extends StatelessWidget {
   final List<TableRow> children;
 
   const DefaultFormTable({
-    Key key,
-    @required this.children,
+    Key? key,
+    required this.children,
   }) : super(key: key);
 
   @override
@@ -82,7 +82,7 @@ class DefaultFormTable extends StatelessWidget {
 class FormFieldValue<T> {
   final TextEditingController controller;
   final FocusNode focusNode;
-  String error;
+  String? error;
   final T Function() get;
   final Function(T) set;
 
@@ -90,10 +90,10 @@ class FormFieldValue<T> {
   set value(T newValue) => set(newValue);
 
   FormFieldValue({
-    @required this.get,
-    @required this.set,
-    FocusNode focusNode,
-    TextEditingController controller,
+    required this.get,
+    required this.set,
+    FocusNode? focusNode,
+    TextEditingController? controller,
   })  : controller = controller ?? TextEditingController(),
         focusNode = focusNode ?? FocusNode();
 
@@ -104,11 +104,11 @@ class FormFieldValue<T> {
 }
 
 TableRow tableRow({
-  String name,
-  String description,
-  Widget field,
+  required String name,
+  String? description,
+  Widget? field,
   double maxWidth = 250,
-  double maxHeight,
+  double? maxHeight,
   double minHeight = 52,
 }) {
   return TableRow(

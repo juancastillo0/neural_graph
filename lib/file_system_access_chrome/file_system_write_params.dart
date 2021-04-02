@@ -1,69 +1,68 @@
-import 'package:meta/meta.dart';
 import 'package:neural_graph/file_system_access_chrome/file_system_write_chunk_type.dart';
 
 abstract class WriteParams {
   const WriteParams._();
 
   const factory WriteParams.write({
-    @required FileSystemWriteChunkType data,
-    int position,
+    required FileSystemWriteChunkType data,
+    int? position,
   }) = _Write;
   const factory WriteParams.seek({
-    @required int position,
+    required int position,
   }) = _Seek;
   const factory WriteParams.truncate({
-    @required int size,
+    required int size,
   }) = _Truncate;
 
   T when<T>({
-    @required T Function(FileSystemWriteChunkType data, int position) write,
-    @required T Function(int position) seek,
-    @required T Function(int size) truncate,
+    required T Function(FileSystemWriteChunkType data, int? position) write,
+    required T Function(int position) seek,
+    required T Function(int size) truncate,
   }) {
-    final v = this;
+    final WriteParams v = this;
     if (v is _Write) return write(v.data, v.position);
     if (v is _Seek) return seek(v.position);
     if (v is _Truncate) return truncate(v.size);
     throw "";
   }
 
-  T/*!*/ maybeWhen<T>({
-    T Function()/*!*/ orElse,
-    T Function(FileSystemWriteChunkType data, int position) write,
-    T Function(int position) seek,
-    T Function(int size) truncate,
+  T maybeWhen<T>({
+    required T Function() orElse,
+    T Function(FileSystemWriteChunkType data, int? position)? write,
+    T Function(int position)? seek,
+    T Function(int size)? truncate,
   }) {
-    final v = this;
+    final WriteParams v = this;
     if (v is _Write)
-      return write != null ? write(v.data, v.position) : orElse?.call();
-    if (v is _Seek) return seek != null ? seek(v.position) : orElse?.call();
+      return write != null ? write(v.data, v.position) : orElse.call();
+    if (v is _Seek) return seek != null ? seek(v.position) : orElse.call();
     if (v is _Truncate)
-      return truncate != null ? truncate(v.size) : orElse?.call();
+      return truncate != null ? truncate(v.size) : orElse.call();
     throw "";
   }
 
   T map<T>({
-    @required T Function(_Write value) write,
-    @required T Function(_Seek value) seek,
-    @required T Function(_Truncate value) truncate,
+    required T Function(_Write value) write,
+    required T Function(_Seek value) seek,
+    required T Function(_Truncate value) truncate,
   }) {
-    final v = this;
+    final WriteParams v = this;
     if (v is _Write) return write(v);
     if (v is _Seek) return seek(v);
     if (v is _Truncate) return truncate(v);
     throw "";
   }
 
-  T/*!*/ maybeMap<T>({
-    T Function()/*!*/ orElse,
-    T Function(_Write value) write,
-    T Function(_Seek value) seek,
-    T Function(_Truncate value) truncate,
+  T maybeMap<T>({
+    required T Function() orElse,
+    T Function(_Write value)? write,
+    T Function(_Seek value)? seek,
+    T Function(_Truncate value)? truncate,
   }) {
-    final v = this;
-    if (v is _Write) return write != null ? write(v) : orElse?.call();
-    if (v is _Seek) return seek != null ? seek(v) : orElse?.call();
-    if (v is _Truncate) return truncate != null ? truncate(v) : orElse?.call();
+    final WriteParams v = this;
+    if (v is _Write) return write != null ? write(v) : orElse.call();
+    if (v is _Seek) return seek != null ? seek(v) : orElse.call();
+    if (v is _Truncate) return truncate != null ? truncate(v) : orElse.call();
     throw "";
   }
 //   static WriteParams fromJson(Map<String, dynamic> map) {
@@ -80,11 +79,11 @@ abstract class WriteParams {
 }
 
 class _Write extends WriteParams {
-  final int position;
+  final int? position;
   final FileSystemWriteChunkType data;
 
   const _Write({
-    @required this.data,
+    required this.data,
     this.position,
   }) : super._();
 
@@ -109,7 +108,7 @@ class _Seek extends WriteParams {
   final int position;
 
   const _Seek({
-    @required this.position,
+    required this.position,
   }) : super._();
 
   // static _Seek fromJson(Map<String, dynamic> map) {
@@ -131,7 +130,7 @@ class _Truncate extends WriteParams {
   final int size;
 
   const _Truncate({
-    @required this.size,
+    required this.size,
   }) : super._();
 
   // static _Truncate fromJson(Map<String, dynamic> map) {
