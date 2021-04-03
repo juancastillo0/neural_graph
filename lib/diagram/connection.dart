@@ -4,10 +4,7 @@ import 'package:flutter/painting.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:mobx/mobx.dart';
-import 'package:neural_graph/diagram/graph.dart';
 import 'package:neural_graph/diagram/node.dart';
-import 'package:neural_graph/graph_canvas/adding_node_state.dart';
-import 'package:neural_graph/root_store.dart';
 import 'package:neural_graph/common/extensions.dart';
 
 class Connection<NF extends NodeData, NT extends NodeData> {
@@ -17,7 +14,7 @@ class Connection<NF extends NodeData, NT extends NodeData> {
   NF get fromData => from.node.data;
   NT get toData => to.node.data;
 
-  final ObservableList<Offset?> innerPoints = ObservableList<Offset>();
+  final innerPoints = ObservableList<Offset>();
 
   Connection(this.from, this.to);
 

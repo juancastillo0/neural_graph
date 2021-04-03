@@ -22,7 +22,8 @@ class Graph<N extends NodeData> {
       (keys) {
         this.selectedNodes.retainWhere(keys.contains);
       },
-      equals: (keys, prevKeys) => keys!.difference(prevKeys!).isEmpty,
+      equals: (keys, prevKeys) =>
+          prevKeys != null && keys!.difference(prevKeys).isEmpty,
     );
   }
 
@@ -155,7 +156,11 @@ class Graph<N extends NodeData> {
             }
             return graphCanvas.mousePosition;
           },
-          (pos) => conn!.innerPoints[index] = pos,
+          (pos) {
+            if (pos != null) {
+              conn!.innerPoints[index] = pos;
+            }
+          },
         );
       }
     });
