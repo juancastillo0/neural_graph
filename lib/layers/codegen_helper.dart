@@ -47,7 +47,6 @@ class CodeGenHelper {
       bool prevIsNum = false;
 
       for (String c in name.firstToUpperCase().split("")) {
-        prevIsNum = false;
         if (int.tryParse(c) != null) {
           prevIsNum = true;
         } else if (prevIsNum) {

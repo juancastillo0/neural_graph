@@ -27,13 +27,14 @@ class DefaultForm extends HookWidget {
               controller: controller,
               child: Theme(
                 data: theme.copyWith(
-                    inputDecorationTheme: const InputDecorationTheme(
-                  isDense: true,
-                  // contentPadding: EdgeInsets.only(top: 3, bottom: 3, left: 10),
-                  labelStyle: TextStyle(fontSize: 18),
-                )),
+                  // inputDecorationTheme: const InputDecorationTheme(
+                  //   isDense: true,
+                  //   // contentPadding: EdgeInsets.only(top: 3, bottom: 3, left: 10),
+                  //   labelStyle: TextStyle(fontSize: 18),
+                  // ),
+                ),
                 child: DefaultTextStyle(
-                  style: theme.textTheme.bodyText1!.copyWith(fontSize: 16),
+                  style: theme.textTheme.bodyText1!.copyWith(),
                   child: Padding(
                     padding: const EdgeInsets.only(bottom: 8.0),
                     child: FocusTraversalGroup(

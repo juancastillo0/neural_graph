@@ -28,23 +28,23 @@ ThemeData get theme {
     primaryColor: Colors.blue[900],
     toggleableActiveColor: Colors.blue[900],
     visualDensity: VisualDensity.adaptivePlatformDensity,
-    inputDecorationTheme: const InputDecorationTheme(
-      isDense: true,
-      border: OutlineInputBorder(),
-      errorStyle: TextStyle(height: 0),
-      contentPadding: EdgeInsets.only(top: 7, bottom: 7, left: 10, right: 10),
-      labelStyle: TextStyle(fontSize: 18),
-    ),
-    textTheme: GoogleFonts.nunitoSansTextTheme(),
     // inputDecorationTheme: const InputDecorationTheme(
     //   isDense: true,
-    //   filled: true,
-    //   contentPadding: EdgeInsets.only(top: 7, left: 7, right: 7, bottom: 8),
-    //   labelStyle: TextStyle(height: 1),
+    //   border: OutlineInputBorder(),
+    //   errorStyle: TextStyle(height: 0),
+    //   contentPadding: EdgeInsets.only(top: 7, bottom: 7, left: 10, right: 10),
+    //   labelStyle: TextStyle(fontSize: 18),
     // ),
+    textTheme: GoogleFonts.nunitoSansTextTheme(),
+    inputDecorationTheme: const InputDecorationTheme(
+      isDense: true,
+      filled: true,
+      contentPadding: EdgeInsets.only(top: 7, left: 7, right: 7, bottom: 8),
+      labelStyle: TextStyle(height: 1),
+    ),
     tooltipTheme: const TooltipThemeData(
       textStyle: TextStyle(fontSize: 14, color: Colors.white),
-      padding: EdgeInsets.only(left: 8, right: 8, bottom: 8, top: 5),
+      padding: EdgeInsets.only(left: 8, right: 8, bottom: 5, top: 5),
     ),
   );
 }
