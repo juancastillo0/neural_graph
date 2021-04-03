@@ -4,7 +4,6 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:neural_graph/diagram/node.dart';
 import 'package:neural_graph/widgets/resizable.dart';
-import 'package:neural_graph/widgets/scrollable.dart';
 
 const _menuMap = {
   'Model': [
@@ -40,8 +39,8 @@ const _menuMap = {
 class LayersMenu extends HookWidget {
   const LayersMenu({Key? key}) : super(key: key);
   @override
-  Widget build(BuildContext ctx) {
-    final textTheme = Theme.of(ctx).textTheme;
+  Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
     final searchTerm = useTextEditingController();
     useListenable(searchTerm);
 
@@ -52,36 +51,40 @@ class LayersMenu extends HookWidget {
           child: TextField(
             controller: searchTerm,
             decoration: InputDecoration(
-              suffixIcon: IconButton(
-                icon: searchTerm.text.isEmpty
+              suffixIcon: TextButton(
+                onPressed: searchTerm.clear,
+                child: searchTerm.text.isEmpty
                     ? const Icon(Icons.search)
                     : const Icon(Icons.close),
-                onPressed: searchTerm.clear,
               ),
+              suffixIconConstraints: BoxConstraints.tight(const Size(28, 28)),
             ),
           ),
         ),
         Expanded(
-          child: Scrollbar(
-            thickness: 10,
-            isAlwaysShown: true,
-            child: Padding(
-              padding: const EdgeInsets.only(right: 16.0),
-              child: Builder(
-                builder: (context) {
-                  final firstSection = _menuMap.keys.first;
-                  return ListView(
-                    padding: const EdgeInsets.only(bottom: 15),
-                    shrinkWrap: true,
-                    children: _menuMap.entries.map((e) {
-                      return _ListSection(
-                        firstSection: firstSection,
-                        textTheme: textTheme,
-                        e: e,
-                      );
-                    }).toList(),
-                  );
-                },
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 6),
+            child: Scrollbar(
+              thickness: 10,
+              isAlwaysShown: true,
+              child: Padding(
+                padding: const EdgeInsets.only(right: 16.0),
+                child: Builder(
+                  builder: (context) {
+                    final firstSection = _menuMap.keys.first;
+                    return ListView(
+                      padding: const EdgeInsets.only(bottom: 15),
+                      shrinkWrap: true,
+                      children: _menuMap.entries.map((e) {
+                        return _ListSection(
+                          firstSection: firstSection,
+                          textTheme: textTheme,
+                          e: e,
+                        );
+                      }).toList(),
+                    );
+                  },
+                ),
               ),
             ),
           ),
@@ -110,7 +113,7 @@ class _ListSection extends HookWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         Separator(
-          size: 20,
+          size: e.key == firstSection ? 6 : 20,
           color: e.key == firstSection ? Colors.transparent : Colors.black26,
         ),
         Row(
@@ -125,6 +128,7 @@ class _ListSection extends HookWidget {
               ),
             ),
             IconButton(
+              splashRadius: 24,
               icon: Icon(open.value
                   ? Icons.keyboard_arrow_up
                   : Icons.keyboard_arrow_down),

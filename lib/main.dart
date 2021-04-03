@@ -60,9 +60,9 @@ void main() {
     yield LicenseEntryWithLineBreaks(['google_fonts'], licenseCousine);
     yield LicenseEntryWithLineBreaks(['google_fonts'], licenseNunitoSans);
   });
-  
+
   GetIt.instance.registerSingleton(RootStore());
-  mainContext.config = mainContext.config.clone(
+  mainContext.config = ReactiveConfig(
     writePolicy: ReactiveWritePolicy.never,
     disableErrorBoundaries: true,
   );
@@ -257,7 +257,7 @@ class CodeGenerated extends HookWidget {
 
                     return SelectableText(
                       sourceCode,
-                      style: GoogleFonts.cousine(),
+                      style: GoogleFonts.cousine(fontSize: 13),
                     );
                   }),
                 ),
