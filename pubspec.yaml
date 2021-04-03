@@ -39,8 +39,6 @@ dependencies:
   intl: ^0.17.0
   logger: ^1.0.0
   google_fonts: ^2.0.0
-  touchable:
-    path: ./packages/touchable/
   flutter_webrtc: ^0.6.0
 
   # The following adds the Cupertino Icons font to your application.

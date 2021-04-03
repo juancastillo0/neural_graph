@@ -3,9 +3,10 @@ import 'dart:ui' as ui;
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:neural_graph/diagram/graph.dart';
+import 'package:neural_graph/gestured_canvas/gestures.dart';
+import 'package:neural_graph/gestured_canvas/gestured_canvas.dart';
 import 'package:neural_graph/graph_canvas/adding_node_state.dart';
 import 'package:neural_graph/diagram/node.dart';
-import 'package:touchable/touchable.dart';
 
 class PartialConnectionsPainter extends CustomPainter {
   final AddingConnectionState addingConnectionState;
@@ -40,11 +41,11 @@ class ConnectionsPainter extends CustomPainter {
   final Map<String, Node> nodes;
   final int? selectedConnectionPoint;
   final Connection? selectedConnection;
-  final BuildContext context;
+  final RegionContainer regions;
   final Graph graph;
 
   ConnectionsPainter({
-    required this.context,
+    required this.regions,
     required this.nodes,
     required this.selectedConnectionPoint,
     required this.selectedConnection,
@@ -63,7 +64,7 @@ class ConnectionsPainter extends CustomPainter {
 
   @override
   void paint(Canvas _canvas, Size size) {
-    final canvas = TouchyCanvas(context, _canvas);
+    final canvas = regions.wrapCanvas(_canvas);
 
     final List<VoidCallback> circles = [];
 
@@ -73,28 +74,29 @@ class ConnectionsPainter extends CustomPainter {
           final isSelected = conn == selectedConnection;
           final other = conn.from;
 
-          void Function(DragStartDetails) createOnLongPressStart(
-            int insertIndex,
-          ) =>
-              (DragStartDetails details) {
-                conn.innerPoints.insert(insertIndex, details.localPosition);
-                graph.selectConnectionPoint(conn, insertIndex);
-              };
-
           void onTapUp(TapUpDetails _) {
             graph.selectConnection(conn);
+          }
+
+          Gestures _lineGestures(int insertIndex) {
+            return Gestures(
+              onTapUp: onTapUp,
+              onPanStart: (DragStartDetails details) {
+                conn.innerPoints.insert(insertIndex, details.localPosition);
+                graph.selectConnectionPoint(conn, insertIndex);
+              },
+            );
           }
 
           Offset curr = port.offset;
           for (final pointIndex
               in Iterable<int>.generate(conn.innerPoints.length)) {
-            final innerPoint = conn.innerPoints[pointIndex]!;
+            final innerPoint = conn.innerPoints[pointIndex];
             canvas.drawLine(
               curr,
               innerPoint,
               isSelected ? _selectedPaint : _paint,
-              onTapUp: onTapUp,
-              onPanStart: createOnLongPressStart(pointIndex),
+              gestures: _lineGestures(pointIndex),
             );
             curr = innerPoint;
 
@@ -102,22 +104,20 @@ class ConnectionsPainter extends CustomPainter {
                 isSelected && selectedConnectionPoint == pointIndex;
             circles.add(
               () => canvas.drawCircle(
-                innerPoint,
-                6,
-                isPointSelected ? _selectedPaint : _paint,
+                  innerPoint, 6, isPointSelected ? _selectedPaint : _paint,
+                  gestures: Gestures(
                 onPanStart: (details) {
                   graph.setIsDragging(true);
                   graph.selectConnectionPoint(conn, pointIndex);
                 },
-              ),
+              )),
             );
           }
           canvas.drawLine(
             curr,
             other.offset,
             isSelected ? _selectedPaint : _paint,
-            onTapUp: onTapUp,
-            onPanStart: createOnLongPressStart(conn.innerPoints.length),
+            gestures: _lineGestures(conn.innerPoints.length),
           );
 
           final paragraphB = ui.ParagraphBuilder(ui.ParagraphStyle(
@@ -141,10 +141,10 @@ class ConnectionsPainter extends CustomPainter {
             if (_pos + 1 < conn.innerPoints.length) {
               _paragraphPoint2 = conn.innerPoints[_pos + 1];
             }
-            print(_paragraphPoint1);
-            print(_paragraphPoint2);
-            print(conn.innerPoints);
-            print(_pos);
+            // print(_paragraphPoint1);
+            // print(_paragraphPoint2);
+            // print(conn.innerPoints);
+            // print(_pos);
           }
 
           canvas.drawParagraph(
@@ -153,7 +153,8 @@ class ConnectionsPainter extends CustomPainter {
               _paragraphPoint1,
               _paragraphPoint2,
               0.5,
-            )!.translate(-100, -12),
+            )!
+                .translate(-100, -12),
           );
 
           // // DRAW ARROW TRIANGLE

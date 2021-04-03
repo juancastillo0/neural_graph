@@ -6,13 +6,14 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:neural_graph/arrow.dart';
 import 'package:neural_graph/diagram/graph.dart';
+import 'package:neural_graph/gestured_canvas/gestures.dart';
+import 'package:neural_graph/gestured_canvas/gestured_canvas.dart';
 import 'package:neural_graph/layers/layers.dart';
 import 'package:neural_graph/diagram/node.dart';
 import 'package:neural_graph/root_store.dart';
 import 'package:neural_graph/widgets/gesture_listener.dart';
 import 'package:neural_graph/widgets/scrollable.dart';
 import 'package:neural_graph/widgets/scrollable_extended.dart';
-import 'package:touchable/touchable.dart';
 
 class GraphView extends HookWidget {
   final Graph graph;
@@ -47,7 +48,7 @@ class GraphView extends HookWidget {
                 final isAdding = !addingConnection.isNone();
                 return FlatButton.icon(
                   icon: const Icon(Icons.add_circle_outline),
-                  onPressed: (){},
+                  onPressed: () {},
                   // onPressed: isAdding
                   //     ? () {
                   //         // graph.addingConnection =
@@ -127,21 +128,23 @@ class CanvasView extends HookWidget {
                   builder: (context) => Stack(
                     clipBehavior: Clip.none,
                     children: [
-                      CanvasTouchDetector(
-                        onPanEnd: (details) {
-                          graph.selectConnectionPoint(
-                              graph.selectedConnection, null);
-                        },
-                        onPanUpdate: (details) {
-                          graphCanvas.mousePosition = graphCanvas
-                              .toCanvasOffset(details.globalPosition);
-                        },
-                        builder: (context) => Observer(
+                      GesturedCanvasDetector(
+                        gestures: Gestures(
+                          onPanEnd: (details) {
+                            graph.selectConnectionPoint(
+                                graph.selectedConnection, null);
+                          },
+                          onPanUpdate: (details) {
+                            graphCanvas.mousePosition = graphCanvas
+                                .toCanvasOffset(details.globalPosition);
+                          },
+                        ),
+                        builder: (context, regions) => Observer(
                           builder: (context) => CustomPaint(
                             size: graph.graphCanvas.size,
                             willChange: true,
                             painter: ConnectionsPainter(
-                              context: context,
+                              regions: regions,
                               nodes: graph.nodes,
                               selectedConnection: graph.selectedConnection,
                               selectedConnectionPoint:
