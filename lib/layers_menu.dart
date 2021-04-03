@@ -54,10 +54,14 @@ class LayersMenu extends HookWidget {
               suffixIcon: TextButton(
                 onPressed: searchTerm.clear,
                 child: searchTerm.text.isEmpty
-                    ? const Icon(Icons.search)
-                    : const Icon(Icons.close),
+                    ? const Icon(Icons.search, size: 22)
+                    : const Icon(Icons.close, size: 22),
               ),
-              suffixIconConstraints: BoxConstraints.tight(const Size(28, 28)),
+              suffixIconConstraints: BoxConstraints.tight(const Size(36, 36)),
+              contentPadding: (Theme.of(context)
+                      .inputDecorationTheme
+                      .contentPadding! as EdgeInsets)
+                  .copyWith(top: 10),
             ),
           ),
         ),
@@ -67,24 +71,39 @@ class LayersMenu extends HookWidget {
             child: Scrollbar(
               thickness: 10,
               isAlwaysShown: true,
-              child: Padding(
-                padding: const EdgeInsets.only(right: 16.0),
-                child: Builder(
-                  builder: (context) {
-                    final firstSection = _menuMap.keys.first;
-                    return ListView(
-                      padding: const EdgeInsets.only(bottom: 15),
-                      shrinkWrap: true,
-                      children: _menuMap.entries.map((e) {
-                        return _ListSection(
-                          firstSection: firstSection,
-                          textTheme: textTheme,
-                          e: e,
-                        );
-                      }).toList(),
-                    );
-                  },
-                ),
+              child: AnimatedBuilder(
+                animation: searchTerm,
+                builder: (context, _) {
+                  final _search = searchTerm.text.toLowerCase();
+                  String? firstSection;
+                  return ListView(
+                    padding: const EdgeInsets.only(right: 16.0),
+                    shrinkWrap: true,
+                    children: _menuMap.entries
+                        .map(
+                          (e) => MapEntry(
+                            e.key,
+                            e.value
+                                .where((k) => k.toLowerCase().contains(_search))
+                                .toList(),
+                          ),
+                        )
+                        .where(
+                          (e) =>
+                              e.key.toLowerCase().contains(_search) ||
+                              e.value.isNotEmpty,
+                        )
+                        .map((e) {
+                      firstSection ??= e.key;
+                      return _ListSection(
+                        key: Key(e.key),
+                        firstSection: firstSection!,
+                        textTheme: textTheme,
+                        e: e,
+                      );
+                    }).toList(),
+                  );
+                },
               ),
             ),
           ),
@@ -150,6 +169,7 @@ class _ListSection extends HookWidget {
             itemBuilder: (ctx, index) {
               final text = e.value[index];
               return Draggable<String>(
+                key: Key(text),
                 data: text,
                 dragAnchor: DragAnchor.pointer,
                 feedback: NodeContainer(
