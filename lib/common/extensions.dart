@@ -75,7 +75,7 @@ extension GenerateString on Random {
     return Iterable<int>.generate(length).map((_) {
       final _index = (this.nextDouble() * _charsKey.length).floor();
       return _charsKey[_index];
-    }).join("");
+    }).join();
   }
 }
 

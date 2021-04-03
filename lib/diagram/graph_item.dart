@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:neural_graph/diagram/node.dart';
 
 abstract class GraphItem<N extends NodeData> {

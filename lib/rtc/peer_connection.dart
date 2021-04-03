@@ -149,9 +149,9 @@ class PeerConnectionState extends ChangeNotifier {
   }
 
   void _onIceCandidate(RTCIceCandidate candidate) {
-    _log('_onIceCandidate: ${candidate?.toMap()}');
+    _log('_onIceCandidate: ${candidate.toMap()}');
     // connection.addCandidate(candidate);
-    if (candidate == null) {
+    if (candidate.candidate == null) {
       print('onIceCandidate: complete!');
       return;
     }

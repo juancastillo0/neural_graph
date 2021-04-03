@@ -7,12 +7,11 @@
 library file_system_access;
 
 import 'dart:async';
+import 'dart:html' as html;
 import 'dart:js_util';
 
-import "package:js/js.dart";
+import 'package:js/js.dart';
 import 'package:neural_graph/common/extensions.dart';
-import 'dart:html' as html;
-
 import 'package:neural_graph/file_system_access_chrome/file_system_write_chunk_type.dart';
 
 import 'file_system_access_interface.dart';

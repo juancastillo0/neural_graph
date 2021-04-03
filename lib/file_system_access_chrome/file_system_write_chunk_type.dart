@@ -86,6 +86,7 @@ abstract class FileSystemWriteChunkType {
 }
 
 class _BufferSource extends FileSystemWriteChunkType {
+  @override
   final ByteBuffer value;
 
   const _BufferSource(
@@ -94,6 +95,7 @@ class _BufferSource extends FileSystemWriteChunkType {
 }
 
 class _Blob extends FileSystemWriteChunkType {
+  @override
   final dynamic /*html.Blob*/ value;
 
   const _Blob(
@@ -102,6 +104,7 @@ class _Blob extends FileSystemWriteChunkType {
 }
 
 class _String extends FileSystemWriteChunkType {
+  @override
   final String value;
 
   const _String(
@@ -110,6 +113,7 @@ class _String extends FileSystemWriteChunkType {
 }
 
 class _WriteParams extends FileSystemWriteChunkType {
+  @override
   final WriteParams value;
 
   const _WriteParams(
