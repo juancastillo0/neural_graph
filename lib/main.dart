@@ -46,6 +46,12 @@ ThemeData get theme {
       textStyle: TextStyle(fontSize: 14, color: Colors.white),
       padding: EdgeInsets.only(left: 8, right: 8, bottom: 5, top: 5),
     ),
+    scrollbarTheme: ScrollbarThemeData(
+      isAlwaysShown: true,
+      interactive: true,
+      thickness: MaterialStateProperty.all(9),
+      mainAxisMargin: 6,
+    ),
   );
 }
 
@@ -250,16 +256,20 @@ class CodeGenerated extends HookWidget {
               ),
               child: MultiScrollable(
                 vertical: controller,
-                child: SingleChildScrollView(
-                  controller: controller,
-                  child: Observer(builder: (context) {
-                    final sourceCode = root.generatedSourceCode;
+                child: ScrollConfiguration(
+                  behavior: ScrollConfiguration.of(context)
+                      .copyWith(scrollbars: false),
+                  child: SingleChildScrollView(
+                    controller: controller,
+                    child: Observer(builder: (context) {
+                      final sourceCode = root.generatedSourceCode;
 
-                    return SelectableText(
-                      sourceCode,
-                      style: GoogleFonts.cousine(fontSize: 13),
-                    );
-                  }),
+                      return SelectableText(
+                        sourceCode,
+                        style: GoogleFonts.cousine(fontSize: 13),
+                      );
+                    }),
+                  ),
                 ),
               ),
             ),

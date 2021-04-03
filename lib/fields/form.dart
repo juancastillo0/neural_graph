@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 
@@ -14,40 +12,35 @@ class DefaultForm extends HookWidget {
   @override
   Widget build(BuildContext context) {
     final controller = useMemoized(() => ScrollController());
-    return Scrollbar(
-      isAlwaysShown: true,
-      controller: controller,
-      thickness: 10,
-      child: Padding(
-        padding: const EdgeInsets.only(right: 10.0),
-        child: Builder(
-          builder: (context) {
-            final theme = Theme.of(context);
-            return SingleChildScrollView(
-              controller: controller,
-              child: Theme(
-                data: theme.copyWith(
-                    // inputDecorationTheme: const InputDecorationTheme(
-                    //   isDense: true,
-                    //   // contentPadding: EdgeInsets.only(top: 3, bottom: 3, left: 10),
-                    //   labelStyle: TextStyle(fontSize: 18),
-                    // ),
-                    ),
-                child: DefaultTextStyle(
-                  style: theme.textTheme.bodyText1!.copyWith(),
-                  child: Padding(
-                    padding: const EdgeInsets.only(bottom: 8.0),
-                    child: FocusTraversalGroup(
-                      child: Form(
-                        child: child,
-                      ),
+    return Padding(
+      padding: const EdgeInsets.only(right: 10.0),
+      child: Builder(
+        builder: (context) {
+          final theme = Theme.of(context);
+          return SingleChildScrollView(
+            controller: controller,
+            child: Theme(
+              data: theme.copyWith(
+                  // inputDecorationTheme: const InputDecorationTheme(
+                  //   isDense: true,
+                  //   // contentPadding: EdgeInsets.only(top: 3, bottom: 3, left: 10),
+                  //   labelStyle: TextStyle(fontSize: 18),
+                  // ),
+                  ),
+              child: DefaultTextStyle(
+                style: theme.textTheme.bodyText1!.copyWith(),
+                child: Padding(
+                  padding: const EdgeInsets.only(bottom: 8.0),
+                  child: FocusTraversalGroup(
+                    child: Form(
+                      child: child,
                     ),
                   ),
                 ),
               ),
-            );
-          },
-        ),
+            ),
+          );
+        },
       ),
     );
   }
