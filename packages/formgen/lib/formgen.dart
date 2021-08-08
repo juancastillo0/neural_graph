@@ -1,5 +1,8 @@
 library formgen;
 
+export 'validate/serde_type.dart';
+export 'validate/validate.dart';
+
 class FormGen {
   const FormGen({this.allRequired = false});
 
@@ -16,7 +19,7 @@ class FormInput<T> {
     String? description,
     this.width,
     this.validate,
-  }): description = description ?? "";
+  }) : description = description ?? "";
   final String? label;
   final String description;
 

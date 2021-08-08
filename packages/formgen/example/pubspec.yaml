@@ -1,0 +1,17 @@
+name: formgen_example
+description: A new Flutter package project.
+version: 0.0.1
+homepage:
+
+environment:
+  sdk: ">=2.12.0-0 <3.0.0"
+
+dependencies:
+  formgen:
+    path: ../
+
+dev_dependencies:
+  test:
+  build_runner:
+  formgen_generation:
+    path: ../../formgen_generation/

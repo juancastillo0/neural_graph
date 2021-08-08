@@ -1,7 +1,6 @@
 name: formgen
 description: A new Flutter package project.
 version: 0.0.1
-author:
 homepage:
 
 environment:
@@ -10,10 +9,12 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  validators: ^3.0.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  build_runner:
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

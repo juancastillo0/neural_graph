@@ -13,3 +13,11 @@ builders:
     auto_apply: dependents
     build_to: cache
     applies_builders: ["source_gen|combining_builder"]
+  validator_gen:
+    target: ":formgen_generation"
+    import: "package:formgen_generation/formgen_generation.dart"
+    builder_factories: ["validatorGen"]
+    build_extensions: {".dart": [".validator_gen.g.part"]}
+    auto_apply: dependents
+    build_to: cache
+    applies_builders: ["source_gen|combining_builder"]
