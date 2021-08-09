@@ -73,7 +73,7 @@ class ValidateString extends ValidateField<String> implements ValidateLength {
   final bool? isLowercase;
   final bool? isUppercase;
 
-  ValidateFieldType get variantType => ValidateFieldType.string;
+  final ValidateFieldType variantType = ValidateFieldType.string;
 
   final List<ValidationError> Function(String)? customValidate;
   final String? customValidateName;
@@ -168,7 +168,9 @@ class ValidateString extends ValidateField<String> implements ValidateLength {
       isBool: map['isBool'],
       isNum: map['isNum'],
       isUrl: map['isUrl'],
-      isUUID: parseEnum(map['isUUID'] as String?, UUIDVersion.values),
+      isUUID: map['isUUID'] is UUIDVersion
+          ? map['isUUID']
+          : parseEnum(map['isUUID'] as String?, UUIDVersion.values),
       isCurrency: map['isCurrency'],
       isJSON: map['isJSON'],
       matches: map['matches'],
@@ -189,8 +191,12 @@ class ValidateString extends ValidateField<String> implements ValidateLength {
       surrogatePairsLengthMax: map['surrogatePairsLengthMax'],
       isInt: map['isInt'],
       isFloat: map['isFloat'],
-      isISBN: parseEnum(map['isISBN'], ISBNVersion.values),
-      isIP: parseEnum(map['isIP'], IPVersion.values),
+      isISBN: map['isISBN'] is ISBNVersion
+          ? map['isISBN']
+          : parseEnum(map['isISBN'] as String?, ISBNVersion.values),
+      isIP: map['isIP'] is IPVersion
+          ? map['isIP']
+          : parseEnum(map['isIP'] as String?, IPVersion.values),
     );
   }
 

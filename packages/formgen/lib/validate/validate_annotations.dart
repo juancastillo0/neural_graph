@@ -88,6 +88,7 @@ abstract class ValidateComparable<T extends Comparable<T>> {
 }
 
 class ValidateComparison<T extends Comparable<T>> {
+  final bool useCompareTo;
   final CompVal<T>? more;
   final CompVal<T>? less;
   final CompVal<T>? moreEq;
@@ -98,13 +99,15 @@ class ValidateComparison<T extends Comparable<T>> {
     this.less,
     this.moreEq,
     this.lessEq,
-  });
+    bool? useCompareTo,
+  }) : useCompareTo = useCompareTo ?? true;
 
   static const fieldsSerde = SerdeType.nested({
     'more': CompVal.fieldsSerde,
     'less': CompVal.fieldsSerde,
     'moreEq': CompVal.fieldsSerde,
     'lessEq': CompVal.fieldsSerde,
+    'useCompareTo': SerdeType.bool,
   });
 
   Map<String, dynamic> toJson() {
@@ -113,6 +116,7 @@ class ValidateComparison<T extends Comparable<T>> {
       'less': less?.toJson(),
       'moreEq': moreEq?.toJson(),
       'lessEq': lessEq?.toJson(),
+      'useCompareTo': useCompareTo,
     };
   }
 
@@ -122,6 +126,7 @@ class ValidateComparison<T extends Comparable<T>> {
       less: map['less'] == null ? null : CompVal.fromJson<T>(map['less']),
       moreEq: map['moreEq'] == null ? null : CompVal.fromJson<T>(map['moreEq']),
       lessEq: map['lessEq'] == null ? null : CompVal.fromJson<T>(map['lessEq']),
+      useCompareTo: map['useCompareTo'],
     );
   }
 }
@@ -175,15 +180,13 @@ abstract class ValidateField<T> implements ValidateCustom<T> {
     return const SerdeType.union(
       ValidateField.variantTypeString,
       {
-        'ValidateFieldType.num': SerdeType.nested(ValidateNum.fieldsSerde),
-        'ValidateFieldType.string':
-            SerdeType.nested(ValidateString.fieldsSerde),
-        'ValidateFieldType.date': SerdeType.nested(ValidateDate.fieldsSerde),
-        'ValidateFieldType.duration':
-            SerdeType.nested(ValidateDuration.fieldsSerde),
-        'ValidateFieldType.list': SerdeType.nested(ValidateList.fieldsSerde),
-        'ValidateFieldType.set': SerdeType.nested(ValidateSet.fieldsSerde),
-        'ValidateFieldType.map': SerdeType.nested(ValidateMap.fieldsSerde),
+        'num': SerdeType.nested(ValidateNum.fieldsSerde),
+        'string': SerdeType.nested(ValidateString.fieldsSerde),
+        'date': SerdeType.nested(ValidateDate.fieldsSerde),
+        'duration': SerdeType.nested(ValidateDuration.fieldsSerde),
+        'list': SerdeType.nested(ValidateList.fieldsSerde),
+        'set': SerdeType.nested(ValidateSet.fieldsSerde),
+        'map': SerdeType.nested(ValidateMap.fieldsSerde),
       },
     );
   }

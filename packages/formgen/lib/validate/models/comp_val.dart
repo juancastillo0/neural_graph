@@ -99,7 +99,7 @@ abstract class CompVal<T extends Comparable<T>> {
   bool get isSingle => this is CompValueSingle;
   bool get isList => this is CompValueList;
 
-  TypeCompVal get typeEnum;
+  TypeCompVal get variantType;
 
   static CompVal<T> fromJson<T extends Comparable<T>>(Object? _map) {
     final Map<String, dynamic> map;
@@ -224,7 +224,7 @@ class CompValueRef<T extends Comparable<T>> extends CompVal<T> {
   ) : super._();
 
   @override
-  TypeCompVal get typeEnum => TypeCompVal.ref;
+  final TypeCompVal variantType = TypeCompVal.ref;
 
   static CompValueRef<T> fromJson<T extends Comparable<T>>(Object? _map) {
     final Map<String, dynamic> map;
@@ -239,6 +239,11 @@ class CompValueRef<T extends Comparable<T>> extends CompVal<T> {
     return CompValueRef<T>(
       map['ref'] as String,
     );
+  }
+
+  @override
+  String toString() {
+    return '$ref';
   }
 
   @override
@@ -262,7 +267,12 @@ class CompValueSingle<T extends Comparable<T>> extends CompVal<T> {
   ) : super._();
 
   @override
-  TypeCompVal get typeEnum => TypeCompVal.single;
+  final TypeCompVal variantType = TypeCompVal.single;
+
+  @override
+  String toString() {
+    return '$value';
+  }
 
   static CompValueSingle<T> fromJson<T extends Comparable<T>>(Object? _map) {
     final Map<String, dynamic> map;
@@ -300,7 +310,12 @@ class CompValueList<T extends Comparable<T>> extends CompVal<T> {
   ) : super._();
 
   @override
-  TypeCompVal get typeEnum => TypeCompVal.list;
+  final TypeCompVal variantType = TypeCompVal.list;
+
+  @override
+  String toString() {
+    return '[${values.join(' , ')}]';
+  }
 
   static CompValueList<T> fromJson<T extends Comparable<T>>(Object? _map) {
     final Map<String, dynamic> map;

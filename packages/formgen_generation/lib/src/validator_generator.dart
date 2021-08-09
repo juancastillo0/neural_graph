@@ -8,6 +8,7 @@ import 'package:build/src/builder/build_step.dart';
 import 'package:analyzer/dart/element/element.dart';
 import 'package:formgen/formgen.dart';
 import 'package:source_gen/source_gen.dart';
+import 'package:analyzer/src/dart/element/element.dart';
 
 class ValidatorGenerator extends GeneratorForAnnotation<Validate> {
   @override
@@ -16,27 +17,29 @@ class ValidatorGenerator extends GeneratorForAnnotation<Validate> {
     ConstantReader annotation,
     BuildStep buildStep,
   ) {
-    final visitor = ModelVisitor();
-    element.visitChildren(visitor);
+    try {
+      final visitor = ModelVisitor();
+      element.visitChildren(visitor);
 
-    final annotationValue = annotation.objectValue.extractValue(
-      Validate.fieldsSerde,
-      (p0) => Validate.fromJson(p0),
-    );
-    final nullableErrorLists = annotationValue.nullableErrorLists;
+      final annotationValue = annotation.objectValue.extractValue(
+        Validate.fieldsSerde,
+        (p0) => Validate.fromJson(p0),
+      );
+      final nullableErrorLists = annotationValue.nullableErrorLists;
 
-    String _fieldIdent(String fieldName) {
-      return '${visitor.className}Field.$fieldName';
-    }
+      String _fieldIdent(String fieldName) {
+        return '${visitor.className}Field.$fieldName';
+      }
 
-    final className = visitor.className;
+      final className = visitor.className;
 
-    return '''
+      return '''
 
 enum ${className}Field {
   ${visitor.fields.entries.map((e) {
-      return '${e.key},';
-    }).join()}
+        return '${e.key},';
+      }).join()}
+  ${visitor.validateFunctions.isNotEmpty ? 'global,' : ''}
 }
 
 class ${className}ValidationFields {
@@ -44,11 +47,12 @@ class ${className}ValidationFields {
   final Map<${className}Field, List<ValidationError>> errorsMap;
 
   ${visitor.fields.entries.map((e) {
-      return 'List<ValidationError>${nullableErrorLists ? '?' : ''} get ${e.key} => errorsMap[${_fieldIdent(e.key)}]${nullableErrorLists ? '' : '!'};';
-    }).join()}
+        return 'List<ValidationError>${nullableErrorLists ? '?' : ''} get ${e.key} '
+            '=> errorsMap[${_fieldIdent(e.key)}]${nullableErrorLists ? '' : '!'};';
+      }).join()}
 }
 
-class ${className}Validation {
+class ${className}Validation extends Validation<${className}, ${className}Field> {
   const ${className}Validation(this.errorsMap, this.value, this.fields);
 
   final Map<${className}Field, List<ValidationError>> errorsMap;
@@ -61,36 +65,85 @@ class ${className}Validation {
 
 ${className}Validation validate${className}(${className} value) {
   final errors = <${className}Field, List<ValidationError>>{};
+  ${visitor.validateFunctions.isEmpty ? '' : 'errors[${className}Field.global] = [${visitor.validateFunctions.map((e) {
+              return e.isStatic
+                  ? '...${className}.${e.name}(value)'
+                  : '...value.${e.name}()';
+            }).join(',')}];'}
   ${visitor.fields.entries.map((e) {
-      final isNullable =
-          e.value.element.type.nullabilitySuffix == NullabilitySuffix.question;
-      final getter = 'value.${e.key}${isNullable ? '!' : ''}';
-      final validations = e.value.annotation.validations(getter: getter);
-      if (validations.isEmpty) {
-        return '';
-      }
-      final _nullable = isNullable
-          ? nullableErrorLists
-              ? 'if(value.${e.key} != null) '
-              : 'if(value.${e.key} == null) errors[${_fieldIdent(e.key)}] = []; else'
-          : '';
+        final isNullable = e.value.element.type.nullabilitySuffix ==
+            NullabilitySuffix.question;
+        final fieldName = '${e.key}${isNullable ? '!' : ''}';
+        final getter = 'value.$fieldName';
+        final validations = e.value.annotation.validations(
+          fieldName: fieldName,
+          prefix: 'value.',
+        );
+        if (validations.isEmpty) {
+          return '';
+        }
+        final _nullable = isNullable
+            ? nullableErrorLists
+                ? 'if(value.${e.key} != null) '
+                : 'if(value.${e.key} == null) errors[${_fieldIdent(e.key)}] = []; else'
+            : '';
 
-      return '${_nullable} errors[${_fieldIdent(e.key)}] = [${validations.map((valid) {
-        return 'if (${valid.condition}) ${valid.errorTemplate(e.key, getter)}';
-      }).join(",")}];';
-    }).join()}
+        String _mapValidationItem(ValidationItem valid) {
+          if (valid.iterable != null) {
+            return '${valid.iterable} ...[${valid.nested!.map(_mapValidationItem).join(",")}]';
+          }
+          return 'if (${valid.condition}) ${valid.errorTemplate(e.key, getter)}';
+        }
+
+        final _custom = e.value.annotation.customValidateName == null
+            ? ''
+            : '...${e.value.annotation.customValidateName}($getter),';
+
+        return '${_nullable} errors[${_fieldIdent(e.key)}] = [$_custom${validations.map(_mapValidationItem).join(",")}];';
+      }).join()}
   ${nullableErrorLists ? 'errors.removeWhere((k, v) => v.isEmpty);' : ''}
 
   return ${className}Validation(errors, value, ${className}ValidationFields(errors),);
 }
 ''';
+    } catch (e, s) {
+      return '"""$e\n$s"""';
+    }
+  }
+}
+
+class ValidationItem {
+  final String defaultMessage;
+  final String condition;
+  final String errorCode;
+  final Object? param;
+  final String? iterable;
+  final List<ValidationItem>? nested;
+
+  const ValidationItem({
+    required this.defaultMessage,
+    required this.condition,
+    required this.errorCode,
+    required this.param,
+    this.iterable,
+    this.nested,
+  });
+
+  String errorTemplate(String fieldName, String getter) {
+    return """ValidationError(
+        message: r'$defaultMessage',
+        errorCode: '$errorCode',
+        property: '$fieldName',
+        validationParam: $param,
+        value: $getter,
+      )""";
   }
 }
 
 class ModelVisitor extends SimpleElementVisitor {
   DartType? className;
   final fields = <String, _Field>{};
-  final validateFunctions = <FieldElement>{};
+  final validateFunctions = <MethodElement>{};
 
   static const _listAnnotation = TypeChecker.fromRuntime(ValidateList);
   static const _stringAnnotation = TypeChecker.fromRuntime(ValidateString);
@@ -98,6 +151,13 @@ class ModelVisitor extends SimpleElementVisitor {
   static const _dateAnnotation = TypeChecker.fromRuntime(ValidateDate);
   static const _functionAnnotation =
       TypeChecker.fromRuntime(ValidationFunction);
+
+  void visitMethodElement(MethodElement element) {
+    if (_functionAnnotation.hasAnnotationOfExact(element)) {
+      validateFunctions.add(element);
+    }
+    super.visitMethodElement(element);
+  }
 
   @override
   dynamic visitConstructorElement(ConstructorElement element) {
@@ -121,10 +181,6 @@ class ModelVisitor extends SimpleElementVisitor {
 
         fields[element.name] = _Field(element, _annot);
       }
-    }
-
-    if (_functionAnnotation.hasAnnotationOfExact(element)) {
-      validateFunctions.add(element);
     }
 
     // Primitives
@@ -188,49 +244,76 @@ extension ConsumeSerdeType on DartObject {
 
   Object? serde(SerdeType serde) {
     final _value = serde.when(
-        bool: () => this.toBoolValue(),
-        str: () => this.toStringValue(),
-        num: () => this.toDoubleValue() ?? this.toIntValue(),
-        int: () => this.toIntValue(),
-        function: () => this.toFunctionValue()?.name,
-        duration: () => this.getField('_duration')?.toIntValue(),
-        list: (list) =>
-            this.toListValue()?.map((e) => e.serde(list.generic)).toList(),
-        set: (set) =>
-            this.toListValue()?.map((e) => e.serde(set.generic)).toSet(),
-        map: (map) => this.toMapValue()?.map(
-              (key, value) => MapEntry(
-                key?.serde(map.genericKey),
-                value?.serde(map.genericValue),
-              ),
+      bool: () => this.toBoolValue(),
+      str: () => this.toStringValue(),
+      num: () => this.toDoubleValue() ?? this.toIntValue(),
+      int: () => this.toIntValue(),
+      function: () {
+        final f = this.toFunctionValue();
+        if (f == null) {
+          return null;
+        }
+        final enclosing = f.declaration.enclosingElement.name;
+        return '${enclosing == null ? '' : '$enclosing.'}${f.name}';
+      },
+      duration: () => this.getField('_duration')?.toIntValue(),
+      list: (list) =>
+          this.toListValue()?.map((e) => e.serde(list.generic)).toList(),
+      set: (set) =>
+          this.toListValue()?.map((e) => e.serde(set.generic)).toSet(),
+      map: (map) => this.toMapValue()?.map(
+            (key, value) => MapEntry(
+              key?.serde(map.genericKey),
+              value?.serde(map.genericValue),
             ),
-        enumV: (enumV) {
-          final enumIndex = this.getField('index')?.toIntValue();
-          return enumIndex == null ? null : enumV.values[enumIndex];
-        },
-        nested: (nested) {
-          return nested.props.map(
-            (key, value) => MapEntry(key, this.getField(key)?.serde(value)),
-          );
-        },
-        union: (union) {
-          final discriminator = this.getField(union.discriminator)?.toString();
-          final variant = union.variants[discriminator];
-          if (variant == null) {
-            return null;
-          }
-          return this.serde(variant);
-        },
-        unionType: (union) {},
-        dynamic: () {
-          return this.toBoolValue() ??
-              this.toIntValue() ??
-              this.toDoubleValue() ??
-              this.toStringValue() ??
-              this.toListValue() ??
-              this.toSetValue() ??
-              this.toMapValue();
-        });
+          ),
+      enumV: (enumV) {
+        final enumIndex = this.getField('index')?.toIntValue();
+        return enumIndex == null ? null : enumV.values[enumIndex];
+      },
+      nested: (nested) {
+        return nested.props.map(
+          (key, value) => MapEntry(key, this.getField(key)?.serde(value)),
+        );
+      },
+      union: (union) {
+        final eValue = this.getField(union.discriminator);
+        final t = eValue?.type;
+
+        final String? discriminator;
+        if (t?.element.runtimeType == EnumElementImpl) {
+          final index = eValue?.getField('index')?.toIntValue();
+          final v = (t?.element as EnumElementImpl).fields[index! + 2];
+          discriminator = v.name;
+        } else {
+          discriminator = eValue?.toStringValue() ??
+              eValue?.getField('_inner')?.toStringValue();
+        }
+
+        final variant = union.variants[discriminator];
+        if (variant == null) {
+          return null;
+        }
+        final result = this.serde(variant);
+        if (result is Map && !result.containsKey(union.discriminator)) {
+          result[union.discriminator] = discriminator;
+        }
+        return result;
+      },
+      unionType: (union) {},
+      late: (l) {
+        return this.serde(l.func());
+      },
+      dynamic: () {
+        return this.toBoolValue() ??
+            this.toIntValue() ??
+            this.toDoubleValue() ??
+            this.toStringValue() ??
+            this.toListValue() ??
+            this.toSetValue() ??
+            this.toMapValue();
+      },
+    );
     return _value;
   }
 }
@@ -243,91 +326,152 @@ class _Field {
 
 extension TemplateValidateField on ValidateField {
   List<ValidationItem> validations({
-    required String getter,
+    required String fieldName,
+    required String prefix,
   }) {
-    final v = this;
+    final getter = '$prefix$fieldName';
     final validations = <ValidationItem>[];
 
-    if (v is ValidateString) {
-      validations.addAll(stringValidations(v, getter));
-    } else if (v is ValidateNum) {
-      if (v.min != null) {
-        validations.add(ValidationItem(
-          condition: '$getter < ${v.min}',
-          defaultMessage: 'Should be at a minimum ${v.min}',
-          errorCode: 'ValidateNum.min',
-          param: v.min,
-        ));
-      }
-      if (v.max != null) {
-        validations.add(ValidationItem(
-          condition: '$getter > ${v.max}',
-          defaultMessage: 'Should be at a maximum ${v.max}',
-          errorCode: 'ValidateNum.max',
-          param: v.max,
-        ));
-      }
-      if (v.isInt != null && v.isInt == true) {
-        validations.add(ValidationItem(
-          condition: '$getter.round() != $getter',
-          defaultMessage: 'Should be an integer',
-          errorCode: 'ValidateNum.isInt',
-          param: null,
-        ));
-      }
-      if (v.comp != null) validations.addAll(compValidations(v.comp!));
-    } else if (v is ValidateList) {
-      if (v.minLength != null) {
-        validations.add(ValidationItem(
-          condition: '$getter.length < ${v.minLength}',
-          defaultMessage: 'Should be at a minimum ${v.minLength} in length',
-          errorCode: 'ValidateList.minLength',
-          param: v.minLength,
-        ));
-      }
-      if (v.maxLength != null) {
-        validations.add(ValidationItem(
-          condition: '$getter.length > ${v.maxLength}',
-          defaultMessage: 'Should be at a maximum ${v.maxLength} in length',
-          errorCode: 'ValidateList.maxLength',
-          param: v.maxLength,
-        ));
-      }
-    } else if (v is ValidateDate) {
-      String dateFromStr(String repr) {
-        final lowerRepr = repr.toLowerCase();
-        if (lowerRepr == 'now') {
-          return 'DateTime.now()';
-        } else {
-          final _p = DateTime.parse(repr);
-          return 'DateTime.fromMillisecondsSinceEpoch(${_p.millisecondsSinceEpoch})';
+    this.when(
+      string: (v) {
+        validations.addAll(stringValidations(v, getter));
+      },
+      num: (v) {
+        if (v.isInt != null && v.isInt == true) {
+          validations.add(ValidationItem(
+            condition: '$getter.round() != $getter',
+            defaultMessage: 'Should be an integer',
+            errorCode: 'ValidateNum.isInt',
+            param: null,
+          ));
         }
-      }
+        if (v.comp != null)
+          validations.addAll(compValidations(
+            v.comp!,
+            prefix: prefix,
+            fieldName: fieldName,
+          ));
+        if (v.min != null) {
+          validations.add(ValidationItem(
+            condition: '$getter < ${v.min}',
+            defaultMessage: 'Should be at a minimum ${v.min}',
+            errorCode: 'ValidateNum.min',
+            param: v.min,
+          ));
+        }
+        if (v.max != null) {
+          validations.add(ValidationItem(
+            condition: '$getter > ${v.max}',
+            defaultMessage: 'Should be at a maximum ${v.max}',
+            errorCode: 'ValidateNum.max',
+            param: v.max,
+          ));
+        }
+      },
+      date: (v) {
+        String dateFromStr(String repr) {
+          final lowerRepr = repr.toLowerCase();
+          if (lowerRepr == 'now') {
+            return 'DateTime.now()';
+          } else {
+            final _p = DateTime.parse(repr);
+            return 'DateTime.fromMillisecondsSinceEpoch(${_p.millisecondsSinceEpoch})';
+          }
+        }
 
-      if (v.min != null) {
-        final minDate = dateFromStr(v.min!);
-        validations.add(ValidationItem(
-          condition: '$minDate.isAfter($getter)',
-          defaultMessage: 'Should be at a minimum ${v.min}',
-          errorCode: 'ValidateDate.min',
-          param: v.min!,
-        ));
-      }
-      if (v.max != null) {
-        final maxDate = dateFromStr(v.max!);
-        validations.add(ValidationItem(
-          condition: '$maxDate.isAfter($getter)',
-          defaultMessage: 'Should be at a maximum ${v.max}',
-          errorCode: 'ValidateDate.max',
-          param: v.max!,
-        ));
-      }
-      if (v.comp != null)
-        validations.addAll(compValidations(
-          v.comp!,
-          dateFromStr,
-        ));
-    }
+        if (v.comp != null)
+          validations.addAll(compValidations(
+            v.comp!,
+            makeString: dateFromStr,
+            prefix: prefix,
+            fieldName: fieldName,
+          ));
+
+        if (v.min != null) {
+          final minDate = dateFromStr(v.min!);
+          validations.add(ValidationItem(
+            condition: '$minDate.isAfter($getter)',
+            defaultMessage: 'Should be at a minimum ${v.min}',
+            errorCode: 'ValidateDate.min',
+            param: '"${v.min}"',
+          ));
+        }
+        if (v.max != null) {
+          final maxDate = dateFromStr(v.max!);
+          validations.add(ValidationItem(
+            condition: '$maxDate.isAfter($getter)',
+            defaultMessage: 'Should be at a maximum ${v.max}',
+            errorCode: 'ValidateDate.max',
+            param: '"${v.max}"',
+          ));
+        }
+      },
+      duration: (v) {
+        if (v.comp != null)
+          validations.addAll(compValidations(
+            v.comp!,
+            prefix: prefix,
+            fieldName: fieldName,
+          ));
+      },
+      list: (v) {
+        if (v.each != null)
+          validations.add(ValidationItem(
+            defaultMessage: '',
+            errorCode: '',
+            iterable: 'for (final i in Iterable<int>.generate($getter.length))',
+            condition: '',
+            param: null,
+            nested: v.each!.validations(
+              fieldName: '$fieldName[i]',
+              prefix: prefix,
+            ),
+          ));
+        validations.addAll(lengthValidations(v, getter));
+      },
+      set: (v) {
+        if (v.each != null)
+          validations.add(ValidationItem(
+            defaultMessage: '',
+            errorCode: '',
+            iterable: 'for (final ${fieldName}Item in $getter)',
+            condition: '',
+            param: null,
+            nested: v.each!.validations(
+              fieldName: '${fieldName}Item',
+              prefix: '',
+            ),
+          ));
+        validations.addAll(lengthValidations(v, getter));
+      },
+      map: (v) {
+        if (v.eachKey != null)
+          validations.add(ValidationItem(
+            defaultMessage: '',
+            errorCode: '',
+            iterable: 'for (final ${fieldName}Key in $getter.keys)',
+            condition: '',
+            param: null,
+            nested: v.eachKey!.validations(
+              fieldName: '${fieldName}Key',
+              prefix: '',
+            ),
+          ));
+        if (v.eachValue != null)
+          validations.add(ValidationItem(
+            defaultMessage: '',
+            errorCode: '',
+            iterable: 'for (final ${fieldName}Value in $getter.Values)',
+            condition: '',
+            param: null,
+            nested: v.eachValue!.validations(
+              fieldName: '${fieldName}Value',
+              prefix: '',
+            ),
+          ));
+        validations.addAll(lengthValidations(v, getter));
+      },
+    );
 
     return validations;
   }
@@ -336,34 +480,69 @@ extension TemplateValidateField on ValidateField {
 String _defaultMakeString(Object? obj) => obj.toString();
 
 List<ValidationItem> compValidations<T extends Comparable<T>>(
-  ValidateComparison<T> comp, [
+  ValidateComparison<T> comp, {
+  required String fieldName,
+  required String prefix,
   String Function(T) makeString = _defaultMakeString,
-]) {
-  String comparison(CompVal<T> c) {
+}) {
+  String comparison(CompVal<T> c, String operator) {
     return c.when(ref: (ref) {
-      return '$ref';
+      return '$prefix$fieldName.compareTo($prefix$ref) $operator';
     }, single: (single) {
-      return '';
+      return '$prefix$fieldName.compareTo(${makeString(single)}) $operator';
     }, list: (list) {
-      return '';
+      return list.map((v) => comparison(v, operator)).join(' || ');
     });
   }
 
   return [
-    // if (comp.less != null)
-    //   ValidationItem(
-    //     condition: '$minDate.isAfter($getter)',
-    //     defaultMessage: 'Should be at a minimum ${comp.less}',
-    //     errorCode: 'ValidateComparable.less',
-    //     param: comp.less,
-    //   ),
-    // if (v.max != null)
-    //   ValidationItem(
-    //     condition: '$maxDate.isAfter($getter)',
-    //     defaultMessage: 'Should be at a maximum ${v.max}',
-    //     errorCode: 'ValidateDate.max',
-    //     param: v.max!,
-    //   ),
+    if (comp.less != null)
+      ValidationItem(
+        condition: comparison(comp.less!, '>= 0'),
+        defaultMessage: 'Should be at a minimum ${comp.less}',
+        errorCode: 'ValidateComparable.less',
+        param: '"${comp.less}"',
+      ),
+    if (comp.lessEq != null)
+      ValidationItem(
+        condition: comparison(comp.lessEq!, '> 0'),
+        defaultMessage: 'Should be at a less than or equal to ${comp.lessEq}',
+        errorCode: 'ValidateComparable.lessEq',
+        param: '"${comp.lessEq}"',
+      ),
+    if (comp.more != null)
+      ValidationItem(
+        condition: comparison(comp.more!, '<= 0'),
+        defaultMessage: 'Should be at a minimum ${comp.more}',
+        errorCode: 'ValidateComparable.more',
+        param: '"${comp.more}"',
+      ),
+    if (comp.moreEq != null)
+      ValidationItem(
+        condition: comparison(comp.moreEq!, '< 0'),
+        defaultMessage: 'Should be at a more than or equal to ${comp.moreEq}',
+        errorCode: 'ValidateComparable.moreEq',
+        param: '"${comp.moreEq}"',
+      ),
+  ];
+}
+
+List<ValidationItem> lengthValidations(ValidateLength v, String getter) {
+  return [
+    if (v.minLength != null)
+      ValidationItem(
+        condition: '$getter.length < ${v.minLength}',
+        defaultMessage: 'Should be at a minimum ${v.minLength} in length',
+        errorCode: 'ValidateList.minLength',
+        param: v.minLength,
+      ),
+    if (v.maxLength != null)
+      ValidationItem(
+        condition: '$getter.length > ${v.maxLength}',
+        defaultMessage: 'Should be at a maximum ${v.maxLength} in length',
+        errorCode: 'ValidateList.maxLength',
+        param: v.maxLength,
+      ),
   ];
 }
 
@@ -434,28 +613,4 @@ List<ValidationItem> stringValidations(ValidateString v, String getter) {
     ));
   }
   return validations;
-}
-
-class ValidationItem {
-  final String defaultMessage;
-  final String condition;
-  final String errorCode;
-  final Object? param;
-
-  const ValidationItem({
-    required this.defaultMessage,
-    required this.condition,
-    required this.errorCode,
-    required this.param,
-  });
-
-  String errorTemplate(String fieldName, String getter) {
-    return """ValidationError(
-        message: r'$defaultMessage',
-        errorCode: '$errorCode',
-        property: '$fieldName',
-        param: $param,
-        value: $getter,
-      )""";
-  }
 }

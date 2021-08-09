@@ -42,6 +42,7 @@ class SerdeType {
     required T Function(SerdeTypeUnionType) unionType,
     required T Function(SerdeTypeEnum) enumV,
     required T Function() dynamic,
+    required T Function(SerdeTypeLate) late,
   }) {
     switch (_inner) {
       case 'bool':
@@ -72,8 +73,10 @@ class SerdeType {
         return enumV(this as SerdeTypeEnum);
       case 'dynamic':
         return dynamic();
+      case 'Late':
+        return late(this as SerdeTypeLate);
       default:
-        throw Error();
+        throw Exception('SerdeType._inner $_inner not found in when');
     }
   }
 }
