@@ -7,20 +7,33 @@ part 'model.g.dart';
 // custom validator ergonomics, for field and for class
 // nested validation execution and result
 
+List<ValidationError> _customValidateStr(String value) {
+  return [];
+}
+
 @Validate(nullableErrorLists: true, customValidate: FormTest._customValidate)
 class FormTest {
   static List<ValidationError> _customValidate(Object? value) {
     return [];
   }
 
-  @ValidateString(minLength: 15, maxLength: 50, matches: r'^[a-zA-Z]+$')
+  @ValidateString(
+    minLength: 15,
+    maxLength: 50,
+    matches: r'^[a-zA-Z]+$',
+    customValidate: _customValidateStr,
+  )
   final String longStr;
 
   @ValidateString(maxLength: 20, contains: '@')
   final String shortStr;
 
-  @ValidateNum(isInt: true, min: 0)
+  @ValidateNum(isInt: true, min: 0, customValidate: _customValidateNum)
   final num positiveInt;
+
+  static List<ValidationError> _customValidateNum(num value) {
+    return [];
+  }
 
   @ValidationFunction()
   static List<ValidationError> _customValidate2(FormTest value) {
@@ -35,6 +48,11 @@ class FormTest {
     ];
   }
 
+  @ValidationFunction()
+  List<ValidationError> _customValidate3() {
+    return _customValidate2(this);
+  }
+
   @ValidateNum(
     min: 0,
     max: 1,
@@ -45,7 +63,7 @@ class FormTest {
   )
   final double? optionalDecimal;
 
-  @ValidateList(minLength: 1)
+  @ValidateList(minLength: 1, each: ValidateString(isDate: true, maxLength: 3))
   final List<String> nonEmptyList;
 
   @ValidateString(isUUID: UUIDVersion.v4)
