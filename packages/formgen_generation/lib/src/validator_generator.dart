@@ -20,6 +20,18 @@ class ValidatorGenerator extends GeneratorForAnnotation<Validate> {
     try {
       final visitor = ModelVisitor();
       element.visitChildren(visitor);
+      final _visited = <Element>{element};
+      ClassElement? elem = element is ClassElement ? element : null;
+      while (elem?.supertype != null) {
+        final currelem = elem!.supertype!.element;
+        if (_visited.contains(currelem)) {
+          elem = null;
+          continue;
+        }
+        _visited.add(currelem);
+        currelem.visitChildren(visitor);
+        elem = currelem;
+      }
 
       final annotationValue = annotation.objectValue.extractValue(
         Validate.fieldsSerde,
@@ -179,7 +191,9 @@ class ModelVisitor extends SimpleElementVisitor {
 
   @override
   dynamic visitConstructorElement(ConstructorElement element) {
-    className = element.returnType;
+    if (className == null) {
+      className = element.returnType;
+    }
     return super.visitConstructorElement(element);
   }
 
