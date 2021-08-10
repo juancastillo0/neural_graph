@@ -26,12 +26,11 @@ class ValidatorGenerator extends GeneratorForAnnotation<Validate> {
         (p0) => Validate.fromJson(p0),
       );
       final nullableErrorLists = annotationValue.nullableErrorLists;
+      final className = visitor.className;
 
       String _fieldIdent(String fieldName) {
         return '${visitor.className}Field.$fieldName';
       }
-
-      final className = visitor.className;
 
       return '''
 
@@ -39,6 +38,7 @@ enum ${className}Field {
   ${visitor.fields.entries.map((e) {
         return '${e.key},';
       }).join()}
+  ${visitor.fieldsWithValidate.map((e) => '${e.name},').join()}
   ${visitor.validateFunctions.isNotEmpty ? 'global,' : ''}
 }
 
@@ -46,6 +46,13 @@ class ${className}ValidationFields {
   const ${className}ValidationFields(this.errorsMap);
   final Map<${className}Field, List<ValidationError>> errorsMap;
 
+  ${visitor.fieldsWithValidate.map((e) {
+        final retType =
+            '${e.type.getDisplayString(withNullability: false)}Validation?';
+        return '$retType get ${e.name} {'
+            'final l = errorsMap[${_fieldIdent(e.name)}];'
+            'return (l != null && l.isNotEmpty) ? l.first.nestedValidation as $retType : null;}';
+      }).join()}
   ${visitor.fields.entries.map((e) {
         return 'List<ValidationError>${nullableErrorLists ? '?' : ''} get ${e.key} '
             '=> errorsMap[${_fieldIdent(e.key)}]${nullableErrorLists ? '' : '!'};';
@@ -65,6 +72,16 @@ class ${className}Validation extends Validation<${className}, ${className}Field>
 
 ${className}Validation validate${className}(${className} value) {
   final errors = <${className}Field, List<ValidationError>>{};
+
+  ${visitor.fieldsWithValidate.map((e) {
+        final isNullable =
+            e.type.nullabilitySuffix == NullabilitySuffix.question;
+        return '''
+        final _${e.name}Validation = ${isNullable ? 'value.${e.name} == null ? null : ' : ''}
+          validate${e.type.getDisplayString(withNullability: false)}(value.${e.name}!).toError(property: '${e.name}');
+        errors[${className}Field.${e.name}] = [if (_${e.name}Validation != null) _${e.name}Validation];
+        ''';
+      }).join()}
   ${visitor.validateFunctions.isEmpty ? '' : 'errors[${className}Field.global] = [${visitor.validateFunctions.map((e) {
               return e.isStatic
                   ? '...${className}.${e.name}(value)'
@@ -107,7 +124,7 @@ ${className}Validation validate${className}(${className} value) {
 }
 ''';
     } catch (e, s) {
-      return '"""$e\n$s"""';
+      return 'const error = """$e\n$s""";';
     }
   }
 }
@@ -144,6 +161,7 @@ class ModelVisitor extends SimpleElementVisitor {
   DartType? className;
   final fields = <String, _Field>{};
   final validateFunctions = <MethodElement>{};
+  final fieldsWithValidate = <FieldElement>{};
 
   static const _listAnnotation = TypeChecker.fromRuntime(ValidateList);
   static const _stringAnnotation = TypeChecker.fromRuntime(ValidateString);
@@ -180,6 +198,16 @@ class ModelVisitor extends SimpleElementVisitor {
         );
 
         fields[element.name] = _Field(element, _annot);
+      }
+    }
+
+    final elementType = element.type.element;
+    if (elementType != null) {
+      final fieldType = TypeChecker.fromRuntime(Validate)
+          .annotationsOfExact(elementType, throwOnUnresolved: false)
+          .toList();
+      if (fieldType.isNotEmpty) {
+        fieldsWithValidate.add(element);
       }
     }
 

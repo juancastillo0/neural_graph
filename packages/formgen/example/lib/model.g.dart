@@ -13,12 +13,20 @@ enum FormTestField {
   optionalDecimal,
   nonEmptyList,
   identifier,
+  nested,
   global,
 }
 
 class FormTestValidationFields {
   const FormTestValidationFields(this.errorsMap);
   final Map<FormTestField, List<ValidationError>> errorsMap;
+
+  NestedFieldValidation? get nested {
+    final l = errorsMap[FormTestField.nested];
+    return (l != null && l.isNotEmpty)
+        ? l.first.nestedValidation as NestedFieldValidation?
+        : null;
+  }
 
   List<ValidationError>? get longStr => errorsMap[FormTestField.longStr];
   List<ValidationError>? get shortStr => errorsMap[FormTestField.shortStr];
@@ -43,6 +51,14 @@ class FormTestValidation extends Validation<FormTest, FormTestField> {
 
 FormTestValidation validateFormTest(FormTest value) {
   final errors = <FormTestField, List<ValidationError>>{};
+
+  final _nestedValidation = value.nested == null
+      ? null
+      : validateNestedField(value.nested!).toError(property: 'nested');
+  errors[FormTestField.nested] = [
+    if (_nestedValidation != null) _nestedValidation
+  ];
+
   errors[FormTestField.global] = [
     ...FormTest._customValidate2(value),
     ...value._customValidate3()

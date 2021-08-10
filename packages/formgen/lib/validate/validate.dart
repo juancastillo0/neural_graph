@@ -1,5 +1,21 @@
 export 'validate_annotations.dart';
 
+// class ValidationError {
+//   const ValidationError._();
+
+//   factory ValidationError({
+//     required String property,
+//     required Object? value,
+//     required String errorCode,
+//     required String message,
+//     Object? validationParam,
+//     Validation? nestedValidation,
+//   }) = ValidationErrorSingle;
+
+//   static ValidationError nested<T, F>(Validation<T, F> validation) =>
+//       ValidationErrorNested<T, F>(validation);
+
+// }
 
 class ValidationError {
   // TODO: final F fieldId;
@@ -9,7 +25,7 @@ class ValidationError {
   final String errorCode;
   final Object? validationParam;
   final String message;
-  final List<ValidationError>? children;
+  final Validation? nestedValidation;
 
   const ValidationError({
     required this.property,
@@ -17,7 +33,7 @@ class ValidationError {
     required this.errorCode,
     required this.message,
     this.validationParam,
-    this.children,
+    this.nestedValidation,
   });
 
   @override
@@ -25,7 +41,26 @@ class ValidationError {
     return '$errorCode${validationParam == null ? '' : '(${validationParam})'}: '
         '$message. $property${value == null ? '' : ' = $value'}';
   }
+
+  static ValidationError? fromNested(String property, Validation validation) {
+    return validation.hasErrors
+        ? ValidationError(
+            errorCode: 'Validate.nested',
+            message: '',
+            property: property,
+            value: validation.value,
+            nestedValidation: validation,
+          )
+        : null;
+    // return this.hasErrors ? ValidationError.nested(this) : null;
+  }
 }
+
+// class ValidationErrorNested<T, F> extends ValidationError {
+//   final Validation<T, F> validation;
+
+//   ValidationErrorNested(this.validation) : super._();
+// }
 
 class Validated<T> {
   const Validated._(this.value);
@@ -51,6 +86,10 @@ abstract class Validation<T, F> {
   // bool get hasErrors => numErrors > 0;
 
   Validated<T>? get validated => isValid ? Validated._(value) : null;
+
+  ValidationError? toError({required String property}) {
+    return ValidationError.fromNested(property, this);
+  }
 }
 
 abstract class Validatable<T, F> {
