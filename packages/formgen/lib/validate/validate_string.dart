@@ -16,7 +16,7 @@ enum UUIDVersion {
 
 enum ISBNVersion { v10, v13 }
 
-T? parseEnum<T>(String? raw, List<T> enumValues) {
+T? _parseEnum<T>(String? raw, List<T> enumValues) {
   if (raw == null) {
     return null;
   }
@@ -29,7 +29,7 @@ T? parseEnum<T>(String? raw, List<T> enumValues) {
   throw Error();
 }
 
-String? toEnumString(Object? value) {
+String? _toEnumString(Object? value) {
   return value == null ? null : value.toString().split('.')[1];
 }
 
@@ -130,7 +130,7 @@ class ValidateString extends ValidateField<String> implements ValidateLength {
       'isBool': isBool,
       'isNum': isNum,
       'isUrl': isUrl,
-      'isUUID': toEnumString(isUUID),
+      'isUUID': _toEnumString(isUUID),
       'isCurrency': isCurrency,
       'isJSON': isJSON,
       'matches': matches,
@@ -151,8 +151,8 @@ class ValidateString extends ValidateField<String> implements ValidateLength {
       'surrogatePairsLengthMax': surrogatePairsLengthMax,
       'isInt': isInt,
       'isFloat': isFloat,
-      'isISBN': toEnumString(isISBN),
-      'isIP': toEnumString(isIP),
+      'isISBN': _toEnumString(isISBN),
+      'isIP': _toEnumString(isIP),
     }..removeWhere((key, value) => value == null);
   }
 
@@ -170,7 +170,7 @@ class ValidateString extends ValidateField<String> implements ValidateLength {
       isUrl: map['isUrl'],
       isUUID: map['isUUID'] is UUIDVersion
           ? map['isUUID']
-          : parseEnum(map['isUUID'] as String?, UUIDVersion.values),
+          : _parseEnum(map['isUUID'] as String?, UUIDVersion.values),
       isCurrency: map['isCurrency'],
       isJSON: map['isJSON'],
       matches: map['matches'],
@@ -193,10 +193,10 @@ class ValidateString extends ValidateField<String> implements ValidateLength {
       isFloat: map['isFloat'],
       isISBN: map['isISBN'] is ISBNVersion
           ? map['isISBN']
-          : parseEnum(map['isISBN'] as String?, ISBNVersion.values),
+          : _parseEnum(map['isISBN'] as String?, ISBNVersion.values),
       isIP: map['isIP'] is IPVersion
           ? map['isIP']
-          : parseEnum(map['isIP'] as String?, IPVersion.values),
+          : _parseEnum(map['isIP'] as String?, IPVersion.values),
     );
   }
 
