@@ -21,3 +21,15 @@ builders:
     auto_apply: dependents
     build_to: cache
     applies_builders: ["source_gen|combining_builder"]
+
+  validators_lib_gen:
+    # library URI containing the builder - maps to `lib/member_count_library_generator.dart`
+    import: "package:formgen_generation/formgen_generation.dart"
+    # Name of the function in the above library to call.
+    builder_factories: ["validatorsLibGen"]
+    # The mapping from the source extension to the generated file extension
+    build_extensions: {".dart": [".validators.dart"]}
+    # Will automatically run on any package that depends on it
+    auto_apply: dependents
+    # Generate the output directly into the package, not to a hidden cache dir
+    build_to: source

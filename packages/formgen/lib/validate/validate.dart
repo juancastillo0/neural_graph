@@ -92,10 +92,8 @@ abstract class Validation<T, F> {
   }
 }
 
-abstract class Validatable<T, F> {
-  Validator<T, F> get validator;
-}
+class Validator<T, V extends Validation<T, Object>> {
+  final V Function(T) validate;
 
-abstract class Validator<T, F> {
-  Validation<T, F> validate(T value);
+  const Validator(this.validate);
 }
