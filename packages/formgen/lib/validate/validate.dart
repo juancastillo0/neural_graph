@@ -38,8 +38,8 @@ class ValidationError {
 
   @override
   String toString() {
-    return '$errorCode${validationParam == null ? '' : '(${validationParam})'}: '
-        '$message. $property${value == null ? '' : ' = $value'}';
+    return '$errorCode${validationParam == null ? '' : '(${validationParam})'}:'
+        ' $message. $property${value == null ? '' : ' = $value'}';
   }
 
   static ValidationError? fromNested(String property, Validation validation) {
@@ -68,22 +68,26 @@ class Validated<T> {
 }
 
 abstract class Validation<T, F> {
-  const Validation();
+  Validation(Map<F, List<ValidationError>> errorsMap)
+      : errorsMap = Map.unmodifiable(errorsMap),
+        numErrors = computeNumErrors(errorsMap.values.expand((e) => e));
 
-  Map<F, List<ValidationError>> get errorsMap;
+  static int computeNumErrors(Iterable<ValidationError> errors) {
+    return errors.fold(
+      0,
+      (_num, error) => _num + (error.nestedValidation?.numErrors ?? 1),
+    );
+  }
+
+  final Map<F, List<ValidationError>> errorsMap;
+  final int numErrors;
+
   T get value;
   Object get fields;
 
   Iterable<ValidationError> get allErrors => errorsMap.values.expand((e) => e);
-
-  int get numErrors =>
-      errorsMap.values.fold(0, (_num, errors) => _num + errors.length);
-  bool get hasErrors => allErrors.isNotEmpty;
+  bool get hasErrors => numErrors > 0;
   bool get isValid => !hasErrors;
-
-  // TODO: faster impl
-  // int get numErrors;
-  // bool get hasErrors => numErrors > 0;
 
   Validated<T>? get validated => isValid ? Validated._(value) : null;
 

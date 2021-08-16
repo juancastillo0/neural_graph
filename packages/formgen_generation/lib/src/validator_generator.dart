@@ -72,7 +72,7 @@ class ${className}ValidationFields {
 }
 
 class ${className}Validation extends Validation<${className}, ${className}Field> {
-  const ${className}Validation(this.errorsMap, this.value, this.fields);
+  ${className}Validation(this.errorsMap, this.value, this.fields) : super(errorsMap);
 
   final Map<${className}Field, List<ValidationError>> errorsMap;
 
@@ -96,7 +96,7 @@ ${className}Validation validate${className}(${className} value) {
       }).join()}
   ${visitor.validateFunctions.isEmpty ? '' : 'errors[${className}Field.global] = [${visitor.validateFunctions.map((e) {
               return e.isStatic
-                  ? '...${className}.${e.name}(value)'
+                  ? '...${e.enclosingElement.name}.${e.name}(value)'
                   : '...value.${e.name}()';
             }).join(',')}];'}
   ${visitor.fields.entries.map((e) {
@@ -202,7 +202,7 @@ class ModelVisitor extends SimpleElementVisitor {
     void _addFields({
       required TypeChecker annotation,
       required Map<String, SerdeType> fieldsSerde,
-      required ValidateField Function(Map<String, dynamic> map) fromJson,
+      required ValidateField Function(Map<String, Object?> map) fromJson,
     }) {
       if (annotation.hasAnnotationOfExact(element)) {
         final annot = annotation.annotationsOfExact(element).first;
@@ -347,13 +347,18 @@ extension ConsumeSerdeType on DartObject {
         return this.serde(l.func());
       },
       dynamic: () {
-        return this.toBoolValue() ??
+        final v = this.toBoolValue() ??
             this.toIntValue() ??
             this.toDoubleValue() ??
             this.toStringValue() ??
             this.toListValue() ??
             this.toSetValue() ??
             this.toMapValue();
+        if (v == null) {
+          final durMicro = this.getField('_duration')?.toIntValue();
+          return durMicro == null ? null : Duration(microseconds: durMicro);
+        }
+        return v;
       },
     );
     return _value;
@@ -450,9 +455,11 @@ extension TemplateValidateField on ValidateField {
       },
       duration: (v) {
         if (v.comp != null)
-          validations.addAll(compValidations(
+          validations.addAll(compValidations<Duration>(
             v.comp!,
             prefix: prefix,
+            makeString: (dur) =>
+                'Duration(microseconds: ${dur.inMicroseconds})',
             fieldName: fieldName,
           ));
       },
