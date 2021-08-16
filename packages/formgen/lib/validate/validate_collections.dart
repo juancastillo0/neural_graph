@@ -8,13 +8,18 @@ abstract class ValidateLength {
 }
 
 class ValidateList<T> extends ValidateField<List<T>> implements ValidateLength {
+  @override
   final int? minLength;
+  @override
   final int? maxLength;
   final ValidateField<T>? each;
 
+  @override
   ValidateFieldType get variantType => ValidateFieldType.list;
 
+  @override
   final List<ValidationError> Function(List<T>)? customValidate;
+  @override
   final String? customValidateName;
 
   const ValidateList({
@@ -25,7 +30,8 @@ class ValidateList<T> extends ValidateField<List<T>> implements ValidateLength {
     this.customValidateName,
   });
 
-  Map<String, dynamic> toJson() {
+  @override
+  Map<String, Object?> toJson() {
     return {
       ValidateField.variantTypeString: variantType.toString(),
       'minLength': minLength,
@@ -34,14 +40,15 @@ class ValidateList<T> extends ValidateField<List<T>> implements ValidateLength {
     };
   }
 
-  factory ValidateList.fromJson(Map<String, dynamic> map) {
+  factory ValidateList.fromJson(Map<String, Object?> map) {
     return ValidateList(
-      minLength: map['minLength'],
-      maxLength: map['maxLength'],
+      minLength: map['minLength'] as int?,
+      maxLength: map['maxLength'] as int?,
       each: map['each'] == null
           ? null
-          : (ValidateField.fromJson(map['each']) as ValidateField<T>),
-      customValidateName: map['customValidate'],
+          : (ValidateField.fromJson(map['each']! as Map<String, Object?>)
+              as ValidateField<T>),
+      customValidateName: map['customValidate'] as String?,
     );
   }
 
@@ -54,13 +61,18 @@ class ValidateList<T> extends ValidateField<List<T>> implements ValidateLength {
 }
 
 class ValidateSet<T> extends ValidateField<Set<T>> implements ValidateLength {
+  @override
   final int? minLength;
+  @override
   final int? maxLength;
   final ValidateField<T>? each;
 
+  @override
   ValidateFieldType get variantType => ValidateFieldType.set;
 
+  @override
   final List<ValidationError> Function(Set<T>)? customValidate;
+  @override
   final String? customValidateName;
 
   const ValidateSet({
@@ -71,7 +83,8 @@ class ValidateSet<T> extends ValidateField<Set<T>> implements ValidateLength {
     this.customValidateName,
   });
 
-  Map<String, dynamic> toJson() {
+  @override
+  Map<String, Object?> toJson() {
     return {
       ValidateField.variantTypeString: variantType.toString(),
       'minLength': minLength,
@@ -81,14 +94,15 @@ class ValidateSet<T> extends ValidateField<Set<T>> implements ValidateLength {
     };
   }
 
-  factory ValidateSet.fromJson(Map<String, dynamic> map) {
+  factory ValidateSet.fromJson(Map<String, Object?> map) {
     return ValidateSet(
-      minLength: map['minLength'],
-      maxLength: map['maxLength'],
+      minLength: map['minLength'] as int?,
+      maxLength: map['maxLength'] as int?,
       each: map['each'] == null
           ? null
-          : (ValidateField.fromJson(map['each']) as ValidateField<T>),
-      customValidateName: map['customValidate'],
+          : (ValidateField.fromJson(map['each']! as Map<String, Object?>)
+              as ValidateField<T>),
+      customValidateName: map['customValidate'] as String?,
     );
   }
 
@@ -102,14 +116,19 @@ class ValidateSet<T> extends ValidateField<Set<T>> implements ValidateLength {
 
 class ValidateMap<K, V> extends ValidateField<Map<K, V>>
     implements ValidateLength {
+  @override
   final int? minLength;
+  @override
   final int? maxLength;
   final ValidateField<K>? eachKey;
   final ValidateField<V>? eachValue;
 
+  @override
   ValidateFieldType get variantType => ValidateFieldType.map;
 
+  @override
   final List<ValidationError> Function(Map<K, V>)? customValidate;
+  @override
   final String? customValidateName;
 
   const ValidateMap({
@@ -121,7 +140,8 @@ class ValidateMap<K, V> extends ValidateField<Map<K, V>>
     this.customValidateName,
   });
 
-  Map<String, dynamic> toJson() {
+  @override
+  Map<String, Object?> toJson() {
     return {
       ValidateField.variantTypeString: variantType.toString(),
       'minLength': minLength,
@@ -132,17 +152,19 @@ class ValidateMap<K, V> extends ValidateField<Map<K, V>>
     };
   }
 
-  factory ValidateMap.fromJson(Map<String, dynamic> map) {
+  factory ValidateMap.fromJson(Map<String, Object?> map) {
     return ValidateMap(
-      minLength: map['minLength'],
-      maxLength: map['maxLength'],
+      minLength: map['minLength'] as int?,
+      maxLength: map['maxLength'] as int?,
       eachKey: map['eachKey'] == null
           ? null
-          : (ValidateField.fromJson(map['eachKey']) as ValidateField<K>),
+          : (ValidateField.fromJson(map['eachKey']! as Map<String, Object?>)
+              as ValidateField<K>),
       eachValue: map['eachValue'] == null
           ? null
-          : (ValidateField.fromJson(map['eachValue']) as ValidateField<V>),
-      customValidateName: map['customValidate'],
+          : (ValidateField.fromJson(map['eachValue']! as Map<String, Object?>)
+              as ValidateField<V>),
+      customValidateName: map['customValidate'] as String?,
     );
   }
 

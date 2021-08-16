@@ -36,7 +36,9 @@ String? _toEnumString(Object? value) {
 class ValidateString extends ValidateField<String> implements ValidateLength {
   final List<String>? isIn; // enum
 
+  @override
   final int? minLength;
+  @override
   final int? maxLength;
   final bool? isPhone;
   final bool? isEmail;
@@ -54,7 +56,8 @@ class ValidateString extends ValidateField<String> implements ValidateLength {
   final bool? isAlpha;
   final bool? isAlphanumeric;
 
-  // isVariableWidth, isHalfWidth, isFullWidth, isSurrogatePair, isPostalCode, isMultibyte,
+  // isVariableWidth, isHalfWidth, isFullWidth, isSurrogatePair,
+  // isPostalCode, isMultibyte,
   final bool? isAscii;
   final bool? isBase64;
   final bool? isCreditCard;
@@ -73,9 +76,12 @@ class ValidateString extends ValidateField<String> implements ValidateLength {
   final bool? isLowercase;
   final bool? isUppercase;
 
-  final ValidateFieldType variantType = ValidateFieldType.string;
+  @override
+  ValidateFieldType get variantType => ValidateFieldType.string;
 
+  @override
   final List<ValidationError> Function(String)? customValidate;
+  @override
   final String? customValidateName;
 
   const ValidateString({
@@ -117,7 +123,8 @@ class ValidateString extends ValidateField<String> implements ValidateLength {
     this.customValidateName,
   });
 
-  Map<String, dynamic> toJson() {
+  @override
+  Map<String, Object?> toJson() {
     return {
       ValidateField.variantTypeString: variantType.toString(),
       'isIn': isIn,
@@ -156,46 +163,47 @@ class ValidateString extends ValidateField<String> implements ValidateLength {
     }..removeWhere((key, value) => value == null);
   }
 
-  factory ValidateString.fromJson(Map<String, dynamic> map) {
+  factory ValidateString.fromJson(Map<String, Object?> map) {
     return ValidateString(
-      isIn: map['isIn'] == null ? null : List<String>.from(map['isIn']),
-      maxLength: map['maxLength'],
-      minLength: map['minLength'],
-      isPhone: map['isPhone'],
-      isEmail: map['isEmail'],
-      isDate: map['isDate'],
-      isTime: map['isTime'],
-      isBool: map['isBool'],
-      isNum: map['isNum'],
-      isUrl: map['isUrl'],
+      isIn:
+          map['isIn'] == null ? null : List<String>.from(map['isIn']! as List),
+      maxLength: map['maxLength'] as int?,
+      minLength: map['minLength'] as int?,
+      isPhone: map['isPhone'] as bool?,
+      isEmail: map['isEmail'] as bool?,
+      isDate: map['isDate'] as bool?,
+      isTime: map['isTime'] as bool?,
+      isBool: map['isBool'] as bool?,
+      isNum: map['isNum'] as bool?,
+      isUrl: map['isUrl'] as bool?,
       isUUID: map['isUUID'] is UUIDVersion
-          ? map['isUUID']
+          ? map['isUUID']! as UUIDVersion
           : _parseEnum(map['isUUID'] as String?, UUIDVersion.values),
-      isCurrency: map['isCurrency'],
-      isJSON: map['isJSON'],
-      matches: map['matches'],
-      contains: map['contains'],
-      isAlpha: map['isAlpha'],
-      isAlphanumeric: map['isAlphanumeric'],
-      isLowercase: map['isLowercase'],
-      isUppercase: map['isUppercase'],
-      customValidateName: map['customValidate'],
-      isAscii: map['isAscii'],
-      isBase64: map['isBase64'],
-      isCreditCard: map['isCreditCard'],
-      isFQDN: map['isFQDN'],
-      isHexadecimal: map['isHexadecimal'],
-      isHexColor: map['isHexColor'],
-      isDivisibleBy: map['isDivisibleBy'],
-      surrogatePairsLengthMin: map['surrogatePairsLengthMin'],
-      surrogatePairsLengthMax: map['surrogatePairsLengthMax'],
-      isInt: map['isInt'],
-      isFloat: map['isFloat'],
+      isCurrency: map['isCurrency'] as bool?,
+      isJSON: map['isJSON'] as bool?,
+      matches: map['matches'] as String?,
+      contains: map['contains'] as String?,
+      isAlpha: map['isAlpha'] as bool?,
+      isAlphanumeric: map['isAlphanumeric'] as bool?,
+      isLowercase: map['isLowercase'] as bool?,
+      isUppercase: map['isUppercase'] as bool?,
+      customValidateName: map['customValidate'] as String?,
+      isAscii: map['isAscii'] as bool?,
+      isBase64: map['isBase64'] as bool?,
+      isCreditCard: map['isCreditCard'] as bool?,
+      isFQDN: map['isFQDN'] as bool?,
+      isHexadecimal: map['isHexadecimal'] as bool?,
+      isHexColor: map['isHexColor'] as bool?,
+      isDivisibleBy: map['isDivisibleBy'] as int?,
+      surrogatePairsLengthMin: map['surrogatePairsLengthMin'] as int?,
+      surrogatePairsLengthMax: map['surrogatePairsLengthMax'] as int?,
+      isInt: map['isInt'] as bool?,
+      isFloat: map['isFloat'] as bool?,
       isISBN: map['isISBN'] is ISBNVersion
-          ? map['isISBN']
+          ? map['isISBN']! as ISBNVersion
           : _parseEnum(map['isISBN'] as String?, ISBNVersion.values),
       isIP: map['isIP'] is IPVersion
-          ? map['isIP']
+          ? map['isIP']! as IPVersion
           : _parseEnum(map['isIP'] as String?, IPVersion.values),
     );
   }

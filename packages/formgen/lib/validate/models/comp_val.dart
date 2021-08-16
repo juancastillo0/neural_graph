@@ -102,11 +102,11 @@ abstract class CompVal<T extends Comparable<T>> {
   TypeCompVal get variantType;
 
   static CompVal<T> fromJson<T extends Comparable<T>>(Object? _map) {
-    final Map<String, dynamic> map;
+    final Map<String, Object?> map;
     if (_map is CompVal<T>) {
       return _map;
     } else if (_map is String) {
-      map = jsonDecode(_map) as Map<String, dynamic>;
+      map = jsonDecode(_map) as Map<String, Object?>;
     } else {
       map = (_map! as Map).cast();
     }
@@ -125,7 +125,7 @@ abstract class CompVal<T extends Comparable<T>> {
     }
   }
 
-  Map<String, dynamic> toJson();
+  Map<String, Object?> toJson();
 }
 
 class TypeCompVal {
@@ -227,11 +227,11 @@ class CompValueRef<T extends Comparable<T>> extends CompVal<T> {
   final TypeCompVal variantType = TypeCompVal.ref;
 
   static CompValueRef<T> fromJson<T extends Comparable<T>>(Object? _map) {
-    final Map<String, dynamic> map;
+    final Map<String, Object?> map;
     if (_map is CompValueRef<T>) {
       return _map;
     } else if (_map is String) {
-      map = jsonDecode(_map) as Map<String, dynamic>;
+      map = jsonDecode(_map) as Map<String, Object?>;
     } else {
       map = (_map! as Map).cast();
     }
@@ -247,7 +247,7 @@ class CompValueRef<T extends Comparable<T>> extends CompVal<T> {
   }
 
   @override
-  Map<String, dynamic> toJson() {
+  Map<String, Object?> toJson() {
     return {
       'variantType': 'ref',
       'ref': ref,
@@ -275,11 +275,11 @@ class CompValueSingle<T extends Comparable<T>> extends CompVal<T> {
   }
 
   static CompValueSingle<T> fromJson<T extends Comparable<T>>(Object? _map) {
-    final Map<String, dynamic> map;
+    final Map<String, Object?> map;
     if (_map is CompValueSingle<T>) {
       return _map;
     } else if (_map is String) {
-      map = jsonDecode(_map) as Map<String, dynamic>;
+      map = jsonDecode(_map) as Map<String, Object?>;
     } else {
       map = (_map! as Map).cast();
     }
@@ -290,7 +290,7 @@ class CompValueSingle<T extends Comparable<T>> extends CompVal<T> {
   }
 
   @override
-  Map<String, dynamic> toJson() {
+  Map<String, Object?> toJson() {
     return {
       'variantType': 'single',
       'value': value,
@@ -318,11 +318,11 @@ class CompValueList<T extends Comparable<T>> extends CompVal<T> {
   }
 
   static CompValueList<T> fromJson<T extends Comparable<T>>(Object? _map) {
-    final Map<String, dynamic> map;
+    final Map<String, Object?> map;
     if (_map is CompValueList<T>) {
       return _map;
     } else if (_map is String) {
-      map = jsonDecode(_map) as Map<String, dynamic>;
+      map = jsonDecode(_map) as Map<String, Object?>;
     } else {
       map = (_map! as Map).cast();
     }
@@ -336,7 +336,7 @@ class CompValueList<T extends Comparable<T>> extends CompVal<T> {
   }
 
   @override
-  Map<String, dynamic> toJson() {
+  Map<String, Object?> toJson() {
     return {
       'variantType': 'list',
       'values': values.map((e) => e.toJson()).toList(),

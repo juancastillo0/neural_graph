@@ -2,20 +2,20 @@ import 'package:formgen/validate/serde_type.dart';
 import 'package:formgen/validate/validate.dart';
 import 'package:formgen/validate/validate_collections.dart';
 import 'package:formgen/validate/validate_string.dart';
-import 'package:validators/validators.dart' as v;
-
 import 'models/comp_val.dart';
 
+export 'models/comp_val.dart';
 export 'validate_collections.dart';
 export 'validate_string.dart';
-export 'models/comp_val.dart';
 
 class Validate<T> implements ValidateCustom<T> {
   final bool nullableErrorLists;
   final bool constErrors;
   final bool enumFields;
 
+  @override
   final List<ValidationError> Function(T)? customValidate;
+  @override
   final String? customValidateName;
 
   const Validate({
@@ -35,7 +35,7 @@ class Validate<T> implements ValidateCustom<T> {
     'customValidate': SerdeType.function,
   };
 
-  Map<String, dynamic> toJson() {
+  Map<String, Object?> toJson() {
     return {
       'nullableErrorLists': nullableErrorLists,
       'constErrors': constErrors,
@@ -44,12 +44,12 @@ class Validate<T> implements ValidateCustom<T> {
     };
   }
 
-  factory Validate.fromJson(Map<String, dynamic> map) {
+  factory Validate.fromJson(Map<String, Object?> map) {
     return Validate(
-      nullableErrorLists: map['nullableErrorLists'],
-      constErrors: map['constErrors'],
-      enumFields: map['enumFields'],
-      customValidateName: map['customValidate'],
+      nullableErrorLists: map['nullableErrorLists'] as bool?,
+      constErrors: map['constErrors'] as bool?,
+      enumFields: map['enumFields'] as bool?,
+      customValidateName: map['customValidate'] as String?,
     );
   }
 }
@@ -110,7 +110,7 @@ class ValidateComparison<T extends Comparable<T>> {
     'useCompareTo': SerdeType.bool,
   });
 
-  Map<String, dynamic> toJson() {
+  Map<String, Object?> toJson() {
     return {
       'more': more?.toJson(),
       'less': less?.toJson(),
@@ -120,13 +120,13 @@ class ValidateComparison<T extends Comparable<T>> {
     };
   }
 
-  factory ValidateComparison.fromJson(Map<String, dynamic> map) {
+  factory ValidateComparison.fromJson(Map<String, Object?> map) {
     return ValidateComparison<T>(
       more: map['more'] == null ? null : CompVal.fromJson<T>(map['more']),
       less: map['less'] == null ? null : CompVal.fromJson<T>(map['less']),
       moreEq: map['moreEq'] == null ? null : CompVal.fromJson<T>(map['moreEq']),
       lessEq: map['lessEq'] == null ? null : CompVal.fromJson<T>(map['lessEq']),
-      useCompareTo: map['useCompareTo'],
+      useCompareTo: map['useCompareTo'] as bool?,
     );
   }
 }
@@ -191,14 +191,14 @@ abstract class ValidateField<T> implements ValidateCustom<T> {
     );
   }
 
-  T when<T>({
-    required Function(ValidateString) string,
-    required Function(ValidateNum) num,
-    required Function(ValidateDate) date,
-    required Function(ValidateDuration) duration,
-    required Function(ValidateList) list,
-    required Function(ValidateMap) map,
-    required Function(ValidateSet) set,
+  _T when<_T>({
+    required _T Function(ValidateString) string,
+    required _T Function(ValidateNum) num,
+    required _T Function(ValidateDate) date,
+    required _T Function(ValidateDuration) duration,
+    required _T Function(ValidateList) list,
+    required _T Function(ValidateMap) map,
+    required _T Function(ValidateSet) set,
   }) {
     switch (variantType) {
       case ValidateFieldType.string:
@@ -222,7 +222,7 @@ abstract class ValidateField<T> implements ValidateCustom<T> {
     final type = parseValidateFieldType(
       (map[ValidateField.variantTypeString] ??
           map['runtimeType'] ??
-          map['type']) as String,
+          map['type'])! as String,
     );
     switch (type) {
       case ValidateFieldType.string:
@@ -250,11 +250,15 @@ class ValidateNum extends ValidateField<num>
   final num? max;
   final bool? isInt;
   final num? isDivisibleBy;
+  @override
   final ValidateComparison<num>? comp;
 
+  @override
   ValidateFieldType get variantType => ValidateFieldType.num;
 
+  @override
   final List<ValidationError> Function(num)? customValidate;
+  @override
   final String? customValidateName;
 
   const ValidateNum({
@@ -278,7 +282,8 @@ class ValidateNum extends ValidateField<num>
     'comp': ValidateComparison.fieldsSerde,
   };
 
-  Map<String, dynamic> toJson() {
+  @override
+  Map<String, Object?> toJson() {
     return {
       ValidateField.variantTypeString: variantType.toString(),
       'isIn': isIn,
@@ -291,16 +296,17 @@ class ValidateNum extends ValidateField<num>
     };
   }
 
-  factory ValidateNum.fromJson(Map<String, dynamic> map) {
+  factory ValidateNum.fromJson(Map<String, Object?> map) {
     return ValidateNum(
-      isIn: map['isIn'] == null ? null : List<num>.from(map['isIn']),
-      min: map['min'],
-      max: map['max'],
-      isInt: map['isInt'],
-      isDivisibleBy: map['isDivisibleBy'],
-      customValidateName: map['customValidate'],
-      comp:
-          map['comp'] == null ? null : ValidateComparison.fromJson(map['comp']),
+      isIn: map['isIn'] == null ? null : List<num>.from(map['isIn']! as List),
+      min: map['min'] as int?,
+      max: map['max'] as int?,
+      isInt: map['isInt'] as bool?,
+      isDivisibleBy: map['isDivisibleBy'] as int?,
+      customValidateName: map['customValidate'] as String?,
+      comp: map['comp'] == null
+          ? null
+          : ValidateComparison.fromJson(map['comp']! as Map<String, Object?>),
     );
   }
 }
@@ -310,9 +316,12 @@ class ValidateDuration extends ValidateField<Duration>
   final Duration? min;
   final Duration? max;
 
+  @override
   ValidateFieldType get variantType => ValidateFieldType.duration;
 
+  @override
   final List<ValidationError> Function(Duration)? customValidate;
+  @override
   final String? customValidateName;
 
   @override
@@ -333,7 +342,8 @@ class ValidateDuration extends ValidateField<Duration>
     'comp': ValidateComparison.fieldsSerde,
   };
 
-  Map<String, dynamic> toJson() {
+  @override
+  Map<String, Object?> toJson() {
     return {
       ValidateField.variantTypeString: variantType.toString(),
       'min': min?.inMicroseconds,
@@ -343,15 +353,18 @@ class ValidateDuration extends ValidateField<Duration>
     };
   }
 
-  factory ValidateDuration.fromJson(Map<String, dynamic> map) {
+  factory ValidateDuration.fromJson(Map<String, Object?> map) {
     return ValidateDuration(
-      min:
-          map['min'] == null ? null : Duration(microseconds: map['min'] as int),
-      max:
-          map['max'] == null ? null : Duration(microseconds: map['max'] as int),
-      customValidateName: map['customValidate'],
-      comp:
-          map['comp'] == null ? null : ValidateComparison.fromJson(map['comp']),
+      min: map['min'] == null
+          ? null
+          : Duration(microseconds: map['min']! as int),
+      max: map['max'] == null
+          ? null
+          : Duration(microseconds: map['max']! as int),
+      customValidateName: map['customValidate'] as String?,
+      comp: map['comp'] == null
+          ? null
+          : ValidateComparison.fromJson(map['comp']! as Map<String, Object?>),
     );
   }
 }
@@ -361,9 +374,12 @@ class ValidateDate extends ValidateField<DateTime>
   final String? min;
   final String? max;
 
+  @override
   ValidateFieldType get variantType => ValidateFieldType.date;
 
+  @override
   final List<ValidationError> Function(DateTime)? customValidate;
+  @override
   final String? customValidateName;
 
   @override
@@ -384,7 +400,8 @@ class ValidateDate extends ValidateField<DateTime>
     'comp': ValidateComparison.fieldsSerde,
   };
 
-  Map<String, dynamic> toJson() {
+  @override
+  Map<String, Object?> toJson() {
     return {
       ValidateField.variantTypeString: variantType.toString(),
       'min': min,
@@ -394,13 +411,14 @@ class ValidateDate extends ValidateField<DateTime>
     };
   }
 
-  factory ValidateDate.fromJson(Map<String, dynamic> map) {
+  factory ValidateDate.fromJson(Map<String, Object?> map) {
     return ValidateDate(
-      min: map['min'],
-      max: map['max'],
-      customValidateName: map['customValidate'],
-      comp:
-          map['comp'] == null ? null : ValidateComparison.fromJson(map['comp']),
+      min: map['min'] as String?,
+      max: map['max'] as String?,
+      customValidateName: map['customValidate'] as String?,
+      comp: map['comp'] == null
+          ? null
+          : ValidateComparison.fromJson(map['comp']! as Map<String, Object?>),
     );
   }
 }
