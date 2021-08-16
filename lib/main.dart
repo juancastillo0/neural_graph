@@ -1,3 +1,4 @@
+import 'package:file_system_access/file_system_access.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -9,13 +10,13 @@ import 'package:mobx/mobx.dart';
 import 'package:neural_graph/common/extensions.dart';
 import 'package:neural_graph/diagram/graph.dart';
 import 'package:neural_graph/fields/button_select_field.dart';
-import 'package:neural_graph/file_system_access_chrome/file_system_access.dart';
 import 'package:neural_graph/graph_canvas/graph_canvas.dart';
 import 'package:neural_graph/layers/codegen_helper.dart';
 import 'package:neural_graph/layers/layers.dart';
 import 'package:neural_graph/layers_menu.dart';
 import 'package:neural_graph/root_store.dart';
 import 'package:neural_graph/rtc/data_channel.dart';
+import 'package:neural_graph/tasks/tasks_tab_view.dart';
 import 'package:neural_graph/widgets/gesture_listener.dart';
 import 'package:neural_graph/widgets/resizable.dart';
 import 'package:neural_graph/widgets/scrollable.dart';
@@ -127,45 +128,83 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   final root = RootStore.instance;
 
+  int index = 0;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(widget.title!)),
-      body: Row(
+      appBar: AppBar(
+          title: Row(
         children: [
-          const Resizable(
-            defaultWidth: 210,
-            horizontal: ResizeHorizontal.right,
-            child: LayersMenu(),
-          ),
-          Expanded(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Expanded(
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Expanded(
-                        child: Observer(builder: (context) {
-                          return GraphView(graph: root.selectedNetwork.graph);
-                        }),
-                      ),
-                      const Resizable(
-                        defaultWidth: 400,
-                        horizontal: ResizeHorizontal.left,
-                        child: CodeGenerated(),
-                      ),
-                    ],
-                  ),
-                ),
-                const Resizable(
-                  defaultHeight: 300,
-                  vertical: ResizeVertical.top,
-                  child: PropertiesView(),
-                )
-              ],
+          Text(widget.title!),
+          InkWell(
+            onTap: () {
+              setState(() {
+                index = 0;
+              });
+            },
+            child: Container(
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 16.0, vertical: 2.0),
+              child: const Text('Scheduler'),
             ),
+          ),
+          InkWell(
+            onTap: () {
+              setState(() {
+                index = 1;
+              });
+            },
+            child: Container(
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 16.0, vertical: 2.0),
+              child: const Text('Graph'),
+            ),
+          )
+        ],
+      )),
+      body: IndexedStack(
+        index: index,
+        children: [
+          const TasksTabView(),
+          Row(
+            children: [
+              const Resizable(
+                defaultWidth: 210,
+                horizontal: ResizeHorizontal.right,
+                child: LayersMenu(),
+              ),
+              Expanded(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Expanded(
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Expanded(
+                            child: Observer(builder: (context) {
+                              return GraphView(
+                                  graph: root.selectedNetwork.graph);
+                            }),
+                          ),
+                          const Resizable(
+                            defaultWidth: 400,
+                            horizontal: ResizeHorizontal.left,
+                            child: CodeGenerated(),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const Resizable(
+                      defaultHeight: 300,
+                      vertical: ResizeVertical.top,
+                      child: PropertiesView(),
+                    )
+                  ],
+                ),
+              ),
+            ],
           ),
         ],
       ),
@@ -197,13 +236,13 @@ class CodeGenerated extends HookWidget {
                 onPressed: () async {
                   if (kIsWeb) {
                     final handles =
-                        await FileSystem.instance!.showOpenFilePicker();
+                        await FileSystem.instance.showOpenFilePicker();
                     final handle = handles[0];
 
                     // final file = await handle.getFile();
                     // final contents = await readFileAsText(file);
 
-                    final v = await FileSystem.instance!.verifyPermission(
+                    final v = await FileSystem.instance.verifyPermission(
                       handle,
                       mode: FileSystemPermissionMode.readwrite,
                     );

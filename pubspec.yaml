@@ -28,11 +28,11 @@ dependencies:
     path: ./packages/formgen/
 
   # MobX
-  mobx: ^2.0.0-nullsafety.6
-  flutter_mobx: ^2.0.0-nullsafety.3
+  mobx: ^2.0.0
+  flutter_mobx: ^2.0.0
 
   # Tools
-  flutter_hooks: ^0.16.0
+  flutter_hooks: ^0.18.0
   freezed_annotation:
   uuid: ^3.0.0
   get_it: ^6.0.0
@@ -45,6 +45,14 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.2
   url_strategy: ^0.2.0
+  stack_portal:
+    git:
+      url: https://github.com/juancastillo0/stack_portal
+    # path: ../stack_portal/
+  file_system_access:
+    git:
+      url: https://github.com/juancastillo0/file_system_access_web
+    # path: ../file_system_access/
 
   artemis:
     git:
