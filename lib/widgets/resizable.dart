@@ -128,7 +128,7 @@ class Separator extends StatelessWidget {
   final bool vertical;
 
   @override
-  Widget build(BuildContext ctx) {
+  Widget build(BuildContext context) {
     final margin = (size - thickness) / 2;
 
     if (vertical) {

@@ -119,9 +119,11 @@ class CommunicationStore {
           peerId: peerId,
           client: gqlClient,
           signals: (() async* {
-            yield* Stream.fromIterable(_peerSignals.remove(peerId) ?? []);
+            yield* Stream<
+                    GraphQLResponse<Signals$SubscriptionRoot>>.fromIterable(
+                _peerSignals.remove(peerId) ?? []);
             yield* remoteSignalStream;
-          })() as Stream<GraphQLResponse<Signals$SubscriptionRoot>>,
+          })(),
         );
 
         final peerConn = PeerConnectionState(

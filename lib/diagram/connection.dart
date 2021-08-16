@@ -23,7 +23,7 @@ class Connection<NF extends NodeData, NT extends NodeData> {
     return null;
   }
 
-  Map<String, dynamic> toJson() {
+  Map<String, Object?> toJson() {
     return {};
   }
 }

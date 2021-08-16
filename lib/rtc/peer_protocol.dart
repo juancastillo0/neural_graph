@@ -132,7 +132,7 @@ class GraphQlBody {
     return GraphQlBody(
       data: json['data'] as Map<String, dynamic>?,
       errors: (json['errors'] as List)
-          .map((e) => GraphQlError.fromJson(e as Map<String, dynamic>))
+          .map((Object? e) => GraphQlError.fromJson(e! as Map<String, dynamic>))
           .toList(),
     );
   }

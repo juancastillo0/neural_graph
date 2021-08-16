@@ -86,7 +86,7 @@ class MyApp extends StatelessWidget {
       onGenerateRoute: (settings) {
         print(settings);
         if (settings.name == '/fam/m') {
-          return MaterialPageRoute(
+          return MaterialPageRoute<Object?>(
             builder: (context) => Scaffold(
               appBar: AppBar(),
               backgroundColor: Colors.white,
@@ -96,7 +96,7 @@ class MyApp extends StatelessWidget {
           );
         }
         if (settings.name == '/fam') {
-          return MaterialPageRoute(
+          return MaterialPageRoute<Object?>(
             builder: (context) => Scaffold(
               appBar: AppBar(),
               backgroundColor: Colors.white,
@@ -106,7 +106,7 @@ class MyApp extends StatelessWidget {
           );
         }
         if (settings.name == '/') {
-          return MaterialPageRoute(
+          return MaterialPageRoute<Object?>(
             builder: (context) => const MyHomePage(title: 'Neural Graph'),
             settings: settings,
           );
@@ -322,7 +322,7 @@ class CodeGenerated extends HookWidget {
 class PropertiesView extends HookWidget {
   const PropertiesView({Key? key}) : super(key: key);
   @override
-  Widget build(BuildContext ctx) {
+  Widget build(BuildContext context) {
     final selectedGraph = useRoot().selectedNetwork.graph;
 
     return Row(

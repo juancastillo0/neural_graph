@@ -159,17 +159,18 @@ class ValidationItem {
   });
 
   String errorTemplate(String fieldName, String getter) {
-    return """ValidationError(
+    // ignore: leading_newlines_in_multiline_strings
+    return '''ValidationError(
         message: r'$defaultMessage',
         errorCode: '$errorCode',
         property: '$fieldName',
         validationParam: $param,
         value: $getter,
-      )""";
+      )''';
   }
 }
 
-class ModelVisitor extends SimpleElementVisitor {
+class ModelVisitor extends SimpleElementVisitor<void> {
   DartType? className;
   final fields = <String, _Field>{};
   final validateFunctions = <MethodElement>{};
@@ -216,7 +217,7 @@ class ModelVisitor extends SimpleElementVisitor {
 
     final elementType = element.type.element;
     if (elementType != null) {
-      final fieldType = TypeChecker.fromRuntime(Validate)
+      final fieldType = const TypeChecker.fromRuntime(Validate)
           .annotationsOfExact(elementType, throwOnUnresolved: false)
           .toList();
       if (fieldType.isNotEmpty) {
@@ -242,7 +243,7 @@ class ModelVisitor extends SimpleElementVisitor {
       fromJson: (map) => ValidateDate.fromJson(map),
     );
     _addFields(
-      annotation: TypeChecker.fromRuntime(ValidateDuration),
+      annotation: const TypeChecker.fromRuntime(ValidateDuration),
       fieldsSerde: ValidateDuration.fieldsSerde,
       fromJson: (map) => ValidateDuration.fromJson(map),
     );
@@ -250,17 +251,17 @@ class ModelVisitor extends SimpleElementVisitor {
     _addFields(
       annotation: _listAnnotation,
       fieldsSerde: ValidateList.fieldsSerde,
-      fromJson: (map) => ValidateList.fromJson(map),
+      fromJson: (map) => ValidateList<Object?>.fromJson(map),
     );
     _addFields(
-      annotation: TypeChecker.fromRuntime(ValidateSet),
+      annotation: const TypeChecker.fromRuntime(ValidateSet),
       fieldsSerde: ValidateSet.fieldsSerde,
-      fromJson: (map) => ValidateSet.fromJson(map),
+      fromJson: (map) => ValidateSet<Object?>.fromJson(map),
     );
     _addFields(
-      annotation: TypeChecker.fromRuntime(ValidateMap),
+      annotation: const TypeChecker.fromRuntime(ValidateMap),
       fieldsSerde: ValidateMap.fieldsSerde,
-      fromJson: (map) => ValidateMap.fromJson(map),
+      fromJson: (map) => ValidateMap<Object?, Object?>.fromJson(map),
     );
 
     return super.visitFieldElement(element);
@@ -284,7 +285,7 @@ extension ConsumeSerdeType on DartObject {
   }
 
   Object? serde(SerdeType serde) {
-    final _value = serde.when(
+    final _value = serde.when<Object?>(
       bool: () => this.toBoolValue(),
       str: () => this.toStringValue(),
       num: () => this.toDoubleValue() ?? this.toIntValue(),

@@ -92,7 +92,7 @@ class DenseForm extends HookWidget {
   final DenseLayer state;
 
   @override
-  Widget build(BuildContext ctx) {
+  Widget build(BuildContext context) {
     return DefaultFormTable(
       children: [
         tableRow(

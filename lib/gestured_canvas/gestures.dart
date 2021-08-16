@@ -1,3 +1,5 @@
+// ignore_for_file: cast_nullable_to_non_nullable
+
 import 'package:flutter/material.dart';
 
 class Gestures {
@@ -148,7 +150,7 @@ class Gestures {
     if (onForcePressEnd != null) GestureType.onForcePressEnd,
   };
 
-  void consume<T>(RawGesture<T> rawGesture) {
+  void consume(RawGesture rawGesture) {
     switch (rawGesture.type) {
       case GestureType.onTapDown:
         onTapDown?.call(rawGesture.event as TapDownDetails);
@@ -295,9 +297,9 @@ class Gestures {
   }
 }
 
-class RawGesture<T> {
+class RawGesture {
   final GestureType type;
-  final T event;
+  final Object? event;
 
   RawGesture(this.type, this.event);
 

@@ -7,7 +7,7 @@ import 'package:test/test.dart';
 
 void main() {
   final g = Graph<Layer>();
-  Node makeNode(Iterable inputs) {
+  Node makeNode() {
     return Node<Layer>(
       graph: g,
       key: '2',
@@ -21,7 +21,7 @@ void main() {
 
   group('Convolutional isValidInput', () {
     test('ConvDimension.two', () {
-      final node = makeNode([]);
+      final node = makeNode();
       final conv = node.data as Convolutional;
 
       expect(
@@ -39,7 +39,7 @@ void main() {
     });
 
     test('ConvDimensions.one', () {
-      final node = makeNode([]);
+      final node = makeNode();
       final conv = node.data as Convolutional;
       conv.dimensions = ConvDimensions.one;
 
@@ -60,7 +60,7 @@ void main() {
 
   group('Convolutional output', () {
     test('ConvPadding.valid', () {
-      final node = makeNode([]);
+      final node = makeNode();
       final conv = node.data as Convolutional;
       conv.padding = ConvPadding.valid;
 
@@ -71,7 +71,7 @@ void main() {
     });
 
     test('stride = 2', () {
-      final node = makeNode([]);
+      final node = makeNode();
       final conv = node.data as Convolutional;
       conv.strides = [2];
 
@@ -82,7 +82,7 @@ void main() {
     });
 
     test('dilationRate = 2', () {
-      final node = makeNode([]);
+      final node = makeNode();
       final conv = node.data as Convolutional;
       conv.dilationRate = [2];
       conv.filters = 64;

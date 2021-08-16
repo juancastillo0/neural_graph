@@ -197,7 +197,7 @@ class ConvolutionalForm2 extends HookWidget {
   }
 }
 
-class ModelVisitor extends SimpleElementVisitor {
+class ModelVisitor extends SimpleElementVisitor<void> {
   DartType? className;
   Map<String, _Field> fields = {};
 
@@ -232,7 +232,7 @@ class _Field {
   final FormInput annotation;
 }
 
-class EnumVisitor extends SimpleElementVisitor {
+class EnumVisitor extends SimpleElementVisitor<void> {
   DartType? className;
   Map<String, DartType> fields = {};
 

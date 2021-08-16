@@ -119,7 +119,7 @@ class _MyAppState extends State<LoopBackSample> {
 
   // Platform messages are asynchronous, so we initialize in an async method.
   void _makeCall() async {
-    final mediaConstraints = <String, dynamic>{
+    final mediaConstraints = <String, Object?>{
       'audio': true,
       'video': {
         'mandatory': {
@@ -129,27 +129,27 @@ class _MyAppState extends State<LoopBackSample> {
           'minFrameRate': '30',
         },
         'facingMode': 'user',
-        'optional': [],
+        'optional': <Object?>[],
       }
     };
 
-    final configuration = <String, dynamic>{
+    final configuration = <String, Object?>{
       'iceServers': [
         {'url': 'stun:stun.l.google.com:19302'},
       ],
       'sdpSemantics': 'unified-plan'
     };
 
-    final offerSdpConstraints = <String, dynamic>{
+    final offerSdpConstraints = <String, Object?>{
       'mandatory': {
         'OfferToReceiveAudio': true,
         'OfferToReceiveVideo': true,
       },
-      'optional': [],
+      'optional': <Object?>[],
     };
 
-    final loopbackConstraints = <String, dynamic>{
-      'mandatory': {},
+    final loopbackConstraints = <String, Object?>{
+      'mandatory': <Object?>{},
       'optional': [
         {'DtlsSrtpKeyAgreement': false},
       ],

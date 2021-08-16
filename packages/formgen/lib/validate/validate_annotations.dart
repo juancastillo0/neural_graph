@@ -8,13 +8,13 @@ export 'models/comp_val.dart';
 export 'validate_collections.dart';
 export 'validate_string.dart';
 
-class Validate<T> implements ValidateCustom<T> {
+class Validate implements ValidateCustom<Object?> {
   final bool nullableErrorLists;
   final bool constErrors;
   final bool enumFields;
 
   @override
-  final List<ValidationError> Function(T)? customValidate;
+  final List<ValidationError> Function(Object?)? customValidate;
   @override
   final String? customValidateName;
 
@@ -218,7 +218,7 @@ abstract class ValidateField<T> implements ValidateCustom<T> {
     }
   }
 
-  static ValidateField fromJson(Map<String, Object?> map) {
+  static ValidateField<Object?> fromJson(Map<String, Object?> map) {
     final type = parseValidateFieldType(
       (map[ValidateField.variantTypeString] ??
           map['runtimeType'] ??
@@ -234,11 +234,11 @@ abstract class ValidateField<T> implements ValidateCustom<T> {
       case ValidateFieldType.duration:
         return ValidateDuration.fromJson(map);
       case ValidateFieldType.list:
-        return ValidateList.fromJson(map);
+        return ValidateList<Object?>.fromJson(map);
       case ValidateFieldType.map:
-        return ValidateMap.fromJson(map);
+        return ValidateMap<Object?, Object?>.fromJson(map);
       case ValidateFieldType.set:
-        return ValidateSet.fromJson(map);
+        return ValidateSet<Object?>.fromJson(map);
     }
   }
 }

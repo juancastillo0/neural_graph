@@ -12,17 +12,17 @@ class PeerConnectionState extends ChangeNotifier {
     required SingalProtocol<String> protocol,
     required this.peerId,
     required this.userId,
-    this.offerSdpConstraints = const <String, dynamic>{
+    this.offerSdpConstraints = const <String, Object?>{
       'mandatory': {
         'OfferToReceiveAudio': false,
         'OfferToReceiveVideo': false,
       },
-      'optional': [],
+      'optional': <Object?>[],
     },
     required this.isInitializer,
     RTCDataChannelInit? dataChannelConfig,
   }) : this.protocol = protocol.map<RTCSignal?>(
-          (s) => RTCSignal.fromJson(jsonDecode(s) as Map<String, dynamic>),
+          (s) => RTCSignal.fromJson(jsonDecode(s) as Map<String, Object?>),
           (s) => jsonEncode(s!.toJson()),
         ) {
     this._remoteSubscription =
@@ -47,14 +47,14 @@ class PeerConnectionState extends ChangeNotifier {
   }
 
   Future<void> _createConnection() async {
-    final configuration = <String, dynamic>{
+    final configuration = <String, Object?>{
       'iceServers': [
         {'url': 'stun:stun.l.google.com:19302'},
       ]
     };
 
-    final loopbackConstraints = <String, dynamic>{
-      'mandatory': {},
+    final loopbackConstraints = <String, Object?>{
+      'mandatory': <Object?, Object?>{},
       'optional': [
         {'DtlsSrtpKeyAgreement': true},
       ],
@@ -94,8 +94,8 @@ class PeerConnectionState extends ChangeNotifier {
 
   void _log(Object data) {
     final now = DateTime.now();
-    print(
-        '$userId | ${now.hour}:${now.minute}:${now.second}:${now.millisecond} | $data');
+    print('$userId | ${now.hour}:${now.minute}:'
+        '${now.second}:${now.millisecond} | $data');
   }
 
   Future<void> _onSignal(RTCSignal? signal) async {
@@ -262,15 +262,15 @@ class RtcMessage {
     required this.timestamp,
   });
 
-  static RtcMessage fromJson(Map<String, dynamic> map) {
+  static RtcMessage fromJson(Map<String, Object?> map) {
     return RtcMessage(
       text: map['text'] as String?,
       roomId: map['roomId'] as String?,
-      timestamp: DateTime.parse(map['timestamp'] as String),
+      timestamp: DateTime.parse(map['timestamp']! as String),
     );
   }
 
-  Map<String, dynamic> toJson() {
+  Map<String, Object?> toJson() {
     return {
       'text': text,
       'roomId': roomId,

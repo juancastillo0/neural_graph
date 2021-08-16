@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:neural_graph/common/extensions.dart';
 import 'package:neural_graph/layers/layers.dart';
 
@@ -90,7 +89,7 @@ class CodeGenHelper {
   String get outputSuffix => language.isJs ? 'Output' : '_output';
 
   String defineOutput(String name) {
-    return "$defineKeyword$name$outputSuffix =";
+    return '$defineKeyword$name$outputSuffix =';
   }
 
   String defineName(String name) {

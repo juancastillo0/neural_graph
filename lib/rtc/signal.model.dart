@@ -67,7 +67,7 @@ abstract class RTCSignal {
     throw '';
   }
 
-  static RTCSignal? fromJson(Map<String, dynamic> map) {
+  static RTCSignal? fromJson(Map<String, Object?> map) {
     switch (map['runtimeType'] as String?) {
       case '_Answer':
         return _Answer.fromJson(map);
@@ -80,7 +80,7 @@ abstract class RTCSignal {
     }
   }
 
-  Map<String, dynamic> toJson();
+  Map<String, Object?> toJson();
 }
 
 class _Answer extends RTCSignal {
@@ -90,14 +90,14 @@ class _Answer extends RTCSignal {
     this.sdp,
   ) : super._();
 
-  static _Answer fromJson(Map<String, dynamic> map) {
+  static _Answer fromJson(Map<String, Object?> map) {
     return _Answer(
       map['sdp'] as String?,
     );
   }
 
   @override
-  Map<String, dynamic> toJson() {
+  Map<String, Object?> toJson() {
     return {
       'runtimeType': '_Answer',
       'sdp': sdp,
@@ -112,14 +112,14 @@ class _Offer extends RTCSignal {
     this.sdp,
   ) : super._();
 
-  static _Offer fromJson(Map<String, dynamic> map) {
+  static _Offer fromJson(Map<String, Object?> map) {
     return _Offer(
       map['sdp'] as String?,
     );
   }
 
   @override
-  Map<String, dynamic> toJson() {
+  Map<String, Object?> toJson() {
     return {
       'runtimeType': '_Offer',
       'sdp': sdp,
@@ -134,8 +134,8 @@ class _Candidate extends RTCSignal {
     this.candidate,
   ) : super._();
 
-  static _Candidate fromJson(Map<String, dynamic> map) {
-    final _m = map['candidate'] as Map<String, dynamic>;
+  static _Candidate fromJson(Map<String, Object?> map) {
+    final _m = map['candidate']! as Map<String, Object?>;
     return _Candidate(
       RTCIceCandidate(
         _m['candidate'] as String?,
@@ -146,7 +146,7 @@ class _Candidate extends RTCSignal {
   }
 
   @override
-  Map<String, dynamic> toJson() {
+  Map<String, Object?> toJson() {
     return {
       'runtimeType': '_Candidate',
       'candidate': candidate.toMap(),

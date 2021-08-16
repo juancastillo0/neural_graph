@@ -54,7 +54,8 @@ class ShapeField extends StatelessWidget {
           ],
           onChanged: (value) {
             // print(
-            //     "value $value field.value ${field.value} field.controller ${field.controller.text}");
+            //     "value $value field.value ${field.value} 
+            //field.controller ${field.controller.text}");
 
             field.value = shapeFromString(value);
             print('value $value field.value ${field.value}');

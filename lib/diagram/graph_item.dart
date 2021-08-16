@@ -130,7 +130,7 @@ class _Connection<N extends NodeData> extends GraphItem<N> {
   }
 
   @override
-  Map<String, dynamic> toJson() {
+  Map<String, Object?> toJson() {
     return {
       'runtimeType': '_Connection',
       'connection': connection!.toJson(),
@@ -177,7 +177,7 @@ class _Node<N extends NodeData> extends GraphItem<N> {
   }
 
   @override
-  Map<String, dynamic> toJson() {
+  Map<String, Object?> toJson() {
     return {
       'runtimeType': '_Node',
       'node': node!.toJson(),
@@ -231,7 +231,7 @@ class _ConnectionPoint<N extends NodeData> extends GraphItem<N> {
   }
 
   @override
-  Map<String, dynamic> toJson() {
+  Map<String, Object?> toJson() {
     return {
       'runtimeType': '_ConnectionPoint',
       'connection': connection!.toJson(),

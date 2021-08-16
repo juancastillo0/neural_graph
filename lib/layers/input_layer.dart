@@ -69,7 +69,7 @@ class InputForm extends HookWidget {
   const InputForm({Key? key, required this.state}) : super(key: key);
   final Input state;
   @override
-  Widget build(BuildContext ctx) {
+  Widget build(BuildContext context) {
     final shapeField = useMemoized(
       () => FormFieldValue<List<int>>(
         get: () => state.shape,

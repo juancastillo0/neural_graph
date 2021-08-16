@@ -1,14 +1,16 @@
 import 'dart:convert';
 
+import 'package:flutter/foundation.dart';
 import 'package:formgen/formgen.dart';
 import 'package:formgen/validate/serde_type.dart';
 
+@immutable
 abstract class CompVal<T extends Comparable<T>> {
   const CompVal._();
 
   static const fieldsSerde = SerdeType.late(_makeFieldsSerde);
   static SerdeType _makeFieldsSerde() {
-    return SerdeType.union(
+    return const SerdeType.union(
       'variantType',
       {
         'ref': SerdeType.nested(CompValueRef.fieldsSerde),
@@ -111,7 +113,7 @@ abstract class CompVal<T extends Comparable<T>> {
       map = (_map! as Map).cast();
     }
 
-    switch (map['variantType'] as String) {
+    switch (map['variantType']) {
       case 'ref':
         return CompValueRef.fromJson<T>(map);
       case 'single':
@@ -128,6 +130,7 @@ abstract class CompVal<T extends Comparable<T>> {
   Map<String, Object?> toJson();
 }
 
+@immutable
 class TypeCompVal {
   final String _inner;
 
@@ -328,8 +331,8 @@ class CompValueList<T extends Comparable<T>> extends CompVal<T> {
     }
 
     return CompValueList<T>(
-      (map['values'] as List)
-          .map((e) => CompVal.fromJson<T>(e))
+      (map['values']! as List)
+          .map((Object? e) => CompVal.fromJson<T>(e))
           .toList()
           .cast(),
     );
