@@ -1,15 +1,15 @@
 import 'package:flutter/widgets.dart';
+import 'package:flutter_hooks/flutter_hooks.dart' show HookWidget, useMemoized;
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:mobx/mobx.dart';
-import 'package:flutter_hooks/flutter_hooks.dart' show HookWidget, useMemoized;
 import 'package:neural_graph/common/extensions.dart';
 import 'package:neural_graph/diagram/connection.dart';
+import 'package:neural_graph/diagram/node.dart';
 import 'package:neural_graph/fields/button_select_field.dart';
 import 'package:neural_graph/fields/form.dart';
 import 'package:neural_graph/fields/shape_field.dart';
 import 'package:neural_graph/layers/codegen_helper.dart';
 import 'package:neural_graph/layers/layers.dart';
-import 'package:neural_graph/diagram/node.dart';
 import 'package:neural_graph/layers/node_layer_view.dart';
 
 part 'input_layer.g.dart';
@@ -21,7 +21,7 @@ abstract class _Input extends Layer with Store {
       : this.outPort = Port(node),
         super(node);
 
-  static const String _layerId = "Input";
+  static const String _layerId = 'Input';
   @override
   String get layerId => _layerId;
 
@@ -47,8 +47,8 @@ abstract class _Input extends Layer with Store {
 
   @override
   String code(CodeGenHelper h) {
-    return """
-""";
+    return '''
+''';
   }
 
   @override
@@ -81,8 +81,8 @@ class InputForm extends HookWidget {
     return DefaultFormTable(
       children: [
         tableRow(
-          name: "Data Type",
-          description: "The type of data in the tensor",
+          name: 'Data Type',
+          description: 'The type of data in the tensor',
           field: Observer(builder: (context) {
             return ButtonSelect<DType>(
               options: DType.values,
@@ -93,8 +93,8 @@ class InputForm extends HookWidget {
           }),
         ),
         tableRow(
-          name: "Shape",
-          description: "Size of the tensor in each dimension",
+          name: 'Shape',
+          description: 'Size of the tensor in each dimension',
           field: ShapeField(
             field: shapeField,
             dimensions: null,

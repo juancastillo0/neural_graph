@@ -82,12 +82,12 @@ FormTestValidation validateFormTest(FormTest value) {
         validationParam: 50,
         value: value.longStr,
       ),
-    if (!RegExp(r"^[a-zA-Z]+$").hasMatch(value.longStr))
+    if (!RegExp(r'^[a-zA-Z]+$').hasMatch(value.longStr))
       ValidationError(
         message: r'Should match ^[a-zA-Z]+$',
         errorCode: 'ValidateString.matches',
         property: 'longStr',
-        validationParam: RegExp(r"^[a-zA-Z]+$"),
+        validationParam: RegExp(r'^[a-zA-Z]+$'),
         value: value.longStr,
       )
   ];
@@ -100,7 +100,7 @@ FormTestValidation validateFormTest(FormTest value) {
         validationParam: 20,
         value: value.shortStr,
       ),
-    if (!value.shortStr.contains(r"@"))
+    if (!value.shortStr.contains(r'@'))
       ValidationError(
         message: r'Should contain @',
         errorCode: 'ValidateString.contains',
@@ -135,7 +135,7 @@ FormTestValidation validateFormTest(FormTest value) {
           message: r'Should be at a minimum 0',
           errorCode: 'ValidateComparable.less',
           property: 'optionalDecimal',
-          validationParam: "0",
+          validationParam: '0',
           value: value.optionalDecimal!,
         ),
       if (value.optionalDecimal!.compareTo(value.positiveInt) < 0)
@@ -143,7 +143,7 @@ FormTestValidation validateFormTest(FormTest value) {
           message: r'Should be at a more than or equal to [positiveInt]',
           errorCode: 'ValidateComparable.moreEq',
           property: 'optionalDecimal',
-          validationParam: "[positiveInt]",
+          validationParam: '[positiveInt]',
           value: value.optionalDecimal!,
         ),
       if (value.optionalDecimal! < 0)
@@ -220,7 +220,7 @@ NestedFieldValidation validateNestedField(NestedField value) {
         message: r'Should be at a minimum 2021-01-01',
         errorCode: 'ValidateDate.min',
         property: 'dateWith2021Min',
-        validationParam: "2021-01-01",
+        validationParam: '2021-01-01',
         value: value.dateWith2021Min,
       )
   ];
@@ -233,7 +233,7 @@ NestedFieldValidation validateNestedField(NestedField value) {
           message: r'Should be at a maximum now',
           errorCode: 'ValidateDate.max',
           property: 'optionalDateWithNowMax',
-          validationParam: "now",
+          validationParam: 'now',
           value: value.optionalDateWithNowMax!,
         )
     ];

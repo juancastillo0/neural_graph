@@ -61,7 +61,7 @@ class Node<T extends NodeData> {
   void move(Offset delta) {
     runInAction(() {
       _offset.value += delta;
-    }, name: "move");
+    }, name: 'move');
   }
 
   void updateSize(BuildContext ctx) {
@@ -70,7 +70,7 @@ class Node<T extends NodeData> {
     if (newWidth != width || newHeight != height) {
       runInAction(() {
         _size.value = Size(newWidth, newHeight);
-      }, name: "updateSize");
+      }, name: 'updateSize');
     }
   }
 

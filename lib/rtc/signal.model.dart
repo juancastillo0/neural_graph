@@ -22,7 +22,7 @@ abstract class RTCSignal {
     if (v is _Answer) return answer(v.sdp);
     if (v is _Offer) return offer(v.sdp);
     if (v is _Candidate) return candidate(v.candidate);
-    throw "";
+    throw '';
   }
 
   T maybeWhen<T>({
@@ -34,9 +34,10 @@ abstract class RTCSignal {
     final RTCSignal v = this;
     if (v is _Answer) return answer != null ? answer(v.sdp) : orElse.call();
     if (v is _Offer) return offer != null ? offer(v.sdp) : orElse.call();
-    if (v is _Candidate)
+    if (v is _Candidate) {
       return candidate != null ? candidate(v.candidate) : orElse.call();
-    throw "";
+    }
+    throw '';
   }
 
   T map<T>({
@@ -48,7 +49,7 @@ abstract class RTCSignal {
     if (v is _Answer) return answer(v);
     if (v is _Offer) return offer(v);
     if (v is _Candidate) return candidate(v);
-    throw "";
+    throw '';
   }
 
   T maybeMap<T>({
@@ -60,13 +61,14 @@ abstract class RTCSignal {
     final RTCSignal v = this;
     if (v is _Answer) return answer != null ? answer(v) : orElse.call();
     if (v is _Offer) return offer != null ? offer(v) : orElse.call();
-    if (v is _Candidate)
+    if (v is _Candidate) {
       return candidate != null ? candidate(v) : orElse.call();
-    throw "";
+    }
+    throw '';
   }
 
   static RTCSignal? fromJson(Map<String, dynamic> map) {
-    switch (map["runtimeType"] as String?) {
+    switch (map['runtimeType'] as String?) {
       case '_Answer':
         return _Answer.fromJson(map);
       case '_Offer':
@@ -97,8 +99,8 @@ class _Answer extends RTCSignal {
   @override
   Map<String, dynamic> toJson() {
     return {
-      "runtimeType": "_Answer",
-      "sdp": sdp,
+      'runtimeType': '_Answer',
+      'sdp': sdp,
     };
   }
 }
@@ -119,8 +121,8 @@ class _Offer extends RTCSignal {
   @override
   Map<String, dynamic> toJson() {
     return {
-      "runtimeType": "_Offer",
-      "sdp": sdp,
+      'runtimeType': '_Offer',
+      'sdp': sdp,
     };
   }
 }
@@ -146,8 +148,8 @@ class _Candidate extends RTCSignal {
   @override
   Map<String, dynamic> toJson() {
     return {
-      "runtimeType": "_Candidate",
-      "candidate": candidate.toMap(),
+      'runtimeType': '_Candidate',
+      'candidate': candidate.toMap(),
     };
   }
 }

@@ -2,15 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:mobx/mobx.dart';
 import 'package:neural_graph/common/extensions.dart';
+import 'package:neural_graph/diagram/node.dart';
 import 'package:neural_graph/layers/codegen_helper.dart';
 import 'package:neural_graph/layers/convolutional_layer.dart';
 import 'package:neural_graph/layers/dense_layer.dart';
 import 'package:neural_graph/layers/input_layer.dart';
-import 'package:neural_graph/diagram/node.dart';
 import 'package:neural_graph/layers/output_layer.dart';
 
 abstract class Layer implements NodeData {
-  Layer(this.node, {String? name}) : this._name = Observable(name ?? "");
+  Layer(this.node, {String? name}) : this._name = Observable(name ?? '');
   final Node<Layer> node;
 
   final Observable<String> _name;
@@ -18,7 +18,7 @@ abstract class Layer implements NodeData {
   void setName(String name) {
     runInAction(() {
       _name.value = name;
-    }, name: "setName");
+    }, name: 'setName');
   }
 
   String get layerId;
@@ -28,10 +28,10 @@ abstract class Layer implements NodeData {
   String code(CodeGenHelper h);
 
   static final Map<String, Layer Function(Node)> layerConstructors = {
-    "Convolutional": (node) => Convolutional(node as Node<Layer>),
-    "Input": (node) => Input(node as Node<Layer>),
-    "Output": (node) => OutputLayer(node as Node<Layer>),
-    "Dense": (node) => DenseLayer(node as Node<Layer>),
+    'Convolutional': (node) => Convolutional(node as Node<Layer>),
+    'Input': (node) => Input(node as Node<Layer>),
+    'Output': (node) => OutputLayer(node as Node<Layer>),
+    'Dense': (node) => DenseLayer(node as Node<Layer>),
   };
 
   Widget form([Key? key]);

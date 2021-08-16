@@ -1,13 +1,13 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:mobx/mobx.dart';
 import 'package:neural_graph/common/extensions.dart';
+import 'package:neural_graph/diagram/connection.dart';
+import 'package:neural_graph/diagram/node.dart';
 import 'package:neural_graph/fields/button_select_field.dart';
 import 'package:neural_graph/fields/form.dart';
 import 'package:neural_graph/layers/codegen_helper.dart';
-import 'package:neural_graph/diagram/node.dart';
-import 'package:neural_graph/diagram/connection.dart';
-import 'package:flutter/material.dart';
 import 'package:neural_graph/layers/layers.dart';
 import 'package:neural_graph/layers/losses.dart';
 import 'package:neural_graph/layers/node_layer_view.dart';
@@ -25,7 +25,7 @@ class OutputLayer extends Layer {
   String applyCode(CodeGenHelper h) {
     final _in = inPort.firstFromData;
     if (_in == null) {
-      return "";
+      return '';
     }
     return "${h.defineName(name)} ${_in.name}${h.outputSuffix};\n";
   }
@@ -51,7 +51,7 @@ class OutputLayer extends Layer {
   }
 
   @override
-  String get layerId => "Output";
+  String get layerId => 'Output';
 
   @override
   Tensor output(Tensor input) {
@@ -80,8 +80,8 @@ class OutputForm extends HookWidget {
     return DefaultFormTable(
       children: [
         tableRow(
-          name: "Loss",
-          description: "Optional loss to apply to the output",
+          name: 'Loss',
+          description: 'Optional loss to apply to the output',
           field: Observer(builder: (context) {
             return ButtonSelect<Loss>(
               options: Loss.values,

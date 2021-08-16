@@ -7,32 +7,32 @@ import 'package:neural_graph/widgets/resizable.dart';
 
 const _menuMap = {
   'Model': [
-    "Input",
-    "Output",
-    "Loss",
-    "Metric",
-    "Optimizer",
-    "Callback",
+    'Input',
+    'Output',
+    'Loss',
+    'Metric',
+    'Optimizer',
+    'Callback',
   ],
   'Layers': [
-    "Convolutional",
-    "Dense",
-    "Recurrent",
-    "Transformer",
-    "Dropout",
-    "Embedding",
-    "Normalization",
+    'Convolutional',
+    'Dense',
+    'Recurrent',
+    'Transformer',
+    'Dropout',
+    'Embedding',
+    'Normalization',
   ],
-  'Activations': ["Softmax", "Sigmoid", "Relu"],
-  "Slice / Shape": [
-    "Concat",
-    "Gather",
-    "Stack",
-    "Tile",
-    "Slice",
-    "Split",
-    "Reshape",
-    "Traspose",
+  'Activations': ['Softmax', 'Sigmoid', 'Relu'],
+  'Slice / Shape': [
+    'Concat',
+    'Gather',
+    'Stack',
+    'Tile',
+    'Slice',
+    'Split',
+    'Reshape',
+    'Traspose',
   ],
 };
 
@@ -87,7 +87,7 @@ class LayersMenu extends HookWidget {
               if (list.isEmpty) {
                 return const Center(
                   child: Text(
-                    "No matches for filter",
+                    'No matches for filter',
                     textAlign: TextAlign.center,
                   ),
                 );

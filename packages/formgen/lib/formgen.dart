@@ -19,7 +19,7 @@ class FormInput<T> {
     String? description,
     this.width,
     this.validate,
-  }) : description = description ?? "";
+  }) : description = description ?? '';
   final String? label;
   final String description;
 

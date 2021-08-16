@@ -23,12 +23,12 @@ abstract class _RootStore with Store {
   _RootStore() {
     final node1 = graph.createNode(
       const Offset(1420, 920),
-      (n) => Convolutional(n, name: "conv1"),
+      (n) => Convolutional(n, name: 'conv1'),
     );
 
     final node2 = graph.createNode(
       const Offset(20, 20),
-      (n) => Convolutional(n, name: "conv2"),
+      (n) => Convolutional(n, name: 'conv2'),
     );
 
     (node2.data as Convolutional)

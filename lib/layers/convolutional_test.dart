@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:neural_graph/diagram/graph.dart';
 import 'package:neural_graph/diagram/node.dart';
-import 'package:test/test.dart';
 import 'package:neural_graph/layers/convolutional_layer.dart';
 import 'package:neural_graph/layers/layers.dart';
+import 'package:test/test.dart';
 
 void main() {
   final g = Graph<Layer>();
@@ -14,7 +14,7 @@ void main() {
       offset: const Offset(20, 20),
       dataBuilder: (n) => Convolutional(
         n,
-        name: "conv2",
+        name: 'conv2',
       ),
     );
   }

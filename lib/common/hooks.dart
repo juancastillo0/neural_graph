@@ -70,7 +70,7 @@ class _DisposableHookState<T> extends HookState<T, _DisposableHook<T>> {
 
   @override
   void dispose() {
-    print("dispose!!");
+    print('dispose!!');
     if (disposable != null) {
       disposable!.dispose();
     }

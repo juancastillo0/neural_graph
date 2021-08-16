@@ -85,27 +85,27 @@ class MyApp extends StatelessWidget {
       navigatorObservers: [routeObserver],
       onGenerateRoute: (settings) {
         print(settings);
-        if (settings.name == "/fam/m") {
+        if (settings.name == '/fam/m') {
           return MaterialPageRoute(
             builder: (context) => Scaffold(
               appBar: AppBar(),
               backgroundColor: Colors.white,
-              body: const Center(child: Text("/fam/m")),
+              body: const Center(child: Text('/fam/m')),
             ),
             settings: settings,
           );
         }
-        if (settings.name == "/fam") {
+        if (settings.name == '/fam') {
           return MaterialPageRoute(
             builder: (context) => Scaffold(
               appBar: AppBar(),
               backgroundColor: Colors.white,
-              body: const Center(child: Text("/fam")),
+              body: const Center(child: Text('/fam')),
             ),
             settings: settings,
           );
         }
-        if (settings.name == "/") {
+        if (settings.name == '/') {
           return MaterialPageRoute(
             builder: (context) => const MyHomePage(title: 'Neural Graph'),
             settings: settings,
@@ -232,7 +232,7 @@ class CodeGenerated extends HookWidget {
               TextButton.icon(
                 style: TextButton.styleFrom(padding: const EdgeInsets.all(14)),
                 icon: const Icon(Icons.file_present),
-                label: const Text("File"),
+                label: const Text('File'),
                 onPressed: () async {
                   if (kIsWeb) {
                     final handles =
@@ -267,14 +267,14 @@ class CodeGenerated extends HookWidget {
                     Clipboard.setData(ClipboardData(text: sourceCode));
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
-                        content: const Text("Source code copied"),
+                        content: const Text('Source code copied'),
                         behavior: SnackBarBehavior.floating,
                         width: 300,
                       ),
                     );
                   },
                   icon: const Icon(Icons.file_copy),
-                  label: const Text("Copy"),
+                  label: const Text('Copy'),
                 );
               }),
               Observer(builder: (context) {
@@ -338,9 +338,9 @@ class PropertiesView extends HookWidget {
           child: Observer(builder: (context) {
             final conn = selectedGraph.selectedConnection;
             if (conn == null) {
-              return const Text("No selected connection");
+              return const Text('No selected connection');
             }
-            return Text("${conn.fromData.name} -> ${conn.toData.name}");
+            return Text('${conn.fromData.name} -> ${conn.toData.name}');
           }),
         ),
         const Resizable(
@@ -371,7 +371,7 @@ class NodePropertiesView extends HookWidget {
       builder: (context) {
         final selectedNode = selectedGraph.selectedNode;
         if (selectedNode == null) {
-          return const Center(child: Text("No selected node"));
+          return const Center(child: Text('No selected node'));
         }
         if (contoller.text != selectedNode.data.name) {
           contoller.text = selectedNode.data.name;
@@ -402,14 +402,14 @@ class NodePropertiesView extends HookWidget {
                   child: TextFormField(
                     autovalidateMode: AutovalidateMode.onUserInteraction,
                     controller: contoller,
-                    decoration: const InputDecoration(hintText: "Name"),
+                    decoration: const InputDecoration(hintText: 'Name'),
                     onChanged: (value) {
                       if (!isRepeated(value)) {
                         selectedNode.data.setName(value);
                       }
                     },
                     validator: (value) =>
-                        selectedNode.data.name != value ? "" : null,
+                        selectedNode.data.name != value ? '' : null,
                   ),
                 ),
                 IconButton(

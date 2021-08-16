@@ -21,7 +21,7 @@ class _DataChannelSampleState extends State<DataChannelSample> {
   @override
   void initState() {
     super.initState();
-    urlController = TextEditingController(text: "http://localhost:8080/");
+    urlController = TextEditingController(text: 'http://localhost:8080/');
   }
 
   Future<void> initServerConnection() async {
@@ -38,7 +38,7 @@ class _DataChannelSampleState extends State<DataChannelSample> {
         storeResult = const AsyncResult.error("Can't connect to server");
       }
     } else {
-      storeResult = const AsyncResult.error("Invalid url");
+      storeResult = const AsyncResult.error('Invalid url');
     }
     setState(() {});
   }
@@ -75,12 +75,12 @@ class _DataChannelSampleState extends State<DataChannelSample> {
       return Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const Text("Connect to a signaling server"),
+          const Text('Connect to a signaling server'),
           TextField(
             controller: urlController,
             onChanged: (value) {
               urlController.value = urlController.value.copyWith(
-                text: value.replaceAll(RegExp(r"\s"), ""),
+                text: value.replaceAll(RegExp(r'\s'), ''),
               );
             },
           ),
@@ -90,7 +90,7 @@ class _DataChannelSampleState extends State<DataChannelSample> {
                 ? const Center(
                     child: CircularProgressIndicator(),
                   )
-                : const Text("Init Connection"),
+                : const Text('Init Connection'),
           ),
           if (storeResult.isError) Text(storeResult.errorOrNull!)
         ],
@@ -139,13 +139,13 @@ class _RoomsViewState extends State<RoomsView> {
             controller: roomController,
             onChanged: (value) {
               roomController.value = roomController.value.copyWith(
-                text: value.replaceAll(RegExp(r"\s"), ""),
+                text: value.replaceAll(RegExp(r'\s'), ''),
               );
             },
           ),
           ElevatedButton(
             onPressed: _joinRoom,
-            child: const Text("Join Room"),
+            child: const Text('Join Room'),
           )
         ],
       );
@@ -159,14 +159,14 @@ class _RoomsViewState extends State<RoomsView> {
             Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Text("Room Id"),
+                const Text('Room Id'),
                 Text(roomController.text),
               ],
             ),
             Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Text("Peers"),
+                const Text('Peers'),
                 AnimatedBuilder(
                   animation: room!.users,
                   builder: (context, _) {

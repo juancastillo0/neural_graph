@@ -133,7 +133,7 @@ class _MyAppState extends State<LoopBackSample> {
       }
     };
 
-    var configuration = <String, dynamic>{
+    final configuration = <String, dynamic>{
       'iceServers': [
         {'url': 'stun:stun.l.google.com:19302'},
       ],
@@ -238,8 +238,9 @@ class _MyAppState extends State<LoopBackSample> {
           init:
               RTCRtpTransceiverInit(direction: TransceiverDirection.RecvOnly));
       */
-      var description = await _peerConnection!.createOffer(offerSdpConstraints);
-      var sdp = description.sdp;
+      final description =
+          await _peerConnection!.createOffer(offerSdpConstraints);
+      final sdp = description.sdp;
       print('sdp = $sdp');
       await _peerConnection!.setLocalDescription(description);
       //change for loopback.
@@ -281,14 +282,14 @@ class _MyAppState extends State<LoopBackSample> {
   }
 
   void _sendDtmf() async {
-    var dtmfSender =
+    final dtmfSender =
         _peerConnection!.createDtmfSender(_localStream!.getAudioTracks()[0]);
     await dtmfSender.insertDTMF('123#');
   }
 
   @override
   Widget build(BuildContext context) {
-    var widgets = <Widget>[
+    final widgets = <Widget>[
       Expanded(
         child: RTCVideoView(_localRenderer, mirror: true),
       ),

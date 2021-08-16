@@ -4,10 +4,10 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:neural_graph/arrow.dart';
 import 'package:neural_graph/diagram/graph.dart';
-import 'package:neural_graph/gestured_canvas/gestures.dart';
-import 'package:neural_graph/gestured_canvas/gestured_canvas.dart';
-import 'package:neural_graph/layers/layers.dart';
 import 'package:neural_graph/diagram/node.dart';
+import 'package:neural_graph/gestured_canvas/gestured_canvas.dart';
+import 'package:neural_graph/gestured_canvas/gestures.dart';
+import 'package:neural_graph/layers/layers.dart';
 import 'package:neural_graph/root_store.dart';
 import 'package:neural_graph/widgets/gesture_listener.dart';
 import 'package:neural_graph/widgets/scrollable.dart';
@@ -54,7 +54,7 @@ class GraphView extends HookWidget {
                   //       }
                   //     : graph.startAddingConnection,
                   color: isAdding ? Colors.black12 : null,
-                  label: const Text("Connection"),
+                  label: const Text('Connection'),
                 );
               },
             ),
@@ -62,7 +62,7 @@ class GraphView extends HookWidget {
               builder: (context) => Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const Text("Scale: "),
+                  const Text('Scale: '),
                   IconButton(
                     icon: const Icon(Icons.remove_circle_outline),
                     onPressed: () {
@@ -108,7 +108,7 @@ class CanvasView extends HookWidget {
           if (constructor != null) {
             graph.createNode(offset, constructor);
           } else {
-            log.e("Wrong layer name ${details.data}");
+            log.e('Wrong layer name ${details.data}');
           }
         },
         builder: (context, candidateData, rejectedData) {
@@ -122,7 +122,7 @@ class CanvasView extends HookWidget {
                     : null,
                 opaque: false,
                 child: Observer(
-                  key: const Key("nodes"),
+                  key: const Key('nodes'),
                   builder: (context) => Stack(
                     clipBehavior: Clip.none,
                     children: [

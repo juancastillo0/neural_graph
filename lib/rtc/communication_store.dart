@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:mobx/mobx.dart';
 import 'package:neural_graph/api.graphql.dart';
 import 'package:gql_websocket_link/gql_websocket_link.dart';
-import "package:web_socket_channel/web_socket_channel.dart";
+import 'package:web_socket_channel/web_socket_channel.dart';
 import 'package:neural_graph/rtc/peer_connection.dart';
 import 'package:neural_graph/rtc/peer_protocol.dart';
 
@@ -52,9 +52,9 @@ class CommunicationStore {
         return null;
       }
       final data = response.data!.createSessionId;
-      final wsUrl = url.replaceAll(RegExp("https?://"), "ws://");
+      final wsUrl = url.replaceAll(RegExp('https?://'), 'ws://');
       final channel = WebSocketChannel.connect(
-        Uri.parse("$wsUrl?token=${data.token}"),
+        Uri.parse('$wsUrl?token=${data.token}'),
       );
 
       final client = ArtemisClient.fromLink(
@@ -66,7 +66,7 @@ class CommunicationStore {
         userId: data.userId,
       );
     } catch (e, s) {
-      print("CommunicationStore.create $e\n$s");
+      print('CommunicationStore.create $e\n$s');
       return null;
     }
   }

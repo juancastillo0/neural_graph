@@ -5,12 +5,12 @@ import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:formgen/formgen.dart';
 import 'package:mobx/mobx.dart';
 import 'package:neural_graph/common/extensions.dart';
+import 'package:neural_graph/diagram/node.dart';
 import 'package:neural_graph/fields/button_select_field.dart';
 import 'package:neural_graph/fields/form.dart';
 import 'package:neural_graph/fields/shape_field.dart';
 import 'package:neural_graph/layers/codegen_helper.dart';
 import 'package:neural_graph/layers/layers.dart';
-import 'package:neural_graph/diagram/node.dart';
 import 'package:neural_graph/layers/node_layer_view.dart';
 
 part 'convolutional_layer.g.dart';
@@ -32,13 +32,13 @@ abstract class _Convolutional extends Layer with Store {
         this.inPort = Port<Layer>(node),
         super(node, name: name);
 
-  static const String _layerId = "Convolutional";
+  static const String _layerId = 'Convolutional';
   @override
   String get layerId => _layerId;
 
   @observable
   ConvDimensions dimensions = ConvDimensions.two;
-  @FormInput(label: "Kernel Size", description: "daaaa")
+  @FormInput(label: 'Kernel Size', description: 'daaaa')
   @observable
   bool useBias = true;
   @observable
@@ -96,14 +96,14 @@ abstract class _Convolutional extends Layer with Store {
 
   @override
   String code(CodeGenHelper h) {
-    String _layerType = "";
+    String _layerType = '';
     if (separable) {
-      _layerType += "separableConv";
+      _layerType += 'separableConv';
     } else {
-      _layerType += "conv";
+      _layerType += 'conv';
     }
 
-    _layerType += "${dimensions.toInt().toString()}d";
+    _layerType += '${dimensions.toInt().toString()}d';
     _layerType = h.layerTypeName(_layerType);
     final sep = h.sep;
     final _separableString = separable
@@ -129,9 +129,9 @@ ${applyCode(h)}
   String applyCode(CodeGenHelper h) {
     final _in = inPort.firstFromData;
     if (_in == null) {
-      return "";
+      return '';
     }
-    return "${h.applyOne(name, _in.name)}\n";
+    return '${h.applyOne(name, _in.name)}\n';
   }
 
   @override
@@ -198,8 +198,8 @@ class ConvolutionalForm extends HookWidget {
     return DefaultFormTable(
       children: [
         tableRow(
-          name: "Dimensions",
-          description: "Number of dimension in the input tensor",
+          name: 'Dimensions',
+          description: 'Number of dimension in the input tensor',
           field: Observer(builder: (context) {
             return ButtonSelect<ConvDimensions>(
               options: ConvDimensions.values,
@@ -210,16 +210,16 @@ class ConvolutionalForm extends HookWidget {
           }),
         ),
         tableRow(
-          name: "Kernel Size",
-          description: "Size of the filter in each dimension",
+          name: 'Kernel Size',
+          description: 'Size of the filter in each dimension',
           field: ShapeField(
             field: fields.kernelSize,
             dimensions: state.dimensions.index,
           ),
         ),
         tableRow(
-          name: "Padding",
-          description: "Border padding behaviour",
+          name: 'Padding',
+          description: 'Border padding behaviour',
           field: Observer(
             builder: (_) => ButtonSelect<ConvPadding>(
               options: ConvPadding.values,
@@ -230,24 +230,24 @@ class ConvolutionalForm extends HookWidget {
           ),
         ),
         tableRow(
-          name: "Strides",
-          description: "List of number of omited rows/cols in each dimension",
+          name: 'Strides',
+          description: 'List of number of omited rows/cols in each dimension',
           field: ShapeField(
             field: fields.strides,
             dimensions: state.dimensions.index,
           ),
         ),
         tableRow(
-          name: "Dilation Rate",
-          description: "List of number of omited rows/cols in each dimension",
+          name: 'Dilation Rate',
+          description: 'List of number of omited rows/cols in each dimension',
           field: ShapeField(
             field: fields.dilationRate,
             dimensions: state.dimensions.index,
           ),
         ),
         tableRow(
-          name: "Use Bias",
-          description: "Use learnable parameter added to the output",
+          name: 'Use Bias',
+          description: 'Use learnable parameter added to the output',
           field: Align(
             child: Observer(
               builder: (_) => Switch(
@@ -258,9 +258,9 @@ class ConvolutionalForm extends HookWidget {
           ),
         ),
         tableRow(
-          name: "Separable",
+          name: 'Separable',
           description:
-              "Whether the convolution is separated into pointwise and depthwise or full",
+              'Whether the convolution is separated into pointwise and depthwise or full',
           field: Align(
             child: Observer(
               builder: (ctx) => Switch(
@@ -272,8 +272,8 @@ class ConvolutionalForm extends HookWidget {
         ),
         if (state.separable)
           tableRow(
-            name: "Depth Multiplier",
-            description: "Expansion rate in a separable convolution",
+            name: 'Depth Multiplier',
+            description: 'Expansion rate in a separable convolution',
             field: TextFormField(
               inputFormatters: [
                 FilteringTextInputFormatter.digitsOnly,

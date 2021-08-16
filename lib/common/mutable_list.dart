@@ -404,7 +404,7 @@ class MutableList<E> extends EventConsumer<ListEvent<E?>> implements List<E?> {
   Iterator<E?> get iterator => _inner.iterator;
 
   @override
-  String join([String separator = ""]) => _inner.join(separator);
+  String join([String separator = '']) => _inner.join(separator);
 
   @override
   int lastIndexOf(E? element, [int? start]) =>

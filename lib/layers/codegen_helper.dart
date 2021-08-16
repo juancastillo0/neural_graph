@@ -12,7 +12,7 @@ extension ProgrammingLanguageExt on ProgrammingLanguage {
 
 extension StringExtension on String {
   String firstToUpperCase() =>
-      length == 0 ? "" : this[0].toUpperCase() + substring(1);
+      length == 0 ? '' : this[0].toUpperCase() + substring(1);
 }
 
 class CodeGenHelper {
@@ -26,14 +26,14 @@ class CodeGenHelper {
 
   void withTab(void Function() fn) {
     _spaces += 2;
-    buffer.write(" " * _spaces);
+    buffer.write(' ' * _spaces);
     fn();
     _spaces -= 2;
   }
 
   void write(Object object) {
     if (_spaces != 0) {
-      buffer.write(object.toString().replaceAll("\n", "\n${" " * _spaces}"));
+      buffer.write(object.toString().replaceAll('\n', "\n${" " * _spaces}"));
     } else {
       buffer.write(object);
     }
@@ -46,7 +46,7 @@ class CodeGenHelper {
       final ans = <String>[];
       bool prevIsNum = false;
 
-      for (String c in name.firstToUpperCase().split("")) {
+      for (String c in name.firstToUpperCase().split('')) {
         if (int.tryParse(c) != null) {
           prevIsNum = true;
         } else if (prevIsNum) {
@@ -65,7 +65,7 @@ class CodeGenHelper {
       final ans = <String>[];
       for (final c in name.split('')) {
         if (c.toUpperCase() == c) {
-          ans.add("_${c.toLowerCase()}");
+          ans.add('_${c.toLowerCase()}');
         } else {
           ans.add(c);
         }
@@ -79,14 +79,14 @@ class CodeGenHelper {
       ? boolean.toString().firstToUpperCase()
       : boolean.toString();
 
-  String openArgs() => language.isJs ? "{" : "";
+  String openArgs() => language.isJs ? '{' : '';
 
-  String closeArgs() => language.isJs ? "}" : "";
+  String closeArgs() => language.isJs ? '}' : '';
 
   String firstOrList<T>(List<T> items) =>
       items.length == 1 ? items[0].toString() : items.toString();
 
-  String get defineKeyword => language.isJs ? "const " : "";
+  String get defineKeyword => language.isJs ? 'const ' : '';
   String get outputSuffix => language.isJs ? 'Output' : '_output';
 
   String defineOutput(String name) {
@@ -94,10 +94,10 @@ class CodeGenHelper {
   }
 
   String defineName(String name) {
-    return "$defineKeyword$name =";
+    return '$defineKeyword$name =';
   }
 
-  String get sep => language.isJs ? ":" : "=";
+  String get sep => language.isJs ? ':' : '=';
 
   String setName(String name) {
     return 'name$sep "$name"';
@@ -106,16 +106,16 @@ class CodeGenHelper {
   String setActivation(Activation activation) {
     return (activation != null)
         ? 'activation$sep "${argName(toEnumString(activation))}"'
-        : "";
+        : '';
   }
 
-  String get typeCastTensor => language.isJs ? " as SymbolicTensor" : "";
+  String get typeCastTensor => language.isJs ? ' as SymbolicTensor' : '';
 
   String applyOne(String name, String inputName) {
     if (language.isJs) {
-      return "${defineOutput(name)} $name.apply($inputName$outputSuffix)$typeCastTensor;";
+      return '${defineOutput(name)} $name.apply($inputName$outputSuffix)$typeCastTensor;';
     } else {
-      return "${defineOutput(name)} $name($inputName$outputSuffix);";
+      return '${defineOutput(name)} $name($inputName$outputSuffix);';
     }
   }
 

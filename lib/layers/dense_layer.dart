@@ -1,14 +1,14 @@
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:mobx/mobx.dart';
 import 'package:neural_graph/common/extensions.dart';
+import 'package:neural_graph/diagram/connection.dart';
+import 'package:neural_graph/diagram/node.dart';
 import 'package:neural_graph/fields/button_select_field.dart';
 import 'package:neural_graph/fields/form.dart';
 import 'package:neural_graph/layers/codegen_helper.dart';
-import 'package:neural_graph/diagram/node.dart';
-import 'package:neural_graph/diagram/connection.dart';
-import 'package:flutter/material.dart';
 import 'package:neural_graph/layers/layers.dart';
 import 'package:neural_graph/layers/node_layer_view.dart';
 
@@ -34,9 +34,9 @@ ${applyCode(h)}
   String applyCode(CodeGenHelper h) {
     final _in = inPort.firstFromData;
     if (_in == null) {
-      return "";
+      return '';
     }
-    return "${h.applyOne(name, _in.name)}\n";
+    return '${h.applyOne(name, _in.name)}\n';
   }
 
   @override
@@ -53,7 +53,7 @@ ${applyCode(h)}
   }
 
   @override
-  String get layerId => "Dense";
+  String get layerId => 'Dense';
 
   @override
   Tensor? output(Tensor input) {
@@ -96,8 +96,8 @@ class DenseForm extends HookWidget {
     return DefaultFormTable(
       children: [
         tableRow(
-          name: "Units",
-          description: "Number of units",
+          name: 'Units',
+          description: 'Number of units',
           field: TextFormField(
             inputFormatters: [
               FilteringTextInputFormatter.digitsOnly,
@@ -113,8 +113,8 @@ class DenseForm extends HookWidget {
           ),
         ),
         tableRow(
-          name: "Activation",
-          description: "Optional loss to apply to the output",
+          name: 'Activation',
+          description: 'Optional loss to apply to the output',
           field: Observer(builder: (context) {
             return ButtonSelect<Activation>(
               options: Activation.values,
@@ -125,8 +125,8 @@ class DenseForm extends HookWidget {
           }),
         ),
         tableRow(
-          name: "Use Bias",
-          description: "Use learnable parameter added to the output",
+          name: 'Use Bias',
+          description: 'Use learnable parameter added to the output',
           field: Align(
             child: Observer(
               builder: (_) => Switch(

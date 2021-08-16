@@ -11,7 +11,7 @@ abstract class Shape {
   HitTestBehavior hitTestBehavior;
 
   Set<GestureType> get registeredGestures =>
-      gestureCallbackMap?.keys?.toSet() ?? Set();
+      gestureCallbackMap?.keys?.toSet() ?? <dynamic>{};
 
   Shape({
     @required this.paint,
@@ -25,7 +25,7 @@ abstract class Shape {
       paint.strokeWidth = ShapeConstant.floatPrecision;
     }
     hitTestBehavior ??= HitTestBehavior.opaque;
-    gestureCallbackMap ??= Map();
+    gestureCallbackMap ??= {};
   }
 
   bool isInside(Offset p);

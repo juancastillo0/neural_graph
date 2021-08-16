@@ -243,7 +243,7 @@ class CompValueRef<T extends Comparable<T>> extends CompVal<T> {
 
   @override
   String toString() {
-    return '$ref';
+    return ref;
   }
 
   @override

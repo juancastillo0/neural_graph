@@ -116,9 +116,9 @@ class GraphQlError {
 
   static GraphQlError fromJson(Map<String, dynamic> json) {
     return GraphQlError(
-      message: json["message"] as String?,
-      locations: json["locations"] as List?,
-      path: json["path"] as List<String>?,
+      message: json['message'] as String?,
+      locations: json['locations'] as List?,
+      path: json['path'] as List<String>?,
     );
   }
 }
@@ -130,8 +130,8 @@ class GraphQlBody {
 
   static GraphQlBody fromJson(Map<String, dynamic> json) {
     return GraphQlBody(
-      data: json["data"] as Map<String, dynamic>?,
-      errors: (json["errors"] as List)
+      data: json['data'] as Map<String, dynamic>?,
+      errors: (json['errors'] as List)
           .map((e) => GraphQlError.fromJson(e as Map<String, dynamic>))
           .toList(),
     );

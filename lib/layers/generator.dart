@@ -9,19 +9,19 @@ String generateNeuralNetworkCode(
   final h = CodeGenHelper(language: lang);
 
   h.write(lang.isJs
-      ? """
+      ? '''
 import * as tf from "@tensorflow/tfjs-node";
 import { SymbolicTensor, layers } from "@tensorflow/tfjs-node";
 import { reduceSingle } from "./reduce-single";
 
 export const makeModel = () => {
-"""
-      : """
+'''
+      : '''
 import tensorflow as tf
 from tensorflow.keras import layers
 
 def make_model():
-""");
+''');
 
   h.withTab(() {
 // ================    INPUTS

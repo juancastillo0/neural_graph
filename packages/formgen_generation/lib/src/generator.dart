@@ -16,7 +16,7 @@ class FormGenGenerator extends GeneratorForAnnotation<FormGen> {
     ConstantReader annotation,
     BuildStep buildStep,
   ) {
-    return "";
+    return '';
     final visitor = ModelVisitor();
     // final enumVisitor = EnumVisitor();
 
@@ -45,7 +45,7 @@ class FormGenGenerator extends GeneratorForAnnotation<FormGen> {
       final elem = entry.value.element;
       final annotation = entry.value.annotation;
 
-      return """\
+      return '''\
 tableRow(
   name: "${annotation.label ?? entry.key}",
   description: "${annotation.description}",
@@ -54,8 +54,8 @@ tableRow(
     dimensions: state.dimensions.index,
   ),
 )
-""";
-    }).join(",");
+''';
+    }).join(',');
     final name = visitor.className!.getDisplayString(withNullability: false);
 
     return """
@@ -199,7 +199,7 @@ class ConvolutionalForm2 extends HookWidget {
 
 class ModelVisitor extends SimpleElementVisitor {
   DartType? className;
-  Map<String, _Field> fields = Map();
+  Map<String, _Field> fields = {};
 
   final _fieldAnnotation = const TypeChecker.fromRuntime(FormInput);
 
@@ -214,11 +214,11 @@ class ModelVisitor extends SimpleElementVisitor {
     if (_fieldAnnotation.hasAnnotationOfExact(element)) {
       final annotation = _fieldAnnotation.annotationsOfExact(element).first;
       final _annot = FormInput(
-        description: annotation.getField("description")?.toStringValue(),
-        label: annotation.getField("label")?.toStringValue(),
+        description: annotation.getField('description')?.toStringValue(),
+        label: annotation.getField('label')?.toStringValue(),
         validate: (_) =>
-            "", //annotation.getField("validate").toFunctionValue().name,
-        width: annotation.getField("width")?.toDoubleValue(),
+            '', //annotation.getField("validate").toFunctionValue().name,
+        width: annotation.getField('width')?.toDoubleValue(),
       );
       fields[element.name] = _Field(element, _annot);
     }
@@ -234,7 +234,7 @@ class _Field {
 
 class EnumVisitor extends SimpleElementVisitor {
   DartType? className;
-  Map<String, DartType> fields = Map();
+  Map<String, DartType> fields = {};
 
   @override
   dynamic visitFieldElement(FieldElement element) {

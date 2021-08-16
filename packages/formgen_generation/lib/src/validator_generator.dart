@@ -1,14 +1,14 @@
 import 'dart:async';
 
 import 'package:analyzer/dart/constant/value.dart';
+import 'package:analyzer/dart/element/element.dart';
 import 'package:analyzer/dart/element/nullability_suffix.dart';
 import 'package:analyzer/dart/element/type.dart';
 import 'package:analyzer/dart/element/visitor.dart';
+import 'package:analyzer/src/dart/element/element.dart';
 import 'package:build/src/builder/build_step.dart';
-import 'package:analyzer/dart/element/element.dart';
 import 'package:formgen/formgen.dart';
 import 'package:source_gen/source_gen.dart';
-import 'package:analyzer/src/dart/element/element.dart';
 
 class ValidatorGenerator extends GeneratorForAnnotation<Validate> {
   @override
@@ -182,6 +182,7 @@ class ModelVisitor extends SimpleElementVisitor {
   static const _functionAnnotation =
       TypeChecker.fromRuntime(ValidationFunction);
 
+  @override
   void visitMethodElement(MethodElement element) {
     if (_functionAnnotation.hasAnnotationOfExact(element)) {
       validateFunctions.add(element);
@@ -191,9 +192,7 @@ class ModelVisitor extends SimpleElementVisitor {
 
   @override
   dynamic visitConstructorElement(ConstructorElement element) {
-    if (className == null) {
-      className = element.returnType;
-    }
+    className ??= element.returnType;
     return super.visitConstructorElement(element);
   }
 
@@ -392,12 +391,13 @@ extension TemplateValidateField on ValidateField {
             param: null,
           ));
         }
-        if (v.comp != null)
+        if (v.comp != null) {
           validations.addAll(compValidations(
             v.comp!,
             prefix: prefix,
             fieldName: fieldName,
           ));
+        }
         if (v.min != null) {
           validations.add(ValidationItem(
             condition: '$getter < ${v.min}',
@@ -426,13 +426,14 @@ extension TemplateValidateField on ValidateField {
           }
         }
 
-        if (v.comp != null)
+        if (v.comp != null) {
           validations.addAll(compValidations(
             v.comp!,
             makeString: dateFromStr,
             prefix: prefix,
             fieldName: fieldName,
           ));
+        }
 
         if (v.min != null) {
           final minDate = dateFromStr(v.min!);
@@ -454,7 +455,7 @@ extension TemplateValidateField on ValidateField {
         }
       },
       duration: (v) {
-        if (v.comp != null)
+        if (v.comp != null) {
           validations.addAll(compValidations<Duration>(
             v.comp!,
             prefix: prefix,
@@ -462,9 +463,10 @@ extension TemplateValidateField on ValidateField {
                 'Duration(microseconds: ${dur.inMicroseconds})',
             fieldName: fieldName,
           ));
+        }
       },
       list: (v) {
-        if (v.each != null)
+        if (v.each != null) {
           validations.add(ValidationItem(
             defaultMessage: '',
             errorCode: '',
@@ -476,10 +478,11 @@ extension TemplateValidateField on ValidateField {
               prefix: prefix,
             ),
           ));
+        }
         validations.addAll(lengthValidations(v, getter));
       },
       set: (v) {
-        if (v.each != null)
+        if (v.each != null) {
           validations.add(ValidationItem(
             defaultMessage: '',
             errorCode: '',
@@ -491,10 +494,11 @@ extension TemplateValidateField on ValidateField {
               prefix: '',
             ),
           ));
+        }
         validations.addAll(lengthValidations(v, getter));
       },
       map: (v) {
-        if (v.eachKey != null)
+        if (v.eachKey != null) {
           validations.add(ValidationItem(
             defaultMessage: '',
             errorCode: '',
@@ -506,7 +510,8 @@ extension TemplateValidateField on ValidateField {
               prefix: '',
             ),
           ));
-        if (v.eachValue != null)
+        }
+        if (v.eachValue != null) {
           validations.add(ValidationItem(
             defaultMessage: '',
             errorCode: '',
@@ -518,6 +523,7 @@ extension TemplateValidateField on ValidateField {
               prefix: '',
             ),
           ));
+        }
         validations.addAll(lengthValidations(v, getter));
       },
     );

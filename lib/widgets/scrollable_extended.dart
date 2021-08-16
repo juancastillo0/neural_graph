@@ -35,7 +35,7 @@ class CustomScrollGestures extends HookWidget {
             final _prev = canvas.scale;
             canvas.onScale(d.scale * initScale.value);
             final _p2 = canvas.toCanvasOffset(prevPoint.value);
-            print("$_p $_p2");
+            print('$_p $_p2');
             final center = Offset(box.maxWidth / 2, box.maxHeight / 2);
             final fromCenter =
                 (prevPoint.value - center) * _prev / canvas.scale;

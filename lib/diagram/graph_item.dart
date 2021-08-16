@@ -24,7 +24,7 @@ abstract class GraphItem<N extends NodeData> {
     if (v is _Connection<N>) return connection(v.connection);
     if (v is _Node<N>) return node(v.node);
     if (v is _ConnectionPoint<N>) return connectionPoint(v.connection, v.index);
-    throw "";
+    throw '';
   }
 
   T? maybeWhen<T>({
@@ -34,14 +34,16 @@ abstract class GraphItem<N extends NodeData> {
     T Function(Connection<N, N>? connection, int? index)? connectionPoint,
   }) {
     final GraphItem<N> v = this;
-    if (v is _Connection<N>)
+    if (v is _Connection<N>) {
       return connection != null ? connection(v.connection) : orElse?.call();
+    }
     if (v is _Node<N>) return node != null ? node(v.node) : orElse?.call();
-    if (v is _ConnectionPoint<N>)
+    if (v is _ConnectionPoint<N>) {
       return connectionPoint != null
           ? connectionPoint(v.connection, v.index)
           : orElse?.call();
-    throw "";
+    }
+    throw '';
   }
 
   T map<T>({
@@ -53,7 +55,7 @@ abstract class GraphItem<N extends NodeData> {
     if (v is _Connection<N>) return connection(v);
     if (v is _Node<N>) return node(v);
     if (v is _ConnectionPoint<N>) return connectionPoint(v);
-    throw "";
+    throw '';
   }
 
   T? maybeMap<T>({
@@ -63,16 +65,18 @@ abstract class GraphItem<N extends NodeData> {
     T Function(_ConnectionPoint value)? connectionPoint,
   }) {
     final GraphItem<N> v = this;
-    if (v is _Connection<N>)
+    if (v is _Connection<N>) {
       return connection != null ? connection(v) : orElse?.call();
+    }
     if (v is _Node<N>) return node != null ? node(v) : orElse?.call();
-    if (v is _ConnectionPoint<N>)
+    if (v is _ConnectionPoint<N>) {
       return connectionPoint != null ? connectionPoint(v) : orElse?.call();
-    throw "";
+    }
+    throw '';
   }
 
   static GraphItem<N>? fromJson<N extends NodeData>(Map<String, dynamic> map) {
-    switch (map["runtimeType"] as String?) {
+    switch (map['runtimeType'] as String?) {
       case '_Connection':
         return _Connection.fromJson<N>(map);
       case '_Node':
@@ -128,8 +132,8 @@ class _Connection<N extends NodeData> extends GraphItem<N> {
   @override
   Map<String, dynamic> toJson() {
     return {
-      "runtimeType": "_Connection",
-      "connection": connection!.toJson(),
+      'runtimeType': '_Connection',
+      'connection': connection!.toJson(),
     };
   }
 }
@@ -175,8 +179,8 @@ class _Node<N extends NodeData> extends GraphItem<N> {
   @override
   Map<String, dynamic> toJson() {
     return {
-      "runtimeType": "_Node",
-      "node": node!.toJson(),
+      'runtimeType': '_Node',
+      'node': node!.toJson(),
     };
   }
 }
@@ -229,9 +233,9 @@ class _ConnectionPoint<N extends NodeData> extends GraphItem<N> {
   @override
   Map<String, dynamic> toJson() {
     return {
-      "runtimeType": "_ConnectionPoint",
-      "connection": connection!.toJson(),
-      "index": index,
+      'runtimeType': '_ConnectionPoint',
+      'connection': connection!.toJson(),
+      'index': index,
     };
   }
 }
