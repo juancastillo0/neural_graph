@@ -15,6 +15,7 @@ class AsyncResult<S, E> with _$AsyncResult<S, E> {
   bool get isSuccess => maybeWhen(orElse: () => false, success: (_) => true);
   bool get isError => maybeWhen(orElse: () => false, error: (_) => true);
 
-  S? get valueOrNull => maybeWhen(orElse: () => null, success: (value) => value);
+  S? get valueOrNull =>
+      maybeWhen(orElse: () => null, success: (value) => value);
   E? get errorOrNull => maybeWhen(orElse: () => null, error: (error) => error);
 }

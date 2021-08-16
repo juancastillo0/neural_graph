@@ -17,8 +17,8 @@ abstract class GraphItem<N extends NodeData> {
   T when<T>({
     required T Function(Connection<N, N>? connection) connection,
     required T Function(Node<N>? node) node,
-    required
-        T Function(Connection<N, N>? connection, int? index) connectionPoint,
+    required T Function(Connection<N, N>? connection, int? index)
+        connectionPoint,
   }) {
     final GraphItem<N> v = this;
     if (v is _Connection<N>) return connection(v.connection);

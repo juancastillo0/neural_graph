@@ -40,7 +40,8 @@ class FormTestValidationFields {
 }
 
 class FormTestValidation extends Validation<FormTest, FormTestField> {
-  const FormTestValidation(this.errorsMap, this.value, this.fields);
+  FormTestValidation(this.errorsMap, this.value, this.fields)
+      : super(errorsMap);
 
   final Map<FormTestField, List<ValidationError>> errorsMap;
 
@@ -163,16 +164,6 @@ FormTestValidation validateFormTest(FormTest value) {
         )
     ];
   errors[FormTestField.nonEmptyList] = [
-    for (final i in Iterable<int>.generate(value.nonEmptyList.length)) ...[
-      if (value.nonEmptyList[i].length > 3)
-        ValidationError(
-          message: r'Should be at a maximum 3 in length',
-          errorCode: 'ValidateString.maxLength',
-          property: 'nonEmptyList',
-          validationParam: 3,
-          value: value.nonEmptyList,
-        )
-    ],
     if (value.nonEmptyList.length < 1)
       ValidationError(
         message: r'Should be at a minimum 1 in length',
@@ -209,7 +200,8 @@ class NestedFieldValidationFields {
 }
 
 class NestedFieldValidation extends Validation<NestedField, NestedFieldField> {
-  const NestedFieldValidation(this.errorsMap, this.value, this.fields);
+  NestedFieldValidation(this.errorsMap, this.value, this.fields)
+      : super(errorsMap);
 
   final Map<NestedFieldField, List<ValidationError>> errorsMap;
 

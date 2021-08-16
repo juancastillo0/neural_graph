@@ -8,7 +8,10 @@ class Disposable<T> {
   final T data;
 }
 
-T useDisposable<T>(T Function() disposableBuilder, [List<Object> keys= const <Object>[]]) {
+T useDisposable<T>(
+  T Function() disposableBuilder, [
+  List<Object> keys = const <Object>[],
+]) {
   final data = disposableBuilder();
   assert((data as dynamic).dispose is void Function());
 

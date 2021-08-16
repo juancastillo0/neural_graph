@@ -51,8 +51,7 @@ abstract class _GraphCanvasStore with Store {
 
     if (delta.dy != 0) {
       final vp = vertical.position;
-      final dy =
-          (vertical.offset - delta.dy).clamp(0.0, vp.maxScrollExtent);
+      final dy = (vertical.offset - delta.dy).clamp(0.0, vp.maxScrollExtent);
       vertical.jumpTo(dy);
     }
   }

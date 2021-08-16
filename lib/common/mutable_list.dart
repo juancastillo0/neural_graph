@@ -148,8 +148,7 @@ class EventHistory<V extends Event> {
   }
 
   @override
-  // TODO: implement hashCode
-  int get hashCode => super.hashCode;
+  int get hashCode => Object.hash(_index, history);
 }
 
 class MutableList<E> extends EventConsumer<ListEvent<E?>> implements List<E?> {
@@ -332,7 +331,8 @@ class MutableList<E> extends EventConsumer<ListEvent<E?>> implements List<E?> {
   }
 
   @override
-  void setRange(int start, int end, Iterable<E?> iterable, [int skipCount = 0]) {
+  void setRange(int start, int end, Iterable<E?> iterable,
+      [int skipCount = 0]) {
     // TODO: implement setRange
   }
 
@@ -407,7 +407,8 @@ class MutableList<E> extends EventConsumer<ListEvent<E?>> implements List<E?> {
   String join([String separator = ""]) => _inner.join(separator);
 
   @override
-  int lastIndexOf(E? element, [int? start]) => _inner.lastIndexOf(element, start);
+  int lastIndexOf(E? element, [int? start]) =>
+      _inner.lastIndexOf(element, start);
 
   @override
   int lastIndexWhere(bool Function(E? element) test, [int? start]) =>
@@ -421,7 +422,8 @@ class MutableList<E> extends EventConsumer<ListEvent<E?>> implements List<E?> {
   Iterable<T> map<T>(T Function(E? e) f) => _inner.map(f);
 
   @override
-  E? reduce(E? Function(E? value, E? element) combine) => _inner.reduce(combine);
+  E? reduce(E? Function(E? value, E? element) combine) =>
+      _inner.reduce(combine);
 
   @override
   Iterable<E?> get reversed => _inner.reversed;
@@ -437,7 +439,8 @@ class MutableList<E> extends EventConsumer<ListEvent<E?>> implements List<E?> {
   Iterable<E?> skip(int count) => _inner.skip(count);
 
   @override
-  Iterable<E?> skipWhile(bool Function(E? value) test) => _inner.skipWhile(test);
+  Iterable<E?> skipWhile(bool Function(E? value) test) =>
+      _inner.skipWhile(test);
 
   @override
   List<E?> sublist(int start, [int? end]) => _inner.sublist(start, end);
@@ -446,7 +449,8 @@ class MutableList<E> extends EventConsumer<ListEvent<E?>> implements List<E?> {
   Iterable<E?> take(int count) => _inner.take(count);
 
   @override
-  Iterable<E?> takeWhile(bool Function(E? value) test) => _inner.takeWhile(test);
+  Iterable<E?> takeWhile(bool Function(E? value) test) =>
+      _inner.takeWhile(test);
 
   @override
   List<E?> toList({bool growable = true}) => _inner.toList(growable: growable);

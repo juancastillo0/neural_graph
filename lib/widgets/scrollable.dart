@@ -67,7 +67,8 @@ class _MultiScrollableState extends State<MultiScrollable> with RouteAware {
               Expanded(
                 child: LayoutBuilder(
                   builder: (context, box) {
-                    SchedulerBinding.instance!.addPostFrameCallback((timeStamp) {
+                    SchedulerBinding.instance!
+                        .addPostFrameCallback((timeStamp) {
                       if (innerWidth != box.maxWidth ||
                           innerHeight != box.maxHeight) {
                         setState(() {

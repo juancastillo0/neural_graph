@@ -102,7 +102,7 @@ class PeerConnectionState extends ChangeNotifier {
     _log("_onSignal ${signal!.toJson()}");
     try {
       await connectionCompleter.future;
-      signal.when(
+      await signal.when(
         answer: (answer) async {
           await this
               .connection!
@@ -117,7 +117,7 @@ class PeerConnectionState extends ChangeNotifier {
           // this.sdp = answer.sdp;
           await this.connection!.setLocalDescription(answer);
 
-          this._sendSignal(RTCSignal.answer(answer.sdp));
+          await this._sendSignal(RTCSignal.answer(answer.sdp));
         },
         candidate: (candidate) async {
           await this.connection!.addCandidate(candidate);
@@ -241,10 +241,13 @@ class PeerConnectionState extends ChangeNotifier {
 
   Future<void> close() async {
     protocol.dispose();
+    // ignore: unawaited_futures
     _remoteSubscription?.cancel();
+    // ignore: unawaited_futures
     dataChannel?.close();
+    // ignore: unawaited_futures
     connection?.close();
-    _messageStreamController.close();
+    await _messageStreamController.close();
   }
 }
 
