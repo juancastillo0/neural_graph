@@ -52,9 +52,11 @@ class ConnectionsPainter extends CustomPainter {
     required this.graph,
   }) {
     // mobx
-    for (var node in graph.nodes.values) {
-      node.data.ports.forEach((port) =>
-          port.connections.forEach((conn) => conn.innerPoints.length));
+    for (final node in graph.nodes.values) {
+      for (final port in node.data.ports) {
+        // ignore: avoid_function_literals_in_foreach_calls
+        port.connections.forEach((conn) => conn.innerPoints.length);
+      }
     }
   }
   static final _paint = Paint()

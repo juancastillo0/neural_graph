@@ -2,12 +2,12 @@ import 'dart:async';
 
 import 'package:artemis/artemis.dart';
 import 'package:flutter/material.dart';
+import 'package:gql_websocket_link/gql_websocket_link.dart';
 import 'package:mobx/mobx.dart';
 import 'package:neural_graph/api.graphql.dart';
-import 'package:gql_websocket_link/gql_websocket_link.dart';
-import 'package:web_socket_channel/web_socket_channel.dart';
 import 'package:neural_graph/rtc/peer_connection.dart';
 import 'package:neural_graph/rtc/peer_protocol.dart';
+import 'package:web_socket_channel/web_socket_channel.dart';
 
 class CommunicationStore {
   CommunicationStore({

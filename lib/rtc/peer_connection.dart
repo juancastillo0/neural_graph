@@ -200,7 +200,7 @@ class PeerConnectionState extends ChangeNotifier {
 
       if (message.type == MessageType.text) {
         final _payload = jsonDecode(message.text) as List;
-        for (var p in _payload) {
+        for (final p in _payload) {
           _messageStreamController.add(
             RtcMessage.fromJson(p as Map<String, dynamic>),
           );

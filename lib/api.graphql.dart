@@ -148,26 +148,26 @@ class SignalMutation
     OperationDefinitionNode(
         type: OperationType.mutation,
         name: NameNode(value: 'Signal'),
-        variableDefinitions: const [
+        variableDefinitions: [
           VariableDefinitionNode(
               variable: VariableNode(name: NameNode(value: 'peerId')),
               type: NamedTypeNode(
                   name: NameNode(value: 'String'), isNonNull: true),
               defaultValue: DefaultValueNode(value: null),
-              directives: const []),
+              directives: []),
           VariableDefinitionNode(
               variable: VariableNode(name: NameNode(value: 'signal')),
               type: NamedTypeNode(
                   name: NameNode(value: 'String'), isNonNull: true),
               defaultValue: DefaultValueNode(value: null),
-              directives: const [])
+              directives: [])
         ],
-        directives: const [],
-        selectionSet: SelectionSetNode(selections: const [
+        directives: [],
+        selectionSet: SelectionSetNode(selections: [
           FieldNode(
               name: NameNode(value: 'signal'),
               alias: null,
-              arguments: const [
+              arguments: [
                 ArgumentNode(
                     name: NameNode(value: 'peerId'),
                     value: VariableNode(name: NameNode(value: 'peerId'))),
@@ -175,7 +175,7 @@ class SignalMutation
                     name: NameNode(value: 'signal'),
                     value: VariableNode(name: NameNode(value: 'signal')))
               ],
-              directives: const [],
+              directives: [],
               selectionSet: null)
         ]))
   ]);
@@ -202,26 +202,26 @@ class CreateSessionMutation
     OperationDefinitionNode(
         type: OperationType.mutation,
         name: NameNode(value: 'CreateSession'),
-        variableDefinitions: const [],
-        directives: const [],
-        selectionSet: SelectionSetNode(selections: const [
+        variableDefinitions: [],
+        directives: [],
+        selectionSet: SelectionSetNode(selections: [
           FieldNode(
               name: NameNode(value: 'createSessionId'),
               alias: null,
-              arguments: const [],
-              directives: const [],
-              selectionSet: SelectionSetNode(selections: const [
+              arguments: [],
+              directives: [],
+              selectionSet: SelectionSetNode(selections: [
                 FieldNode(
                     name: NameNode(value: 'userId'),
                     alias: null,
-                    arguments: const [],
-                    directives: const [],
+                    arguments: [],
+                    directives: [],
                     selectionSet: null),
                 FieldNode(
                     name: NameNode(value: 'token'),
                     alias: null,
-                    arguments: const [],
-                    directives: const [],
+                    arguments: [],
+                    directives: [],
                     selectionSet: null)
               ]))
         ]))
@@ -246,26 +246,26 @@ class SignalsSubscription
     OperationDefinitionNode(
         type: OperationType.subscription,
         name: NameNode(value: 'Signals'),
-        variableDefinitions: const [],
-        directives: const [],
-        selectionSet: SelectionSetNode(selections: const [
+        variableDefinitions: [],
+        directives: [],
+        selectionSet: SelectionSetNode(selections: [
           FieldNode(
               name: NameNode(value: 'signals'),
               alias: null,
-              arguments: const [],
-              directives: const [],
-              selectionSet: SelectionSetNode(selections: const [
+              arguments: [],
+              directives: [],
+              selectionSet: SelectionSetNode(selections: [
                 FieldNode(
                     name: NameNode(value: 'payload'),
                     alias: null,
-                    arguments: const [],
-                    directives: const [],
+                    arguments: [],
+                    directives: [],
                     selectionSet: null),
                 FieldNode(
                     name: NameNode(value: 'peerId'),
                     alias: null,
-                    arguments: const [],
-                    directives: const [],
+                    arguments: [],
+                    directives: [],
                     selectionSet: null)
               ]))
         ]))
@@ -306,31 +306,31 @@ class RoomSubscription
     OperationDefinitionNode(
         type: OperationType.subscription,
         name: NameNode(value: 'Room'),
-        variableDefinitions: const [
+        variableDefinitions: [
           VariableDefinitionNode(
               variable: VariableNode(name: NameNode(value: 'roomId')),
               type: NamedTypeNode(
                   name: NameNode(value: 'String'), isNonNull: true),
               defaultValue: DefaultValueNode(value: null),
-              directives: const [])
+              directives: [])
         ],
-        directives: const [],
-        selectionSet: SelectionSetNode(selections: const [
+        directives: [],
+        selectionSet: SelectionSetNode(selections: [
           FieldNode(
               name: NameNode(value: 'room'),
               alias: null,
-              arguments: const [
+              arguments: [
                 ArgumentNode(
                     name: NameNode(value: 'roomId'),
                     value: VariableNode(name: NameNode(value: 'roomId')))
               ],
-              directives: const [],
-              selectionSet: SelectionSetNode(selections: const [
+              directives: [],
+              selectionSet: SelectionSetNode(selections: [
                 FieldNode(
                     name: NameNode(value: 'users'),
                     alias: null,
-                    arguments: const [],
-                    directives: const [],
+                    arguments: [],
+                    directives: [],
                     selectionSet: null)
               ]))
         ]))
