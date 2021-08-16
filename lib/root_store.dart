@@ -8,6 +8,7 @@ import 'package:neural_graph/layers/convolutional_layer.dart';
 import 'package:neural_graph/layers/generator.dart';
 import 'package:neural_graph/layers/layers.dart';
 import 'package:neural_graph/layers/neural_network.dart';
+import 'package:neural_graph/tasks/tasks_store.dart';
 
 part 'root_store.g.dart';
 
@@ -53,6 +54,8 @@ abstract class _RootStore with Store {
       this.language,
     );
   }
+
+  final tasksStore = TasksStore();
 }
 
 RootStore useRoot() {
