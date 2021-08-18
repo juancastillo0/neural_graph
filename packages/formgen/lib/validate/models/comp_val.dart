@@ -1,8 +1,8 @@
 import 'dart:convert';
 
-import 'package:flutter/foundation.dart';
 import 'package:formgen/formgen.dart';
 import 'package:formgen/validate/serde_type.dart';
+import 'package:meta/meta.dart';
 
 @immutable
 abstract class CompVal<T extends Comparable<T>> {
