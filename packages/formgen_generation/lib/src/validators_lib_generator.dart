@@ -51,6 +51,7 @@ class ValidatorsLibGenerator implements Builder {
 import 'package:formgen/formgen.dart';
 ${allClasses.map((e) => "import '${e.source.uri}';").toSet().join()}
 
+// ignore: avoid_classes_with_only_static_members
 class Validators {
   static const typeMap = <Type, Validator>{
     ${allClasses.map((e) {

@@ -299,6 +299,7 @@ extension ConsumeSerdeType on DartObject {
         return '${enclosing == null ? '' : '$enclosing.'}${f.name}';
       },
       duration: () => this.getField('_duration')?.toIntValue(),
+      option: (inner) => this.serde(inner),
       list: (list) =>
           this.toListValue()?.map((e) => e.serde(list.generic)).toList(),
       set: (set) =>

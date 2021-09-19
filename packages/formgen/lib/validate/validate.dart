@@ -46,7 +46,9 @@ class ValidationError {
     return validation.hasErrors
         ? ValidationError(
             errorCode: 'Validate.nested',
-            message: '',
+            // ignore: missing_whitespace_between_adjacent_strings
+            message: 'Found ${validation.numErrors} error'
+                '{${validation.numErrors > 1 ? 's' : ''} in $property',
             property: property,
             value: validation.value,
             nestedValidation: validation,
