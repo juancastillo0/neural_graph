@@ -139,7 +139,7 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   final root = RootStore.instance;
 
-  int index = 0;
+  int index = 1;
 
   @override
   Widget build(BuildContext context) {
