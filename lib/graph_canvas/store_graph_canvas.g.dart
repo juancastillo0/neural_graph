@@ -6,7 +6,7 @@ part of 'store_graph_canvas.dart';
 // StoreGenerator
 // **************************************************************************
 
-// ignore_for_file: non_constant_identifier_names, unnecessary_brace_in_string_interps, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic
+// ignore_for_file: non_constant_identifier_names, unnecessary_brace_in_string_interps, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic, no_leading_underscores_for_local_identifiers
 
 mixin _$GraphCanvasStore on _GraphCanvasStore, Store {
   Computed<Offset>? _$translateOffsetComputed;
@@ -17,7 +17,8 @@ mixin _$GraphCanvasStore on _GraphCanvasStore, Store {
           name: '_GraphCanvasStore.translateOffset'))
       .value;
 
-  final _$sizeAtom = Atom(name: '_GraphCanvasStore.size');
+  late final _$sizeAtom =
+      Atom(name: '_GraphCanvasStore.size', context: context);
 
   @override
   Size get size {
@@ -32,7 +33,8 @@ mixin _$GraphCanvasStore on _GraphCanvasStore, Store {
     });
   }
 
-  final _$scaleAtom = Atom(name: '_GraphCanvasStore.scale');
+  late final _$scaleAtom =
+      Atom(name: '_GraphCanvasStore.scale', context: context);
 
   @override
   double get scale {
@@ -47,7 +49,8 @@ mixin _$GraphCanvasStore on _GraphCanvasStore, Store {
     });
   }
 
-  final _$mousePositionAtom = Atom(name: '_GraphCanvasStore.mousePosition');
+  late final _$mousePositionAtom =
+      Atom(name: '_GraphCanvasStore.mousePosition', context: context);
 
   @override
   Offset? get mousePosition {

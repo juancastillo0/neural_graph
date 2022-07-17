@@ -6,10 +6,11 @@ part of 'convolutional_layer.dart';
 // StoreGenerator
 // **************************************************************************
 
-// ignore_for_file: non_constant_identifier_names, unnecessary_brace_in_string_interps, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic
+// ignore_for_file: non_constant_identifier_names, unnecessary_brace_in_string_interps, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic, no_leading_underscores_for_local_identifiers
 
 mixin _$Convolutional on _Convolutional, Store {
-  final _$dimensionsAtom = Atom(name: '_Convolutional.dimensions');
+  late final _$dimensionsAtom =
+      Atom(name: '_Convolutional.dimensions', context: context);
 
   @override
   ConvDimensions get dimensions {
@@ -24,7 +25,8 @@ mixin _$Convolutional on _Convolutional, Store {
     });
   }
 
-  final _$useBiasAtom = Atom(name: '_Convolutional.useBias');
+  late final _$useBiasAtom =
+      Atom(name: '_Convolutional.useBias', context: context);
 
   @override
   bool get useBias {
@@ -39,7 +41,8 @@ mixin _$Convolutional on _Convolutional, Store {
     });
   }
 
-  final _$dilationRateAtom = Atom(name: '_Convolutional.dilationRate');
+  late final _$dilationRateAtom =
+      Atom(name: '_Convolutional.dilationRate', context: context);
 
   @override
   List<int> get dilationRate {
@@ -54,7 +57,8 @@ mixin _$Convolutional on _Convolutional, Store {
     });
   }
 
-  final _$depthMultiplierAtom = Atom(name: '_Convolutional.depthMultiplier');
+  late final _$depthMultiplierAtom =
+      Atom(name: '_Convolutional.depthMultiplier', context: context);
 
   @override
   double get depthMultiplier {
@@ -69,7 +73,8 @@ mixin _$Convolutional on _Convolutional, Store {
     });
   }
 
-  final _$stridesAtom = Atom(name: '_Convolutional.strides');
+  late final _$stridesAtom =
+      Atom(name: '_Convolutional.strides', context: context);
 
   @override
   List<int> get strides {
@@ -84,7 +89,8 @@ mixin _$Convolutional on _Convolutional, Store {
     });
   }
 
-  final _$paddingAtom = Atom(name: '_Convolutional.padding');
+  late final _$paddingAtom =
+      Atom(name: '_Convolutional.padding', context: context);
 
   @override
   ConvPadding get padding {
@@ -99,7 +105,8 @@ mixin _$Convolutional on _Convolutional, Store {
     });
   }
 
-  final _$kernelSizeAtom = Atom(name: '_Convolutional.kernelSize');
+  late final _$kernelSizeAtom =
+      Atom(name: '_Convolutional.kernelSize', context: context);
 
   @override
   List<int> get kernelSize {
@@ -114,7 +121,8 @@ mixin _$Convolutional on _Convolutional, Store {
     });
   }
 
-  final _$filtersAtom = Atom(name: '_Convolutional.filters');
+  late final _$filtersAtom =
+      Atom(name: '_Convolutional.filters', context: context);
 
   @override
   int get filters {
@@ -129,7 +137,8 @@ mixin _$Convolutional on _Convolutional, Store {
     });
   }
 
-  final _$separableAtom = Atom(name: '_Convolutional.separable');
+  late final _$separableAtom =
+      Atom(name: '_Convolutional.separable', context: context);
 
   @override
   bool get separable {
@@ -144,7 +153,8 @@ mixin _$Convolutional on _Convolutional, Store {
     });
   }
 
-  final _$activationAtom = Atom(name: '_Convolutional.activation');
+  late final _$activationAtom =
+      Atom(name: '_Convolutional.activation', context: context);
 
   @override
   Activation get activation {

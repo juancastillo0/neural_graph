@@ -6,7 +6,7 @@ part of 'root_store.dart';
 // StoreGenerator
 // **************************************************************************
 
-// ignore_for_file: non_constant_identifier_names, unnecessary_brace_in_string_interps, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic
+// ignore_for_file: non_constant_identifier_names, unnecessary_brace_in_string_interps, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic, no_leading_underscores_for_local_identifiers
 
 mixin _$RootStore on _RootStore, Store {
   Computed<String>? _$generatedSourceCodeComputed;
@@ -17,7 +17,8 @@ mixin _$RootStore on _RootStore, Store {
               name: '_RootStore.generatedSourceCode'))
       .value;
 
-  final _$selectedNetworkAtom = Atom(name: '_RootStore.selectedNetwork');
+  late final _$selectedNetworkAtom =
+      Atom(name: '_RootStore.selectedNetwork', context: context);
 
   @override
   NeuralNetwork get selectedNetwork {
@@ -32,7 +33,8 @@ mixin _$RootStore on _RootStore, Store {
     });
   }
 
-  final _$languageAtom = Atom(name: '_RootStore.language');
+  late final _$languageAtom =
+      Atom(name: '_RootStore.language', context: context);
 
   @override
   ProgrammingLanguage get language {

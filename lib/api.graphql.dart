@@ -1,10 +1,10 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
+// @dart = 2.12
 
 import 'package:artemis/artemis.dart';
+import 'package:json_annotation/json_annotation.dart';
 import 'package:equatable/equatable.dart';
 import 'package:gql/ast.dart';
-import 'package:json_annotation/json_annotation.dart';
-
 part 'api.graphql.g.dart';
 
 @JsonSerializable(explicitToJson: true)
@@ -33,7 +33,7 @@ class CreateSession$MutationRoot$UserSession extends JsonSerializable
 
   late String userId;
 
-  late String? token;
+  String? token;
 
   @override
   List<Object?> get props => [userId, token];
@@ -129,9 +129,9 @@ class SignalArguments extends JsonSerializable with EquatableMixin {
   factory SignalArguments.fromJson(Map<String, dynamic> json) =>
       _$SignalArgumentsFromJson(json);
 
-  final String peerId;
+  late String peerId;
 
-  final String signal;
+  late String signal;
 
   @override
   List<Object?> get props => [peerId, signal];
@@ -139,52 +139,55 @@ class SignalArguments extends JsonSerializable with EquatableMixin {
   Map<String, dynamic> toJson() => _$SignalArgumentsToJson(this);
 }
 
+final SIGNAL_MUTATION_DOCUMENT_OPERATION_NAME = 'Signal';
+final SIGNAL_MUTATION_DOCUMENT = DocumentNode(definitions: [
+  OperationDefinitionNode(
+      type: OperationType.mutation,
+      name: NameNode(value: 'Signal'),
+      variableDefinitions: [
+        VariableDefinitionNode(
+            variable: VariableNode(name: NameNode(value: 'peerId')),
+            type:
+                NamedTypeNode(name: NameNode(value: 'String'), isNonNull: true),
+            defaultValue: DefaultValueNode(value: null),
+            directives: []),
+        VariableDefinitionNode(
+            variable: VariableNode(name: NameNode(value: 'signal')),
+            type:
+                NamedTypeNode(name: NameNode(value: 'String'), isNonNull: true),
+            defaultValue: DefaultValueNode(value: null),
+            directives: [])
+      ],
+      directives: [],
+      selectionSet: SelectionSetNode(selections: [
+        FieldNode(
+            name: NameNode(value: 'signal'),
+            alias: null,
+            arguments: [
+              ArgumentNode(
+                  name: NameNode(value: 'peerId'),
+                  value: VariableNode(name: NameNode(value: 'peerId'))),
+              ArgumentNode(
+                  name: NameNode(value: 'signal'),
+                  value: VariableNode(name: NameNode(value: 'signal')))
+            ],
+            directives: [],
+            selectionSet: null)
+      ]))
+]);
+
 class SignalMutation
     extends GraphQLQuery<Signal$MutationRoot, SignalArguments> {
-  SignalMutation({this.variables});
+  SignalMutation({required this.variables});
 
   @override
-  final DocumentNode document = DocumentNode(definitions: const [
-    OperationDefinitionNode(
-        type: OperationType.mutation,
-        name: NameNode(value: 'Signal'),
-        variableDefinitions: [
-          VariableDefinitionNode(
-              variable: VariableNode(name: NameNode(value: 'peerId')),
-              type: NamedTypeNode(
-                  name: NameNode(value: 'String'), isNonNull: true),
-              defaultValue: DefaultValueNode(value: null),
-              directives: []),
-          VariableDefinitionNode(
-              variable: VariableNode(name: NameNode(value: 'signal')),
-              type: NamedTypeNode(
-                  name: NameNode(value: 'String'), isNonNull: true),
-              defaultValue: DefaultValueNode(value: null),
-              directives: [])
-        ],
-        directives: [],
-        selectionSet: SelectionSetNode(selections: [
-          FieldNode(
-              name: NameNode(value: 'signal'),
-              alias: null,
-              arguments: [
-                ArgumentNode(
-                    name: NameNode(value: 'peerId'),
-                    value: VariableNode(name: NameNode(value: 'peerId'))),
-                ArgumentNode(
-                    name: NameNode(value: 'signal'),
-                    value: VariableNode(name: NameNode(value: 'signal')))
-              ],
-              directives: [],
-              selectionSet: null)
-        ]))
-  ]);
+  final DocumentNode document = SIGNAL_MUTATION_DOCUMENT;
 
   @override
-  final String operationName = 'Signal';
+  final String operationName = SIGNAL_MUTATION_DOCUMENT_OPERATION_NAME;
 
   @override
-  final SignalArguments? variables;
+  final SignalArguments variables;
 
   @override
   List<Object?> get props => [document, operationName, variables];
@@ -193,42 +196,45 @@ class SignalMutation
       Signal$MutationRoot.fromJson(json);
 }
 
+final CREATE_SESSION_MUTATION_DOCUMENT_OPERATION_NAME = 'CreateSession';
+final CREATE_SESSION_MUTATION_DOCUMENT = DocumentNode(definitions: [
+  OperationDefinitionNode(
+      type: OperationType.mutation,
+      name: NameNode(value: 'CreateSession'),
+      variableDefinitions: [],
+      directives: [],
+      selectionSet: SelectionSetNode(selections: [
+        FieldNode(
+            name: NameNode(value: 'createSessionId'),
+            alias: null,
+            arguments: [],
+            directives: [],
+            selectionSet: SelectionSetNode(selections: [
+              FieldNode(
+                  name: NameNode(value: 'userId'),
+                  alias: null,
+                  arguments: [],
+                  directives: [],
+                  selectionSet: null),
+              FieldNode(
+                  name: NameNode(value: 'token'),
+                  alias: null,
+                  arguments: [],
+                  directives: [],
+                  selectionSet: null)
+            ]))
+      ]))
+]);
+
 class CreateSessionMutation
     extends GraphQLQuery<CreateSession$MutationRoot, JsonSerializable> {
   CreateSessionMutation();
 
   @override
-  final DocumentNode document = DocumentNode(definitions: const [
-    OperationDefinitionNode(
-        type: OperationType.mutation,
-        name: NameNode(value: 'CreateSession'),
-        variableDefinitions: [],
-        directives: [],
-        selectionSet: SelectionSetNode(selections: [
-          FieldNode(
-              name: NameNode(value: 'createSessionId'),
-              alias: null,
-              arguments: [],
-              directives: [],
-              selectionSet: SelectionSetNode(selections: [
-                FieldNode(
-                    name: NameNode(value: 'userId'),
-                    alias: null,
-                    arguments: [],
-                    directives: [],
-                    selectionSet: null),
-                FieldNode(
-                    name: NameNode(value: 'token'),
-                    alias: null,
-                    arguments: [],
-                    directives: [],
-                    selectionSet: null)
-              ]))
-        ]))
-  ]);
+  final DocumentNode document = CREATE_SESSION_MUTATION_DOCUMENT;
 
   @override
-  final String operationName = 'CreateSession';
+  final String operationName = CREATE_SESSION_MUTATION_DOCUMENT_OPERATION_NAME;
 
   @override
   List<Object?> get props => [document, operationName];
@@ -237,42 +243,45 @@ class CreateSessionMutation
       CreateSession$MutationRoot.fromJson(json);
 }
 
+final SIGNALS_SUBSCRIPTION_DOCUMENT_OPERATION_NAME = 'Signals';
+final SIGNALS_SUBSCRIPTION_DOCUMENT = DocumentNode(definitions: [
+  OperationDefinitionNode(
+      type: OperationType.subscription,
+      name: NameNode(value: 'Signals'),
+      variableDefinitions: [],
+      directives: [],
+      selectionSet: SelectionSetNode(selections: [
+        FieldNode(
+            name: NameNode(value: 'signals'),
+            alias: null,
+            arguments: [],
+            directives: [],
+            selectionSet: SelectionSetNode(selections: [
+              FieldNode(
+                  name: NameNode(value: 'payload'),
+                  alias: null,
+                  arguments: [],
+                  directives: [],
+                  selectionSet: null),
+              FieldNode(
+                  name: NameNode(value: 'peerId'),
+                  alias: null,
+                  arguments: [],
+                  directives: [],
+                  selectionSet: null)
+            ]))
+      ]))
+]);
+
 class SignalsSubscription
     extends GraphQLQuery<Signals$SubscriptionRoot, JsonSerializable> {
   SignalsSubscription();
 
   @override
-  final DocumentNode document = DocumentNode(definitions: const [
-    OperationDefinitionNode(
-        type: OperationType.subscription,
-        name: NameNode(value: 'Signals'),
-        variableDefinitions: [],
-        directives: [],
-        selectionSet: SelectionSetNode(selections: [
-          FieldNode(
-              name: NameNode(value: 'signals'),
-              alias: null,
-              arguments: [],
-              directives: [],
-              selectionSet: SelectionSetNode(selections: [
-                FieldNode(
-                    name: NameNode(value: 'payload'),
-                    alias: null,
-                    arguments: [],
-                    directives: [],
-                    selectionSet: null),
-                FieldNode(
-                    name: NameNode(value: 'peerId'),
-                    alias: null,
-                    arguments: [],
-                    directives: [],
-                    selectionSet: null)
-              ]))
-        ]))
-  ]);
+  final DocumentNode document = SIGNALS_SUBSCRIPTION_DOCUMENT;
 
   @override
-  final String operationName = 'Signals';
+  final String operationName = SIGNALS_SUBSCRIPTION_DOCUMENT_OPERATION_NAME;
 
   @override
   List<Object?> get props => [document, operationName];
@@ -289,7 +298,7 @@ class RoomArguments extends JsonSerializable with EquatableMixin {
   factory RoomArguments.fromJson(Map<String, dynamic> json) =>
       _$RoomArgumentsFromJson(json);
 
-  final String roomId;
+  late String roomId;
 
   @override
   List<Object?> get props => [roomId];
@@ -297,50 +306,53 @@ class RoomArguments extends JsonSerializable with EquatableMixin {
   Map<String, dynamic> toJson() => _$RoomArgumentsToJson(this);
 }
 
+final ROOM_SUBSCRIPTION_DOCUMENT_OPERATION_NAME = 'Room';
+final ROOM_SUBSCRIPTION_DOCUMENT = DocumentNode(definitions: [
+  OperationDefinitionNode(
+      type: OperationType.subscription,
+      name: NameNode(value: 'Room'),
+      variableDefinitions: [
+        VariableDefinitionNode(
+            variable: VariableNode(name: NameNode(value: 'roomId')),
+            type:
+                NamedTypeNode(name: NameNode(value: 'String'), isNonNull: true),
+            defaultValue: DefaultValueNode(value: null),
+            directives: [])
+      ],
+      directives: [],
+      selectionSet: SelectionSetNode(selections: [
+        FieldNode(
+            name: NameNode(value: 'room'),
+            alias: null,
+            arguments: [
+              ArgumentNode(
+                  name: NameNode(value: 'roomId'),
+                  value: VariableNode(name: NameNode(value: 'roomId')))
+            ],
+            directives: [],
+            selectionSet: SelectionSetNode(selections: [
+              FieldNode(
+                  name: NameNode(value: 'users'),
+                  alias: null,
+                  arguments: [],
+                  directives: [],
+                  selectionSet: null)
+            ]))
+      ]))
+]);
+
 class RoomSubscription
     extends GraphQLQuery<Room$SubscriptionRoot, RoomArguments> {
-  RoomSubscription({this.variables});
+  RoomSubscription({required this.variables});
 
   @override
-  final DocumentNode document = DocumentNode(definitions: const [
-    OperationDefinitionNode(
-        type: OperationType.subscription,
-        name: NameNode(value: 'Room'),
-        variableDefinitions: [
-          VariableDefinitionNode(
-              variable: VariableNode(name: NameNode(value: 'roomId')),
-              type: NamedTypeNode(
-                  name: NameNode(value: 'String'), isNonNull: true),
-              defaultValue: DefaultValueNode(value: null),
-              directives: [])
-        ],
-        directives: [],
-        selectionSet: SelectionSetNode(selections: [
-          FieldNode(
-              name: NameNode(value: 'room'),
-              alias: null,
-              arguments: [
-                ArgumentNode(
-                    name: NameNode(value: 'roomId'),
-                    value: VariableNode(name: NameNode(value: 'roomId')))
-              ],
-              directives: [],
-              selectionSet: SelectionSetNode(selections: [
-                FieldNode(
-                    name: NameNode(value: 'users'),
-                    alias: null,
-                    arguments: [],
-                    directives: [],
-                    selectionSet: null)
-              ]))
-        ]))
-  ]);
+  final DocumentNode document = ROOM_SUBSCRIPTION_DOCUMENT;
 
   @override
-  final String operationName = 'Room';
+  final String operationName = ROOM_SUBSCRIPTION_DOCUMENT_OPERATION_NAME;
 
   @override
-  final RoomArguments? variables;
+  final RoomArguments variables;
 
   @override
   List<Object?> get props => [document, operationName, variables];

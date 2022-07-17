@@ -1,6 +1,7 @@
 import 'package:formgen/formgen.dart';
 import 'package:neural_graph/tasks/task_model.dart';
 
+// ignore: avoid_classes_with_only_static_members
 class Validators {
   static const typeMap = <Type, Validator>{
     Task: validatorTask,
