@@ -778,9 +778,11 @@ packages:
   stack_portal:
     dependency: "direct main"
     description:
-      path: "../stack_portal"
-      relative: true
-    source: path
+      path: "."
+      ref: HEAD
+      resolved-ref: "9f0c0d29b2dba5e30f8fee535484d490ec07861b"
+      url: "https://github.com/juancastillo0/stack_portal"
+    source: git
     version: "0.0.1"
   stack_trace:
     dependency: transitive
