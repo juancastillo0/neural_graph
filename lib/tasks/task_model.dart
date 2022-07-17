@@ -1,13 +1,29 @@
 import 'package:formgen/formgen.dart';
+import 'package:json_annotation/json_annotation.dart';
 import 'package:mobx/mobx.dart';
 import 'package:neural_graph/tasks/tasks_store.dart';
+import 'package:uuid/uuid.dart';
 
 part 'task_model.g.dart';
 
 @Validate()
-class Task extends _Task with _$Task {}
+@JsonSerializable()
+class Task extends _Task with _$Task {
+  Task({String? id}) : this.id = id ?? const Uuid().v4();
+
+  @override
+  final String id;
+
+  factory Task.fromJson(Map<String, Object?> json) => _$TaskFromJson(json);
+  Map<String, Object?> toJson() => _$TaskToJson(this);
+}
 
 abstract class _Task with Store {
+  String get id;
+
+  @observable
+  String? parentTaskId;
+
   @observable
   String name = '';
 

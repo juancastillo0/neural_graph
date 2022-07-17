@@ -3,13 +3,59 @@
 part of 'task_model.dart';
 
 // **************************************************************************
+// JsonSerializableGenerator
+// **************************************************************************
+
+Task _$TaskFromJson(Map<String, dynamic> json) => Task(
+      id: json['id'] as String?,
+    )
+      ..parentTaskId = json['parentTaskId'] as String?
+      ..name = json['name'] as String
+      ..description = json['description'] as String
+      ..minDuration = Duration(microseconds: json['minDuration'] as int)
+      ..maxDuration = Duration(microseconds: json['maxDuration'] as int)
+      ..deliveryDate = json['deliveryDate'] == null
+          ? null
+          : DateTime.parse(json['deliveryDate'] as String)
+      ..minWeight = json['minWeight'] as int
+      ..maxWeight = json['maxWeight'] as int;
+
+Map<String, dynamic> _$TaskToJson(Task instance) => <String, dynamic>{
+      'parentTaskId': instance.parentTaskId,
+      'name': instance.name,
+      'description': instance.description,
+      'minDuration': instance.minDuration.inMicroseconds,
+      'maxDuration': instance.maxDuration.inMicroseconds,
+      'deliveryDate': instance.deliveryDate?.toIso8601String(),
+      'minWeight': instance.minWeight,
+      'maxWeight': instance.maxWeight,
+      'id': instance.id,
+    };
+
+// **************************************************************************
 // StoreGenerator
 // **************************************************************************
 
-// ignore_for_file: non_constant_identifier_names, unnecessary_brace_in_string_interps, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic
+// ignore_for_file: non_constant_identifier_names, unnecessary_brace_in_string_interps, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic, no_leading_underscores_for_local_identifiers
 
 mixin _$Task on _Task, Store {
-  final _$nameAtom = Atom(name: '_Task.name');
+  late final _$parentTaskIdAtom =
+      Atom(name: '_Task.parentTaskId', context: context);
+
+  @override
+  String? get parentTaskId {
+    _$parentTaskIdAtom.reportRead();
+    return super.parentTaskId;
+  }
+
+  @override
+  set parentTaskId(String? value) {
+    _$parentTaskIdAtom.reportWrite(value, super.parentTaskId, () {
+      super.parentTaskId = value;
+    });
+  }
+
+  late final _$nameAtom = Atom(name: '_Task.name', context: context);
 
   @override
   String get name {
@@ -24,7 +70,8 @@ mixin _$Task on _Task, Store {
     });
   }
 
-  final _$descriptionAtom = Atom(name: '_Task.description');
+  late final _$descriptionAtom =
+      Atom(name: '_Task.description', context: context);
 
   @override
   String get description {
@@ -39,7 +86,8 @@ mixin _$Task on _Task, Store {
     });
   }
 
-  final _$minDurationAtom = Atom(name: '_Task.minDuration');
+  late final _$minDurationAtom =
+      Atom(name: '_Task.minDuration', context: context);
 
   @override
   Duration get minDuration {
@@ -54,7 +102,8 @@ mixin _$Task on _Task, Store {
     });
   }
 
-  final _$maxDurationAtom = Atom(name: '_Task.maxDuration');
+  late final _$maxDurationAtom =
+      Atom(name: '_Task.maxDuration', context: context);
 
   @override
   Duration get maxDuration {
@@ -69,7 +118,8 @@ mixin _$Task on _Task, Store {
     });
   }
 
-  final _$deliveryDateAtom = Atom(name: '_Task.deliveryDate');
+  late final _$deliveryDateAtom =
+      Atom(name: '_Task.deliveryDate', context: context);
 
   @override
   DateTime? get deliveryDate {
@@ -84,7 +134,7 @@ mixin _$Task on _Task, Store {
     });
   }
 
-  final _$minWeightAtom = Atom(name: '_Task.minWeight');
+  late final _$minWeightAtom = Atom(name: '_Task.minWeight', context: context);
 
   @override
   int get minWeight {
@@ -99,7 +149,7 @@ mixin _$Task on _Task, Store {
     });
   }
 
-  final _$maxWeightAtom = Atom(name: '_Task.maxWeight');
+  late final _$maxWeightAtom = Atom(name: '_Task.maxWeight', context: context);
 
   @override
   int get maxWeight {
@@ -117,6 +167,7 @@ mixin _$Task on _Task, Store {
   @override
   String toString() {
     return '''
+parentTaskId: ${parentTaskId},
 name: ${name},
 description: ${description},
 minDuration: ${minDuration},
@@ -152,7 +203,7 @@ class TaskValidationFields {
 }
 
 class TaskValidation extends Validation<Task, TaskField> {
-  const TaskValidation(this.errorsMap, this.value, this.fields);
+  TaskValidation(this.errorsMap, this.value, this.fields) : super(errorsMap);
 
   final Map<TaskField, List<ValidationError>> errorsMap;
 

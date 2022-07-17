@@ -5,7 +5,7 @@ import 'package:mobx/mobx.dart';
 import 'package:neural_graph/common/extensions.dart';
 import 'package:neural_graph/diagram/connection.dart';
 import 'package:neural_graph/diagram/node.dart';
-import 'package:neural_graph/fields/button_select_field.dart';
+import 'package:stack_portal/fields.dart';
 import 'package:neural_graph/fields/form.dart';
 import 'package:neural_graph/fields/shape_field.dart';
 import 'package:neural_graph/layers/codegen_helper.dart';

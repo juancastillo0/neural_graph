@@ -6,12 +6,12 @@ import 'package:formgen/formgen.dart';
 import 'package:mobx/mobx.dart';
 import 'package:neural_graph/common/extensions.dart';
 import 'package:neural_graph/diagram/node.dart';
-import 'package:neural_graph/fields/button_select_field.dart';
 import 'package:neural_graph/fields/form.dart';
 import 'package:neural_graph/fields/shape_field.dart';
 import 'package:neural_graph/layers/codegen_helper.dart';
 import 'package:neural_graph/layers/layers.dart';
 import 'package:neural_graph/layers/node_layer_view.dart';
+import 'package:stack_portal/fields.dart';
 
 part 'convolutional_layer.g.dart';
 
