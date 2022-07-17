@@ -57,7 +57,7 @@ dependencies:
 
   artemis:
   gql_websocket_link:
-  json_annotation:
+  json_annotation: ^4.6.0
   equatable:
   meta:
   gql: ^0.13.1
@@ -68,7 +68,7 @@ dev_dependencies:
   test:
   # fvm flutter pub run build_runner watch --delete-conflicting-outputs
   build_runner:
-  json_serializable:
+  json_serializable: ^6.3.1
   mobx_codegen: ^2.0.0
   freezed: 2.0.3+1
   lint: ^1.0.0
@@ -89,6 +89,7 @@ flutter:
   # To add assets to your application, add an assets section, like this:
   assets:
     - google_fonts/
+    - packages/file_system_access/assets/file_persistence.js
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
   # For details regarding adding assets from package dependencies, see
